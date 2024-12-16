@@ -20,7 +20,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <NavigationMenu className="py-4 w-full">
+    <NavigationMenu className="py-4">
       <NavigationMenuList className="w-screen justify-between px-12 max-md:px-6 gap-2 text-sm font-medium">
         <div className="flex gap-8 items-center max-sm:hidden">
           <NavigationMenuItem className="text-xl max-sm:text-lg font-bold">
