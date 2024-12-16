@@ -12,3 +12,12 @@ export const navItems = [
 ];
 export const isActive = (href: string, pathname: string) =>
   pathname === href ? "text-primary" : "text-muted-foreground";
+
+
+export const getTwoAlphabets = (name: string): string => {
+  return name
+    .split(' ')
+    .map((part) => part.charAt(0))
+    .join('')
+    .slice(0, 2).toUpperCase()
+};
