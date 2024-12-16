@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { NavigationMenuItem, NavigationMenuLink } from "./ui/navigation-menu";
+import { NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "./ui/navigation-menu";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Drawer,
@@ -9,16 +10,22 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-
 import { Menu } from "lucide-react";
 import { navItems, isActive } from "@/lib/utils";
-import { NavigationMenuList } from "@radix-ui/react-navigation-menu";
 
 const Navsheet: React.FC<{ pathname: string }> = ({ pathname }) => {
   const [open, setOpen] = useState(false)
+  const router = useRouter()
   const onOpen = useCallback((open : boolean) => {
     setOpen(open)
   }, [])
+  const handleClick = (e : React.MouseEvent<HTMLAnchorElement>, href : string) => {
+    e.preventDefault()
+    setOpen(!open)
+    if (pathname !== href) {
+      router.push(href)
+    }
+  }
   return (
     <Drawer open = {open} onOpenChange={onOpen}>
       <DrawerTrigger className="p-1 rounded-md border">
@@ -29,7 +36,7 @@ const Navsheet: React.FC<{ pathname: string }> = ({ pathname }) => {
           <DrawerHeader className="flex flex-col gap-8 font-medium">
             <DrawerTitle>
               <NavigationMenuItem className="text-xl font-bold">
-                <Link onClick={() => setOpen(false)} className={isActive("/", pathname)} href="/">
+                <Link onClick={(e) => handleClick(e, '/')} className={isActive("/", pathname)} href="/">
                   PrepFlow
                 </Link>
               </NavigationMenuItem>
@@ -38,7 +45,7 @@ const Navsheet: React.FC<{ pathname: string }> = ({ pathname }) => {
             {navItems.map(({ href, label }) => (
             <NavigationMenuItem key={href}>
               <Link href={href} legacyBehavior passHref>
-                <NavigationMenuLink onClick={() => setOpen(false)} className={isActive(href, pathname)}>
+                <NavigationMenuLink onClick={(e) => handleClick(e, href)} className={isActive(href, pathname)}>
                   {label}
                 </NavigationMenuLink>
               </Link>
