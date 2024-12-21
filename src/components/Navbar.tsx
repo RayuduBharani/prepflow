@@ -17,10 +17,10 @@ const Navbar = async () => {
   const session = await auth();
 
   return (
-    <NavigationMenu className="py-4">
+    <NavigationMenu className="py-4 fixed">
       <NavigationMenuList className="w-screen justify-between px-12 max-md:px-2 gap-2 text-sm font-medium">
         <NavbarItems />
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <ModeToggle />
           {session?.user ? (
             <div className="flex gap-2 items-center">
@@ -56,6 +56,8 @@ const Navbar = async () => {
               effect={"expandIcon"}
               iconPlacement="right"
               icon={LogIn}
+              size={'sm'}
+              className="text-xs"
             >
               <Link href={"/signin"}>Sign in</Link>
             </Button>
