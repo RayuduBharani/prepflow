@@ -1,5 +1,6 @@
 "use server"
 import { PrismaClient } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 const prisma = new PrismaClient()
 
@@ -22,5 +23,5 @@ export async function changeToAdmin(formData: FormData) {
             data: { role: "USER" }
         })
     }
-    redirect("/")
+    revalidatePath('/admin')
 }

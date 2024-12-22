@@ -5,9 +5,7 @@ import Form from 'next/form'
 import Sonner from '@/components/Sonner'
 import Google from '@/components/icons/Google'
 import Github from '@/components/icons/Github'
-import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { LogIn } from 'lucide-react'
 
 const page = () => {
   return (
