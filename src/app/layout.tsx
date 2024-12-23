@@ -23,6 +23,7 @@ export default function RootLayout({
         className={`${poppins.className} antialiased bg-background w-screen h-svh`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+
           <Navbar />
           {children}
           <Toaster />

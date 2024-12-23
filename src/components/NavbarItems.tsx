@@ -4,9 +4,10 @@ import { NavigationMenuItem, NavigationMenuLink } from "./ui/navigation-menu";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Navsheet from "./Navsheet";
+import type { Session } from "next-auth";
 import { navItems, isActive } from "@/lib/utils";
 
-const NavbarItems = () => {
+const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
   const router = useRouter();
   const pathname = usePathname();
   const handleClick = (
@@ -20,8 +21,8 @@ const NavbarItems = () => {
   };
   return (
     <>
-      <div className="flex gap-8 items-center max-sm:hidden">
-        <NavigationMenuItem className="text-xl max-sm:text-lg font-bold">
+      <div className="flex gap-8 items-center max-md:hidden">
+        <NavigationMenuItem tabIndex={0} className="text-xl max-sm:text-lg font-bold">
           <Link
             onClick={(e) => handleClick(e, "/")}
             className={isActive("/", pathname)}
@@ -31,7 +32,7 @@ const NavbarItems = () => {
           </Link>
         </NavigationMenuItem>
         {navItems.map(({ href, label }) => (
-          <NavigationMenuItem key={href}>
+          <NavigationMenuItem tabIndex={0} key={href}>
             <Link href={href} legacyBehavior passHref>
               <NavigationMenuLink
                 onClick={(e) => handleClick(e, href)}
@@ -42,20 +43,22 @@ const NavbarItems = () => {
             </Link>
           </NavigationMenuItem>
         ))}
-        <NavigationMenuItem>
-          <Link href={"/admin/dashboard"} legacyBehavior passHref>
-            <NavigationMenuLink
-              onClick={(e) => handleClick(e, "/admin/dashboard")}
-              className={isActive("/admin/dashboard", pathname)}
-            >
-              Dashboard
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {session?.user.role === "ADMIN" && (
+          <NavigationMenuItem tabIndex={0}>
+            <Link href={"/dashboard"} legacyBehavior passHref>
+              <NavigationMenuLink
+                onClick={(e) => handleClick(e, "/dashboard")}
+                className={isActive("/dashboard", pathname)}
+              >
+                Dashboard
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+        )}
       </div>
-      <div className="sm:hidden flex gap-2 items-center">
-        <Navsheet pathname={pathname} />
-        <NavigationMenuItem className="text-xl max-sm:text-lg font-bold">
+      <div className="md:hidden flex gap-2 items-center">
+        <Navsheet session={session} pathname={pathname} />
+        <NavigationMenuItem tabIndex={0} className="text-xl max-sm:text-lg font-bold">
           <Link className="text-primary" href="/">
             PrepFlow
           </Link>
