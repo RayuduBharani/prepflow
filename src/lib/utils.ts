@@ -21,3 +21,17 @@ export const getTwoAlphabets = (name: string): string => {
     .join('')
     .slice(0, 2).toUpperCase()
 };
+
+
+export  const getDifficultyColor = (difficulty: string) => {
+  switch (difficulty.toLowerCase()) {
+      case 'easy':
+          return 'text-green-500 font-semibold';
+      case 'medium':
+          return 'text-orange-500 font-semibold';
+      case 'hard':
+          return 'text-red-500 font-semibold';
+      default:
+          return '';
+  }
+};
