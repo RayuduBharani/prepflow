@@ -16,7 +16,7 @@ const Navbar = async () => {
         <NavbarItems session={session} />
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <AvatarDropDown session={session} />
+          <AvatarDropDown session={session}/>
         </div>
       </NavigationMenuList>
     </NavigationMenu>

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import React from 'react'
 import { changeToAdmin } from '@/app/actions/actions';
+import { seedData } from '@/app/actions/seedAction';
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -19,13 +20,16 @@ async function Admin() {
                 {usersData.map(user => (
                     <div key={user.id} className='flex justify-between items-center bg-muted p-3 rounded-md'>
                         <p>{user.email}</p>
-                        <p className={user.role === 'ADMIN' ? 'text-primary' : "text-muted"}>{user.role}</p>
+                        <p className={user.role === 'ADMIN' ? 'text-primary' : "text-muted-foreground"}>{user.role}</p>
                     </div>
                 ))}
             </div>
             <form action={changeToAdmin} className='min-w-[25%] h-fit flex flex-col gap-3'>
                 <Input name='email' className='h-10 bg-muted' type='email' placeholder='Enter user email' />
                 <Button size={'sm'}>Change Role</Button>
+            </form>
+            <form action={seedData}>
+                <Button type='submit' variant={'outline'}>Seed Data</Button>
             </form>
         </div>
     )

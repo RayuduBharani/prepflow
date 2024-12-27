@@ -27,6 +27,80 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Problem {
+  id             Int              @id @default(autoincrement())
+  title          String
+  slug           String           @unique
+  isPremium      Boolean?         
+  dislikes       Int?              
+  likes          Int?            
+  difficulty     Difficulty
+  url            String
+  accepted       Int?
+  submissions    Int              @default(0)
+  acceptanceRate Float            @default(0)
+  platform       Platform
+  topicTags      ProblemTopic[]   @relation("ProblemTopicProblems")
+  companyTags    ProblemCompany[] @relation("ProblemCompanyProblems")
+  mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
+  topicSlugs     ProblemTopicSlug[] @relation("ProblemTopicSlugProblems")
+  similarTo      SimilarProblem[] @relation("ProblemToSimilar")
+  similarFrom    SimilarProblem[] @relation("SimilarToProblem")
+
+  @@index([difficulty])
+  @@index([difficulty, platform])
+}
+
+model SimilarProblem {
+  id           Int      @id @default(autoincrement())
+  problemId    Int
+  similarId    Int
+  problem      Problem  @relation("ProblemToSimilar", fields: [problemId], references: [id], onDelete: Cascade)
+  similar      Problem  @relation("SimilarToProblem", fields: [similarId], references: [id], onDelete: Cascade)
+
+  @@unique([problemId, similarId])
+  @@index([problemId])
+  @@index([similarId])
+}
+
+model ProblemTopic {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  problems Problem[] @relation("ProblemTopicProblems")
+}
+
+model ProblemCompany {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  problems Problem[] @relation("ProblemCompanyProblems")
+}
+
+model ProblemMainTopic {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  problems Problem[] @relation("ProblemMainTopicProblems")
+}
+
+model ProblemTopicSlug {
+  id       Int       @id @default(autoincrement())
+  slug     String    @unique
+  problems Problem[] @relation("ProblemTopicSlugProblems")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  BASIC
+  SCHOOL
+}
+
+enum Platform {
+  LEETCODE
+  GFG
+}
+
  
 model Account {
   userId            String
