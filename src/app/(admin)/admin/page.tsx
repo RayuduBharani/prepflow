@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import React from 'react'
 import { changeToAdmin } from '@/app/actions/actions';
-import { seedData } from '@/app/actions/seedAction';
+import { dropTables, seedData } from '@/app/actions/seedAction';
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -30,6 +30,9 @@ async function Admin() {
             </form>
             <form action={seedData}>
                 <Button type='submit' variant={'outline'}>Seed Data</Button>
+            </form>
+            <form action={dropTables}>
+                <Button variant={'destructive'} type='submit'>Drop Tables</Button>
             </form>
         </div>
     )

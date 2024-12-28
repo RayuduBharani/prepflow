@@ -18,7 +18,7 @@ interface IProblem {
     title: string;
     slug: string;
     isPremium?: boolean;
-    dislikes?: number;
+    dislikes?: number | null;
     likes?: number;
     difficulty: "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL"; // Updated difficulty levels
     similarQuestions: ISimilarQuestion[];
