@@ -31,7 +31,10 @@ export const projects = [
 const CompaniesPage = () => {
   return (
     <div className='w-full h-full pt-[4rem] sm:px-10 overflow-hidden'>
-      <h1 className='text-xl font-bold mt-7 text-primary sm:px-2 max-sm:px-4'>Company Wise Questions</h1>
+    <div className='flex flex-1 gap-2 justify-between'>
+    <h1 className='text-xl font-bold mt-7 text-primary sm:px-2 max-sm:px-4'>Company Wise Questions</h1>
+    
+    </div>
       <p className='text-sm text-neutral-600 dark:text-neutral-400 mt-1 sm:px-2 max-sm:px-4'>A collection of questions asked by various companies in their interviews</p>
 
       <div className='w-full h-[86%] mt-2 overflow-y-scroll scrollbar-hide'>

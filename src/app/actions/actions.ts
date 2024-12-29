@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/prisma";
-import fs from 'fs'
+import {cache} from 'react'
 
 export async function changeToAdmin(formData: FormData) {
   const user = await prisma.user.findUnique({
@@ -23,3 +23,15 @@ export async function changeToAdmin(formData: FormData) {
   }
   revalidatePath("/admin");
 }
+
+export async function changeCompanyImage(formData : FormData) {
+  const entries = formData.entries()
+  for (const [key, value] of entries) {
+    console.log(key)
+  }
+}
+
+export const getProblemsByCompany = cache(async (name : string) => {
+  const results = await prisma.problemCompany.findUnique({where : {name}, include : {problems : true}})
+  return results
+})

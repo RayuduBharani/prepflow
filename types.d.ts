@@ -5,6 +5,12 @@ declare module "*.svg" {
     export default ReactComponent;
   }
 
+type Company = {
+  id : number
+  image : string | null
+  name : string
+}
+
   
 interface ISimilarQuestion {
     id?: number;
