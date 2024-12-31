@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const poppins = Poppins({weight : ['100', '200', '300', '400', '500', '600', '700', '800', '900']})
 
@@ -27,7 +29,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
 
           <Navbar />
+          <Suspense fallback={<Loading/>}>
           {children}
+          </Suspense>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -17,7 +17,7 @@ async function SheetQuestions({ params }: { params: { typeSlug: string } }) {
             mainTopics : true ,
         }
     })
-    console.log(prismaData)
+    // console.log(prismaData)
     return (
         <div className="w-full h-full pt-[4rem] sm:px-10 overflow-hidden bg-background text-foreground">
             <h1 className="text-lg font-bold mt-7 text-primary sm:px-2 max-sm:px-4">
