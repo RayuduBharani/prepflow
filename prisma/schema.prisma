@@ -1,13 +1,14 @@
 datasource db {
   provider = "postgresql"
   // url      = env("DATABASE_URL")
-  url = env("LOCAL_URI")
+  url      = env("LOCAL_URI")
   // directUrl = env("DIRECT_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
+
 enum UserRole {
   USER
   ADMIN
@@ -19,46 +20,48 @@ model User {
   email         String          @unique
   emailVerified DateTime?
   image         String?
-  role          UserRole            @default(USER)
+  role          UserRole        @default(USER)
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  UserProgress UserProgress[]
 }
 
 model Problem {
-  id             Int              @id @default(autoincrement())
+  id             Int                @id @default(autoincrement())
   title          String
-  slug           String           @unique
-  isPremium      Boolean?         
-  dislikes       Int?              
-  likes          Int?            
+  slug           String             @unique
+  isPremium      Boolean?
+  dislikes       Int?
+  likes          Int?
   difficulty     Difficulty
   url            String
   accepted       Int?
-  submissions    Int              @default(0)
-  acceptanceRate Float            @default(0)
+  submissions    Int                @default(0)
+  acceptanceRate Float              @default(0)
   platform       Platform
-  topicTags      ProblemTopic[]   @relation("ProblemTopicProblems")
-  companyTags    ProblemCompany[] @relation("ProblemCompanyProblems")
+  topicTags      ProblemTopic[]     @relation("ProblemTopicProblems")
+  companyTags    ProblemCompany[]   @relation("ProblemCompanyProblems")
   mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
   topicSlugs     ProblemTopicSlug[] @relation("ProblemTopicSlugProblems")
-  similarTo      SimilarProblem[] @relation("ProblemToSimilar")
-  similarFrom    SimilarProblem[] @relation("SimilarToProblem")
+  similarTo      SimilarProblem[]   @relation("ProblemToSimilar")
+  similarFrom    SimilarProblem[]   @relation("SimilarToProblem")
+  UserProgress   UserProgress[]
 
   @@index([difficulty])
   @@index([difficulty, platform])
 }
 
 model SimilarProblem {
-  id           Int      @id @default(autoincrement())
-  problemId    Int
-  similarId    Int
-  problem      Problem  @relation("ProblemToSimilar", fields: [problemId], references: [id], onDelete: Cascade)
-  similar      Problem  @relation("SimilarToProblem", fields: [similarId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  problemId Int
+  similarId Int
+  problem   Problem @relation("ProblemToSimilar", fields: [problemId], references: [id], onDelete: Cascade)
+  similar   Problem @relation("SimilarToProblem", fields: [similarId], references: [id], onDelete: Cascade)
 
   @@unique([problemId, similarId])
   @@index([problemId])
@@ -74,7 +77,7 @@ model ProblemTopic {
 model ProblemCompany {
   id       Int       @id @default(autoincrement())
   name     String    @unique
-  image String?
+  image    String?
   problems Problem[] @relation("ProblemCompanyProblems")
 }
 
@@ -103,7 +106,23 @@ enum Platform {
   GFG
 }
 
- 
+model UserProgress {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  problemId   Int
+  isCompleted Boolean   @default(false) // Tracks if the problem is completed
+  completedAt DateTime? // Timestamp for when the problem was marked as completed
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem     Problem   @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, problemId]) // Ensures a user can only have one progress record per problem
+  @@index([userId])
+  @@index([problemId])
+}
+
+
 model Account {
   userId            String
   type              String
@@ -116,33 +135,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -153,8 +172,8 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
 }

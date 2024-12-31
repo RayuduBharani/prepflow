@@ -35,3 +35,14 @@ export  const getDifficultyColor = (difficulty: string) => {
           return '';
   }
 };
+
+export function toTitleCase(str : string) {
+  if (!str) return "";
+
+  return str
+    .replace(/-/g, " ")
+    .toLowerCase() 
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
