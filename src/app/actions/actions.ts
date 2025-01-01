@@ -87,3 +87,53 @@ export const getMainTopics = cache(async () => {
   });
   return results;
 });
+
+export const getUserProgressQuuestions = cache(async (userId: string) => {
+  const results = await prisma.userProgress.findMany({
+    where: {
+      userId,
+    },
+    include : {
+      problem : true
+    }
+  });
+  return results;
+})
+
+export const getUserProgress = cache(async (userId: string) => {
+  const results = await prisma.userProgress.findMany({
+    where: {
+      userId : userId,
+      isCompleted : true
+    },
+  });
+  return results;
+});
+
+export const createUserProgress = cache(async (userId: string, problemId: number , isCompleted : boolean) => {
+  const findUserQuestion = await prisma.userProgress.findFirst({
+    where : {
+      userId : userId ,
+      problemId : problemId
+    }
+  })
+  console.log("findUserQuestion" , findUserQuestion)
+  if(findUserQuestion == null){
+    const results = await prisma.userProgress.create({
+      data: {
+        userId,
+        problemId,
+        isCompleted,
+      },
+    });
+    return results;
+  }
+  else {
+    const deleteQuestion = await prisma.userProgress.delete({
+      where : {
+        id : findUserQuestion.id
+      }
+    })
+    console.log("deleteQuestion" , deleteQuestion)
+  }
+});

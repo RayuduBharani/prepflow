@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import { prisma } from "@/prisma";
-import Link from "next/link";
 import {
     Pagination,
     PaginationContent,
@@ -10,13 +8,14 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import QuestionCards from "@/components/snippets/QuestionCards";
 
 async function SheetQuestions({
     params,
     searchParams,
 }: {
     params: { typeSlug: string };
-    searchParams: Promise<{ questions ?: string }>
+    searchParams: Promise<{ questions?: string }>
 }) {
     const { typeSlug } = await params;
     const page = Number((await searchParams).questions) || 1
@@ -124,7 +123,6 @@ async function SheetQuestions({
                                 <PaginationPrevious href={`?questions=${page - 1}`} />
                             </PaginationItem>
                         )}
-
                         {renderPagination()}
                         {page < totalPages && (
                             <PaginationItem className="w-[10%]">
@@ -133,74 +131,8 @@ async function SheetQuestions({
                         )}
                     </PaginationContent>
                 </Pagination>
-
                 {prismaData.length > 0 ? (
-                    <div className="w-full mt-5 h-fit grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 sm:px-0">
-                        {prismaData.map((question, index) => (
-                            <div
-                                key={index}
-                                className="w-full p-4 bg-secondary rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col overflow-hidden"
-                            >
-                                <div className="flex flex-col gap-4 flex-grow">
-                                    <h2 className="text-lg text-primary font-semibold line-clamp-2">
-                                        {question.title}
-                                    </h2>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span
-                                            className={`text-xs font-semibold ${
-                                                question.difficulty === "EASY"
-                                                    ? "text-green-700"
-                                                    : question.difficulty === "MEDIUM"
-                                                    ? "text-yellow-500"
-                                                    : question.difficulty === "HARD"
-                                                    ? "text-red-500"
-                                                    : ""
-                                            }`}
-                                        >
-                                            {question.difficulty}
-                                        </span>
-                                        <span className="">
-                                            Acceptance:{" "}
-                                            <span className="font-medium">
-                                                {question.acceptanceRate}%
-                                            </span>
-                                        </span>
-                                    </div>
-                                    <p className="text-sm  line-clamp-2 text-muted-foreground">
-                                        <span className="font-semibold">Topics : </span>{" "}
-                                        {question.mainTopics
-                                            .map((topic) => topic.name)
-                                            .join(", ")}
-                                    </p>
-                                    <div className="flex flex-col">
-                                        <p className="text-sm font-semibold text-muted-foreground">
-                                            Companies
-                                        </p>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {question.companyTags.map((company, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="bg-background font-semibold text-[0.8rem] px-3 py-1.5 rounded-md shadow-sm border border-muted text-primary"
-                                                >
-                                                    {company.name}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                                <Button
-                                    size="sm"
-                                    className="mt-3"
-                                    variant="default"
-                                    asChild
-                                >
-                                    <Link href={question.url} target="_blank">
-                                        Visit
-                                    </Link>
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
+                    <QuestionCards prismaData={prismaData} />
                 ) : (
                     <div className="w-full h-[85%] flex justify-center items-center">
                         <p className="font-bold text-primary animate-pulse">

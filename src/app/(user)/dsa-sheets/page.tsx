@@ -1,11 +1,16 @@
 import { CircleArrowRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
-import { getMainTopics } from "@/app/actions/actions";
+import { getMainTopics, getUserProgressQuuestions } from "@/app/actions/actions";
 import { toTitleCase } from "@/lib/utils";
+import { auth } from "@/auth";
 
 const DSAPage = async () => {
+  const session = await auth()
   const mainTopics = await getMainTopics();
+  // console.log(mainTopics)
+  const ProgressQuuestions = await getUserProgressQuuestions(session?.user?.id as string);
+  // console.log(ProgressQuuestions)
   return (
     <div className="w-full h-full pt-[4rem] sm:px-10 overflow-hidden">
       <div className="w-full h-full overflow-y-scroll scrollbar-hide p-0">
@@ -19,25 +24,24 @@ const DSAPage = async () => {
           {mainTopics.length > 0 ? (
             mainTopics.map((topic, index) => {
               return (
-                <div
-                  key={index}
-                  className="bg-muted w-full h-fit rounded-lg flex p-4 flex-col gap-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-base font-semibold">
-                      {toTitleCase(topic.name)}
-                    </h1>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                      10 / {topic._count.problems}
-                    </p>
-                  </div>
-                  <div className="flex gap-4 justify-between items-center">
-                    <Progress value={20} />
-                    <Link href={`dsa-sheets/${topic.name}`}>
+                <Link key={index} href={`dsa-sheets/${topic.name}`}>
+                  <div
+                    className="bg-muted w-full h-fit rounded-lg flex p-4 flex-col gap-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h1 className="text-base font-semibold">
+                        {toTitleCase(topic.name)}
+                      </h1>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                        10 / {topic._count.problems}
+                      </p>
+                    </div>
+                    <div className="flex gap-4 justify-between items-center">
+                      <Progress value={20} />
                       <CircleArrowRight size={20} className="cursor-pointer" />
-                    </Link>
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })
           ) : (
