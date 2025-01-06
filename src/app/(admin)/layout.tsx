@@ -2,7 +2,7 @@ import React from 'react'
 
 const AdminLayout = ({children} : {children : React.ReactNode}) => {
   return (
-    <main className='py-[4rem] px-6 w-full'>
+    <main className='w-full h-svh overflow-hidden'>
         {children}
     </main>
   )
