@@ -12,7 +12,7 @@ const Navbar = async () => {
   const session = await auth();
   return (
     <NavigationMenu className="py-4 fixed">
-      <NavigationMenuList className="w-screen justify-between px-12 max-md:px-2 gap-2 text-sm font-medium">
+      <NavigationMenuList className="w-screen justify-between px-6 max-md:px-2 gap-2 text-sm font-medium">
         <NavbarItems session={session} />
         <div className="flex items-center gap-2">
           <ModeToggle />

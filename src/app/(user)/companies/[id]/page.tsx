@@ -21,7 +21,7 @@ export default async function QuestionPage({
   const results = await getProblemsByCompany(params.id);
   const problems = results?.problems;
   return (
-    <div className="w-full h-full pt-[4rem] sm:px-10 overflow-hidden">
+    <div className="w-full h-full pt-[4rem] overflow-hidden">
       <p className="text-xl font-bold mt-7 text-primary sm:px-2 max-sm:px-4 max-sm:text-center">
         Apple
       </p>
