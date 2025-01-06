@@ -7,14 +7,14 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { Toaster } from "@/components/ui/toaster";
 
-const poppins = Poppins({weight : ['100', '200', '300', '400', '500', '600', '700', '800', '900']})
+const poppins = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: "PrepFlow",
   description: "Created by Bharani in colab with Cygnuxxs",
 };
-
-
 
 export default function RootLayout({
   children,
@@ -26,14 +26,16 @@ export default function RootLayout({
       <body
         className={`${poppins.className} antialiased bg-background w-screen h-svh`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-
-          <Navbar />
-          <Suspense fallback={<Loading/>}>
-          {children}
-          </Suspense>
-          <Toaster />
-        </ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Toaster />
+          </ThemeProvider>
       </body>
     </html>
   );

@@ -9,7 +9,7 @@ import { navItems, isActive } from "@/lib/utils";
 
 const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = '/' + usePathname().split('/')[1];
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
