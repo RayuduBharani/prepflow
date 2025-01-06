@@ -1,5 +1,5 @@
 import { InternContent } from "@/components/snippets/InternContent"
-import { JobContent } from "@/components/snippets/JobContent"
+import { JobContent } from "@/components/snippets/JobContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react'
 
@@ -23,10 +23,10 @@ const JobsPage = () => {
                         </TabsList>
                     </div>
                 </div>
-                <TabsContent value="jobs">
+                <TabsContent value="jobs" className="motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
                     <JobContent />
                 </TabsContent>
-                <TabsContent value="internships">
+                <TabsContent value="internships" className="motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
                     <InternContent />
                 </TabsContent>
             </div>

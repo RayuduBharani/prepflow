@@ -8,7 +8,7 @@ export default function JobView() {
     <div className='w-full h-full overflow-hidden pt-[4rem] sm:px-10'>
       <div className='w-full h-full px-4 py-6 overflow-y-auto scrollbar-hide'>
         {/* Header Section */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-lg text-primary sm:text-xl font-bold">Senior Full Stack Developer</h1>
@@ -30,19 +30,19 @@ export default function JobView() {
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
 
         {/* Details Section */}
-        <div className="space-y-6">
-          <section className="space-y-3">
+        <div className="space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
+          <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">About the Role</h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               Join our dynamic team to build next-generation web applications using cutting-edge technologies. 
               You'll be working on complex problems and delivering high-quality solutions that impact millions of users globally.
             </p>
-          </section>
+          </div>
 
-          <section className="space-y-3">
+          <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Responsibilities</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               <li>Design and implement scalable web applications</li>
@@ -51,9 +51,9 @@ export default function JobView() {
               <li>Participate in code reviews and technical discussions</li>
               <li>Mentor junior developers and contribute to team growth</li>
             </ul>
-          </section>
+          </div>
 
-          <section className="space-y-3">
+          <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Requirements</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               <li>5+ years of experience in full-stack development</li>
@@ -62,9 +62,9 @@ export default function JobView() {
               <li>Excellent problem-solving and communication skills</li>
               <li>Bachelor's degree in Computer Science or related field</li>
             </ul>
-          </section>
+          </div>
 
-          <section className="space-y-3">
+          <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Required Skills</h2>
             <div className="flex flex-wrap gap-2">
               {["React", "Node.js", "TypeScript", "Cloud", "Docker", "CI/CD", "MongoDB", "Redis"].map((skill, index) => (
@@ -73,27 +73,30 @@ export default function JobView() {
                 </Badge>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="space-y-3">
+          <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              <li>Competitive salary and equity package</li>
-              <li>Health, dental, and vision insurance</li>
-              <li>Flexible work hours and remote work options</li>
-              <li>Professional development budget</li>
-              <li>401(k) matching</li>
+              {[
+                "Competitive salary and equity package",
+                "Health, dental, and vision insurance",
+                "Flexible work hours and remote work options",
+                "Professional development budget",
+                "401(k) matching"
+              ].map((item, index) => (
+                <li key={index}>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
-          </section>
+          </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-8">
-          <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]">
+          <Button>
             Apply Now
-          </Button>
-          <Button variant="outline" size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]">
-            Save Job
           </Button>
         </div>
       </div>

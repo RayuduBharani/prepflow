@@ -13,9 +13,7 @@ export default function AdminDashboard() {
             <CardDescription>Create and manage job listings</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/post-job">
-              <Button className="w-full">Create New Job</Button>
-            </Link>
+              <Button className="w-full" asChild><Link href="dashboard/post-job">Create New Job</Link></Button>
           </CardContent>
         </Card>
 
@@ -25,9 +23,7 @@ export default function AdminDashboard() {
             <CardDescription>Create and manage internship listings</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/post-internship">
-              <Button className="w-full">Create New Job</Button>
-            </Link>
+              <Button className="w-full" asChild><Link href="dashboard/post-internship">Create New Job</Link></Button>
           </CardContent>
         </Card>
 
@@ -37,9 +33,7 @@ export default function AdminDashboard() {
             <CardDescription>Create learning paths and roadmaps</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/post-roadmap">
-              <Button className="w-full">Create New Roadmap</Button>
-            </Link>
+              <Button className="w-full"><Link href="/post-roadmap">Create New Roadmap</Link></Button>
           </CardContent>
         </Card>
       </div>

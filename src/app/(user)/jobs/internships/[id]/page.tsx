@@ -83,11 +83,11 @@ export default function InternshipView() {
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              <li>Monthly stipend of $1,500</li>
-              <li>Flexible work hours and remote options</li>
-              <li>Access to exclusive training and development resources</li>
-              <li>Mentorship from experienced engineers</li>
-              <li>Certificate of completion and possible full-time opportunities</li>
+              {["Monthly stipend of $1,500", "Flexible work hours and remote options", "Access to exclusive training and development resources", "Mentorship from experienced engineers", "Certificate of completion and possible full-time opportunities"].map((item, index) => (
+                <li key={index}>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </section>
         </div>

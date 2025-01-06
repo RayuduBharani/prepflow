@@ -10,56 +10,57 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import Form from "next/form";
+import { jobPosting } from "@/app/actions/actions";
 
-export default function PostJob() {
+async function PostJob() {
   return (
     <div className="w-full h-full pt-[4rem] overflow-hidden sm:px-10">
       <div className="w-full py-5 px-2 h-full flex flex-col overflow-y-scroll scrollbar-hide">
         <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Job</h1>
-        <p className="text-muted-foreground mt-1">Fill in the details below to create a new job listing.</p>
+        <p className="text-muted-foreground mt-1 text-sm">Fill in the details below to create a new job listing.</p>
 
-        <form className="w-full h-full mt-4 space-y-6">
-          {/* Basic Information */}
+        <Form action={jobPosting} className="w-full h-full mt-7 space-y-6">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <Label htmlFor="company">Company Name</Label>
-                <Input id="company" placeholder="Enter company name" className="border-muted" />
+                <Input name="company" id="company" placeholder="Enter company name" className="border-muted" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="title">Job Title</Label>
-                <Input id="title" placeholder="Enter job title" className="border-muted" />
+                <Input name="title" id="title" placeholder="Enter job title" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               <div className="space-y-2">
                 <Label htmlFor="type">Job Type</Label>
-                <Select>
-                  <SelectTrigger className="border-muted">
+                <Select name="jobtype">
+                  <SelectTrigger className="border-muted" id="type" name="jobtype">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="full-time">Full-time</SelectItem>
-                    <SelectItem value="part-time">Part-time</SelectItem>
-                    <SelectItem value="contract">Contract</SelectItem>
-                    <SelectItem value="remote">Remote</SelectItem>
+                    <SelectItem value="Full_time">Full-time</SelectItem>
+                    <SelectItem value="Part_time">Part-time</SelectItem>
+                    <SelectItem value="Contract">Contract</SelectItem>
+                    <SelectItem value="Remote">Remote</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" placeholder="Enter location" className="border-muted" />
+                <Input name="location" id="location" placeholder="Enter location" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="salary">Salary Range</Label>
-                <Input id="salary" placeholder="e.g. $80K - $120K" className="border-muted" />
+                <Input name="salary" id="salary" placeholder="e.g. $80K - $120K" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="logo">Company Logo URL</Label>
-              <Input id="logo" type="url" placeholder="Enter logo URL" className="border-muted" />
+              <Input name="logo" id="logo" type="text" placeholder="Enter logo URL" className="border-muted" suppressContentEditableWarning={true}/>
             </div>
           </div>
 
@@ -69,6 +70,7 @@ export default function PostJob() {
           <div className="space-y-2">
             <Label htmlFor="about">About the Role</Label>
             <Textarea
+              name="about"
               id="about"
               placeholder="Provide a brief overview of the role and its impact"
               className="min-h-[100px] border-muted resize-none"
@@ -79,6 +81,7 @@ export default function PostJob() {
           <div className="space-y-2">
             <Label htmlFor="responsibilities">Key Responsibilities</Label>
             <Textarea
+              name="responsibilities"
               id="responsibilities"
               placeholder="List the key responsibilities (one per line)"
               className="min-h-[150px] border-muted resize-none"
@@ -90,6 +93,7 @@ export default function PostJob() {
           <div className="space-y-2">
             <Label htmlFor="requirements">Requirements</Label>
             <Textarea
+              name="requirements"
               id="requirements"
               placeholder="List the job requirements (one per line)"
               className="min-h-[150px] border-muted resize-none"
@@ -100,7 +104,7 @@ export default function PostJob() {
           {/* Skills */}
           <div className="space-y-2">
             <Label htmlFor="skills">Required Skills</Label>
-            <Input id="skills" placeholder="e.g. React, Node.js, TypeScript" className="border-muted" />
+            <Input name="skills" id="skills" placeholder="e.g. React, Node.js, TypeScript" className="border-muted" suppressContentEditableWarning={true}/>
             <p className="text-xs text-muted-foreground">Separate skills with commas</p>
           </div>
 
@@ -108,6 +112,7 @@ export default function PostJob() {
           <div className="space-y-2">
             <Label htmlFor="benefits">Benefits</Label>
             <Textarea
+              name="benefits"
               id="benefits"
               placeholder="List the benefits and perks (one per line)"
               className="min-h-[150px] border-muted resize-none"
@@ -115,12 +120,19 @@ export default function PostJob() {
             <p className="text-xs text-muted-foreground">Enter each benefit on a new line</p>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="joburl">Job Url</Label>
+            <Input name="url" id="joburl" placeholder="e.g. React, Node.js, TypeScript" className="border-muted" suppressContentEditableWarning={true}/>
+          </div>
+
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
             <Button type="submit" size="lg">Post Job</Button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
 }
+
+export default PostJob

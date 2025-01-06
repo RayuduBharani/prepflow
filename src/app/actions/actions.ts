@@ -137,3 +137,54 @@ export const createUserProgress = cache(async (userId: string, problemId: number
     console.log("deleteQuestion" , deleteQuestion)
   }
 });
+
+
+
+export const jobPosting = async (formData: FormData) => {
+  const company = formData.get("company") as string;
+  const title = formData.get("title") as string;
+  const jobtype = formData.get("jobtype") as string;
+  const location = formData.get("location") as string;
+  const salary = formData.get("salary") as string;
+  const url = formData.get("url") as string;
+  const logo = formData.get("logo") as string;
+  const about = formData.get("about") as string;
+  const responsibilities = (formData.get("responsibilities") as string).split("\n");
+  const requirements = (formData.get("requirements") as string).split("\n");
+  const skills = (formData.get("skills") as string).split(",").map(skill => skill.trim());
+  const benefits = (formData.get("benefits") as string).split("\n");
+
+  const jobData = {
+    company,
+    title,
+    logo ,
+    jobtype,
+    location,
+    salary,
+    url,
+    about,
+    responsibilities,
+    requirements,
+    skills,
+    benefits,
+  };
+  console.log(jobData);
+  const createJob = await prisma.jobs.create({
+    data: {
+      company,
+      title,
+      logo ,
+      location,
+      salary,
+      url,
+      about,
+      responsibilities,
+      requirements,
+      skills,
+      benefits,
+      jobtype
+    },
+  });
+
+  console.log(createJob)
+};
