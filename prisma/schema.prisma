@@ -1,8 +1,8 @@
 datasource db {
-  provider = "postgresql"
-  // url      = env("DATABASE_URL")
-  url      = env("LOCAL_URI")
-  // directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // url      = env("LOCAL_URI")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -44,7 +44,7 @@ model Problem {
   submissions    Int                @default(0)
   acceptanceRate Float              @default(0)
   platform       Platform
-  category ProblemCategory[] @relation("CategoryProblems")
+  category       ProblemCategory[]  @relation("CategoryProblems")
   topicTags      ProblemTopic[]     @relation("ProblemTopicProblems")
   companyTags    ProblemCompany[]   @relation("ProblemCompanyProblems")
   mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
@@ -108,9 +108,9 @@ enum Platform {
 }
 
 model ProblemCategory {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  slug     String   @unique
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  slug     String    @unique
   problems Problem[] @relation("CategoryProblems") // Relation to Problem
 
   createdAt DateTime @default(now())
@@ -199,7 +199,7 @@ model Jobs {
   id               String   @id @default(uuid())
   company          String
   title            String
-  jobtype             JobType
+  jobtype          JobType
   location         String
   salary           String
   logo             String
@@ -219,7 +219,7 @@ enum InternType {
 }
 
 model internships {
-  id               String @id @default(uuid())
+  id               String     @id @default(uuid())
   company          String
   logo             String
   title            String
@@ -227,9 +227,10 @@ model internships {
   stipend          String
   duration         String
   about            String
-  responsibilities String
-  requirements     String
-  skills           String
-  benefits         String
+  responsibilities String[]
+  requirements     String[]
+  skills           String[]
+  benefits         String[]
   url              String
+  internType       InternType
 }

@@ -3,10 +3,12 @@ import { JobContent } from "@/components/snippets/JobContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react'
 
-const JobsPage = () => {
+const JobsPage = async () => {
     return (
-        <Tabs className="w-full h-full pt-[4rem] overflow-hidden sm:px-10" defaultValue="jobs">
-            <div className="w-full h-full flex flex-col overflow-y-scroll scrollbar-hide">
+        <Tabs className="w-full h-full pt-[4rem] overflow-hidden sm:px-4" defaultValue="jobs">
+            <div className="w-full animate-fade-up h-full flex flex-col overflow-y-scroll scrollbar-hide" style={{
+                animationFillMode: "forwards",
+            }}>
                 <div className="w-full h-fit mt-7 flex justify-between items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">
                     <div className="w-auto h-auto max-sm:w-full">
                         <h1 className="text-lg font-bold text-primary sm:px-2 max-sm:px-4">

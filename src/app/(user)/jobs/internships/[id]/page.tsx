@@ -2,77 +2,84 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Params } from 'next/dist/server/request/params';
+import { getSingleIntern } from '@/app/actions/actions';
+import Link from 'next/link';
 
-export default function InternshipView() {
+export default async function InternshipView({ params }: { params: Params }) {
+  const { id } = await params
+  const internshipData = await getSingleIntern(id as string)
   return (
     <div className="w-full h-full overflow-hidden pt-[4rem] sm:px-10">
       <div className="w-full h-full px-4 py-6 overflow-y-auto scrollbar-hide">
         {/* Header Section */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-lg text-primary sm:text-xl font-bold">
-                Software Engineer Intern
+                {internshipData?.title}
               </h1>
               <p className="text-sm sm:text-base text-foreground font-medium">
-                Microsoft
+                {internshipData?.company}
               </p>
             </div>
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-                alt="Microsoft logo"
+                src={internshipData?.logo}
+                alt={internshipData?.company}
                 className="w-full h-full object-contain"
               />
             </div>
           </div>
 
           <div className="flex flex-wrap gap-2 sm:gap-4">
-            <Badge variant="outline" className="text-xs sm:text-sm">Full-time</Badge>
-            <Badge variant="outline" className="text-xs sm:text-sm">Remote</Badge>
-            <Badge variant="outline" className="text-xs sm:text-sm">$1,500/month</Badge>
-            <Badge variant="outline" className="text-xs sm:text-sm">3 months</Badge>
+            <Badge variant="outline" className="text-xs sm:text-sm">{internshipData?.internType}</Badge>
+            <Badge variant="outline" className="text-xs sm:text-sm">{internshipData?.stipend}</Badge>
+            <Badge variant="outline" className="text-xs sm:text-sm">{internshipData?.duration}</Badge>
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
 
         {/* Details Section */}
-        <div className="space-y-6">
+        <div className="space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">About the Internship</h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              This internship offers a unique opportunity to work with a team of talented engineers to solve real-world problems. 
-              You'll gain hands-on experience in software development, contributing to impactful projects.
+              {internshipData?.about}
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Responsibilities</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              <li>Assist in the design and development of software applications</li>
-              <li>Collaborate with team members on project goals and deliverables</li>
-              <li>Write clean and efficient code following best practices</li>
-              <li>Conduct testing and debugging to ensure quality</li>
-              <li>Prepare documentation and reports as needed</li>
+              {
+                internshipData?.responsibilities.map((item, index) => {
+                  return (
+                    <li key={index}>{item}</li>
+                  )
+                })
+              }
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Requirements</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              <li>Currently enrolled in a Bachelor's or Master's program in Computer Science or a related field</li>
-              <li>Knowledge of JavaScript, React, and Node.js</li>
-              <li>Strong problem-solving and analytical skills</li>
-              <li>Ability to work independently and in a team environment</li>
-              <li>Excellent communication skills</li>
+              {
+                internshipData?.requirements.map((item, index) => {
+                  return (
+                    <li key={index}>{item}</li>
+                  )
+                })
+              }
             </ul>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Required Skills</h2>
             <div className="flex flex-wrap gap-2">
-              {["JavaScript", "React", "Node.js", "Problem-solving", "Git", "API Integration"].map((skill, index) => (
+              {internshipData?.skills.map((skill, index) => (
                 <Badge key={index} variant="secondary" className="text-xs sm:text-sm">
                   {skill}
                 </Badge>
@@ -83,7 +90,7 @@ export default function InternshipView() {
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              {["Monthly stipend of $1,500", "Flexible work hours and remote options", "Access to exclusive training and development resources", "Mentorship from experienced engineers", "Certificate of completion and possible full-time opportunities"].map((item, index) => (
+              {internshipData?.benefits.map((item, index) => (
                 <li key={index}>
                   <span>{item}</span>
                 </li>
@@ -94,11 +101,8 @@ export default function InternshipView() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-8">
-          <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]">
-            Apply Now
-          </Button>
-          <Button variant="outline" size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]">
-            Save Internship
+          <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]" asChild>
+            <Link href={internshipData?.url!} target='_blank'>Apply Now</Link>
           </Button>
         </div>
       </div>

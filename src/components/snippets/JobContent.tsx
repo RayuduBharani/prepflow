@@ -1,3 +1,4 @@
+import { getJobs } from "@/app/actions/actions";
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -11,100 +12,101 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link";
 
-const jobsData = [
-    {
-        company: "Microsoft",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png",
-        title: "Cloud Solutions Architect",
-        type: "Full-time",
-        location: "Redmond, WA",
-        salary: "$140K - $200K",
-        description: "Design and implement scalable cloud solutions using Azure and modern architectural patterns.",
-        skills: ["Azure", "Cloud Architecture", "Kubernetes", "DevOps"]
-    },
-    {
-        company: "Meta",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2048px-Meta_Platforms_Inc._logo.svg.png",
-        title: "AI/ML Engineer",
-        type: "Remote",
-        location: "Remote USA",
-        salary: "$150K - $220K",
-        description: "Work on cutting-edge AI/ML solutions for social media platforms and virtual reality.",
-        skills: ["Python", "TensorFlow", "PyTorch", "Deep Learning"]
-    },
-    {
-        company: "Apple",
-        logo: "https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png",
-        title: "iOS Developer",
-        type: "Hybrid",
-        location: "Cupertino, CA",
-        salary: "$130K - $190K",
-        description: "Create exceptional mobile experiences for Apple's ecosystem using Swift and SwiftUI.",
-        skills: ["Swift", "iOS", "SwiftUI", "Xcode"]
-    },
-    {
-        company: "Amazon",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
-        title: "DevOps Engineer",
-        type: "Full-time",
-        location: "Seattle, WA",
-        salary: "$125K - $185K",
-        description: "Build and maintain scalable infrastructure for AWS services and internal tools.",
-        skills: ["AWS", "Docker", "Jenkins", "Terraform"]
-    },
-    {
-        company: "Netflix",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png",
-        title: "Backend Engineer",
-        type: "Remote",
-        location: "Los Gatos, CA",
-        salary: "$140K - $210K",
-        description: "Design and implement scalable backend services for streaming platform.",
-        skills: ["Java", "Spring Boot", "Microservices", "Redis"]
-    },
-    {
-        company: "Salesforce",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Salesforce.com_logo.svg/2560px-Salesforce.com_logo.svg.png",
-        title: "Technical Architect",
-        type: "Hybrid",
-        location: "San Francisco, CA",
-        salary: "$160K - $230K",
-        description: "Lead technical architecture for enterprise CRM solutions and cloud platforms.",
-        skills: ["Apex", "Lightning", "Integration", "System Design"]
-    },
-    {
-        company: "Adobe",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Adobe_Corporate_Logo.png/1200px-Adobe_Corporate_Logo.png",
-        title: "Frontend Engineer",
-        type: "Full-time",
-        location: "San Jose, CA",
-        salary: "$115K - $175K",
-        description: "Build creative tools and experiences for Adobe's Creative Cloud platform.",
-        skills: ["JavaScript", "React", "WebGL", "CSS3"]
-    },
-    {
-        company: "Twitter",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png",
-        title: "Data Engineer",
-        type: "Remote",
-        location: "Remote USA",
-        salary: "$130K - $190K",
-        description: "Work with big data technologies to process and analyze social media data.",
-        skills: ["Spark", "Hadoop", "Python", "SQL"]
-    },
-    {
-        company: "LinkedIn",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/640px-LinkedIn_logo_initials.png",
-        title: "Security Engineer",
-        type: "Hybrid",
-        location: "Sunnyvale, CA",
-        salary: "$135K - $195K",
-        description: "Protect user data and implement security measures for professional network platform.",
-        skills: ["Security", "Cryptography", "Network Security", "Auth"]
-    }
-];
+// const jobsData = [
+//     {
+//         company: "Microsoft",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png",
+//         title: "Cloud Solutions Architect",
+//         type: "Full-time",
+//         location: "Redmond, WA",
+//         salary: "$140K - $200K",
+//         description: "Design and implement scalable cloud solutions using Azure and modern architectural patterns.",
+//         skills: ["Azure", "Cloud Architecture", "Kubernetes", "DevOps"]
+//     },
+//     {
+//         company: "Meta",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2048px-Meta_Platforms_Inc._logo.svg.png",
+//         title: "AI/ML Engineer",
+//         type: "Remote",
+//         location: "Remote USA",
+//         salary: "$150K - $220K",
+//         description: "Work on cutting-edge AI/ML solutions for social media platforms and virtual reality.",
+//         skills: ["Python", "TensorFlow", "PyTorch", "Deep Learning"]
+//     },
+//     {
+//         company: "Apple",
+//         logo: "https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png",
+//         title: "iOS Developer",
+//         type: "Hybrid",
+//         location: "Cupertino, CA",
+//         salary: "$130K - $190K",
+//         description: "Create exceptional mobile experiences for Apple's ecosystem using Swift and SwiftUI.",
+//         skills: ["Swift", "iOS", "SwiftUI", "Xcode"]
+//     },
+//     {
+//         company: "Amazon",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
+//         title: "DevOps Engineer",
+//         type: "Full-time",
+//         location: "Seattle, WA",
+//         salary: "$125K - $185K",
+//         description: "Build and maintain scalable infrastructure for AWS services and internal tools.",
+//         skills: ["AWS", "Docker", "Jenkins", "Terraform"]
+//     },
+//     {
+//         company: "Netflix",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png",
+//         title: "Backend Engineer",
+//         type: "Remote",
+//         location: "Los Gatos, CA",
+//         salary: "$140K - $210K",
+//         description: "Design and implement scalable backend services for streaming platform.",
+//         skills: ["Java", "Spring Boot", "Microservices", "Redis"]
+//     },
+//     {
+//         company: "Salesforce",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Salesforce.com_logo.svg/2560px-Salesforce.com_logo.svg.png",
+//         title: "Technical Architect",
+//         type: "Hybrid",
+//         location: "San Francisco, CA",
+//         salary: "$160K - $230K",
+//         description: "Lead technical architecture for enterprise CRM solutions and cloud platforms.",
+//         skills: ["Apex", "Lightning", "Integration", "System Design"]
+//     },
+//     {
+//         company: "Adobe",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Adobe_Corporate_Logo.png/1200px-Adobe_Corporate_Logo.png",
+//         title: "Frontend Engineer",
+//         type: "Full-time",
+//         location: "San Jose, CA",
+//         salary: "$115K - $175K",
+//         description: "Build creative tools and experiences for Adobe's Creative Cloud platform.",
+//         skills: ["JavaScript", "React", "WebGL", "CSS3"]
+//     },
+//     {
+//         company: "Twitter",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png",
+//         title: "Data Engineer",
+//         type: "Remote",
+//         location: "Remote USA",
+//         salary: "$130K - $190K",
+//         description: "Work with big data technologies to process and analyze social media data.",
+//         skills: ["Spark", "Hadoop", "Python", "SQL"]
+//     },
+//     {
+//         company: "LinkedIn",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/640px-LinkedIn_logo_initials.png",
+//         title: "Security Engineer",
+//         type: "Hybrid",
+//         location: "Sunnyvale, CA",
+//         salary: "$135K - $195K",
+//         description: "Protect user data and implement security measures for professional network platform.",
+//         skills: ["Security", "Cryptography", "Network Security", "Auth"]
+//     }
+// ];
 
 export async function JobContent() {
+    const jobsData = await getJobs()
     return (
         <div className="w-full h-full px-2 py-2 space-y-4 sm:space-y-6">
             <Separator className="" />
@@ -161,7 +163,7 @@ export async function JobContent() {
                                         {job.title}
                                     </h2>
                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                        {job.type}
+                                        {job.jobtype}
                                     </span>
                                 </div>
                                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
@@ -186,7 +188,7 @@ export async function JobContent() {
                             </div>
 
                             <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
-                                {job.description}
+                                {job.about}
                             </p>
 
                             <div className="flex flex-wrap gap-1.5">
@@ -199,7 +201,7 @@ export async function JobContent() {
                         </div>
 
                         <div className="flex items-center justify-end pt-4 mt-4 border-t">
-                            <Button variant="secondary" size="sm" asChild><Link href={`jobs/1`}>View this job</Link></Button>
+                            <Button variant="secondary" size="sm" asChild><Link href={`jobs/${job.id}`}>View this job</Link></Button>
                         </div>
                     </div>
                 ))}

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Form from "next/form";
 import { jobPosting } from "@/app/actions/actions";
+import FormButton from "@/components/snippets/FormButton";
 
 async function PostJob() {
   return (
@@ -127,7 +127,7 @@ async function PostJob() {
 
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
-            <Button type="submit" size="lg">Post Job</Button>
+            <FormButton formtype="Job"/>
           </div>
         </Form>
       </div>

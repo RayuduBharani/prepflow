@@ -1,3 +1,4 @@
+import { getInternships } from "@/app/actions/actions";
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -11,50 +12,51 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link";
 
-const internshipsData = [
-    {
-        company: "Microsoft",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png",
-        title: "Cloud Platform Intern",
-        duration: "6 months",
-        location: "Redmond, WA",
-        stipend: "$7500/month",
-        description: "Work with Azure cloud services and help build scalable solutions for enterprise customers.",
-        requirements: ["Cloud knowledge", "Java/Python", "Database skills"]
-    },
-    {
-        company: "Meta",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2048px-Meta_Platforms_Inc._logo.svg.png",
-        title: "ML Research Intern",
-        duration: "4 months",
-        location: "Remote",
-        stipend: "$7800/month",
-        description: "Research and implement machine learning solutions for social media applications.",
-        requirements: ["ML/AI background", "Python", "Research experience"]
-    },
-    {
-        company: "Amazon",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
-        title: "AWS Intern",
-        duration: "3 months",
-        location: "Seattle, WA",
-        stipend: "$7600/month",
-        description: "Develop and maintain AWS services while learning cloud infrastructure.",
-        requirements: ["AWS knowledge", "Systems design", "Programming skills"]
-    },
-    {
-        company: "Apple",
-        logo: "https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png",
-        title: "iOS Development Intern",
-        duration: "6 months",
-        location: "Cupertino, CA",
-        stipend: "$7700/month",
-        description: "Create innovative mobile experiences for Apple's ecosystem.",
-        requirements: ["Swift knowledge", "UI/UX skills", "Mobile development"]
-    }
-];
+// const internshipsData = [
+//     {
+//         company: "Microsoft",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png",
+//         title: "Cloud Platform Intern",
+//         duration: "6 months",
+//         location: "Redmond, WA",
+//         stipend: "$7500/month",
+//         description: "Work with Azure cloud services and help build scalable solutions for enterprise customers.",
+//         requirements: ["Cloud knowledge", "Java/Python", "Database skills"]
+//     },
+//     {
+//         company: "Meta",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2048px-Meta_Platforms_Inc._logo.svg.png",
+//         title: "ML Research Intern",
+//         duration: "4 months",
+//         location: "Remote",
+//         stipend: "$7800/month",
+//         description: "Research and implement machine learning solutions for social media applications.",
+//         requirements: ["ML/AI background", "Python", "Research experience"]
+//     },
+//     {
+//         company: "Amazon",
+//         logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
+//         title: "AWS Intern",
+//         duration: "3 months",
+//         location: "Seattle, WA",
+//         stipend: "$7600/month",
+//         description: "Develop and maintain AWS services while learning cloud infrastructure.",
+//         requirements: ["AWS knowledge", "Systems design", "Programming skills"]
+//     },
+//     {
+//         company: "Apple",
+//         logo: "https://www.apple.com/ac/structured-data/images/knowledge_graph_logo.png",
+//         title: "iOS Development Intern",
+//         duration: "6 months",
+//         location: "Cupertino, CA",
+//         stipend: "$7700/month",
+//         description: "Create innovative mobile experiences for Apple's ecosystem.",
+//         requirements: ["Swift knowledge", "UI/UX skills", "Mobile development"]
+//     }
+// ];
 
 export async function InternContent() {
+    const internshipsData = await getInternships()
     return (
         <div className="w-full h-full px-2 py-2 space-y-4 sm:space-y-6">
             <Separator className="" />
@@ -104,7 +106,7 @@ export async function InternContent() {
                     internshipsData.map((internship, index) => (
                         <div key={index}
                             className="group min-h-[350px] sm:h-[400px] bg-background rounded-lg sm:rounded-xl p-4 sm:p-6 border hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col justify-between">
-                            <div className="space-y-3 sm:space-y-4">
+                            <div className="space-y-3 sm:space-y-4 ">
                                 <div className="flex justify-between items-start gap-3 sm:gap-4">
                                     <div className="flex-1 min-w-0 space-y-1">
                                         <p className="text-sm font-medium text-primary">{internship.company}</p>
@@ -137,20 +139,20 @@ export async function InternContent() {
                                 </div>
 
                                 <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
-                                    {internship.description}
+                                    {internship.about}
                                 </p>
 
                                 <div className="flex flex-wrap gap-1.5">
-                                    {internship.requirements.map((requirement, i) => (
+                                    {internship.skills.map((skill, i) => (
                                         <span key={i} className="px-2 py-0.5 text-xs rounded-md bg-secondary text-secondary-foreground">
-                                            {requirement}
+                                            {skill}
                                         </span>
                                     ))}
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-end pt-4 mt-4 border-t">
-                                <Button variant="outline" size="sm"><Link href={`/jobs/internships/${1}`}>View this internship</Link></Button>
+                                <Button variant="outline" size="sm"><Link href={`/jobs/internships/${internship.id}`}>View this internship</Link></Button>
                             </div>
                         </div>
                     ))}
