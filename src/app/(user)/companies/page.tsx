@@ -6,8 +6,7 @@ const CompaniesPage = async () => {
   const session = await auth();
   const companiesData = await getCompanies(session?.user.id);
   return (
-    <div className="w-full h-full pt-[4rem] overflow-hidden">
-      <>
+    <div className="w-full h-full pt-[4rem] px-6 max-sm:px-4 overflow-hidden">
         <div className="flex flex-1 gap-2 justify-between">
           <h1 className="text-xl font-bold text-primary">
             Company Wise Questions
@@ -36,7 +35,6 @@ const CompaniesPage = async () => {
               ))}
           </div>
         </div>
-      </>
     </div>
   );
 };

@@ -6,7 +6,7 @@ import {
   getFilteredRowModel,
   flexRender,
   SortingState,
-  getSortedRowModel,
+  getSortedRowModel, 
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table"
@@ -21,6 +21,12 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import Form from "next/form"
+import { seedCompaniesImages } from "@/app/actions/seedAction"
+import { Button } from "@/components/ui/button"
+import { DownloadCloud } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -32,9 +38,14 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [filterMissingImages, setFilterMissingImages] = useState(false)
+
+  // Create the combined filters outside of the table state
+  const combinedFilters = filterMissingImages 
+    ? [...columnFilters, { id: 'image', value: true }]
+    : columnFilters
+
   const table = useReactTable({
     data,
     columns,
@@ -45,29 +56,34 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
-      columnFilters,
+      columnFilters: combinedFilters,
     },
   })
 
   return (
-    <div className="flex flex-col flex-1 w-full">
-      <div className="flex items-center py-4">
+    <div className="flex flex-col w-fit h-[95%]">
+      <div className="flex items-center gap-2 py-4">
         <Input
           placeholder="Filter Company Names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="md:max-w-sm max-md:w-full placeholder:text-xs"
         />
+
+        <Form action={seedCompaniesImages}>
+          <Button className="text-xs" type="submit" size="sm" variant="outline">
+            <DownloadCloud /> Seed
+          </Button>
+        </Form>
       </div>
-      <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
+      <div className="rounded-md border overflow-auto">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
@@ -76,35 +92,34 @@ export function DataTable<TData, TValue>({
                           header.getContext()
                         )}
                   </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
