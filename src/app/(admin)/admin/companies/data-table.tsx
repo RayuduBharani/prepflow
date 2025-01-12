@@ -25,8 +25,6 @@ import Form from "next/form"
 import { seedCompaniesImages } from "@/app/actions/seedAction"
 import { Button } from "@/components/ui/button"
 import { DownloadCloud } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -61,7 +59,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex flex-col w-fit h-[95%]">
+    <div className="flex flex-col w-fit max-sm:w-full sm:h-[95%]">
       <div className="flex items-center gap-2 py-4">
         <Input
           placeholder="Filter Company Names..."
@@ -78,7 +76,7 @@ export function DataTable<TData, TValue>({
           </Button>
         </Form>
       </div>
-      <div className="rounded-md border overflow-auto">
+      <div className="rounded-md border overflow-auto h-[76vh]">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

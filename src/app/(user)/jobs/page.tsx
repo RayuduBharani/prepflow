@@ -9,7 +9,7 @@ const JobsPage = async () => {
             <div className="w-full animate-fade-up h-full flex flex-col overflow-y-scroll scrollbar-hide" style={{
                 animationFillMode: "forwards",
             }}>
-                <div className="w-full h-fit mt-7 flex justify-between items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">
+                <div className="w-full h-fit mt-7 flex items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">
                     <div className="w-auto h-auto max-sm:w-full">
                         <h1 className="text-lg font-bold text-primary sm:px-2 max-sm:px-4">
                             Jobs & Internships
