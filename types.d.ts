@@ -9,6 +9,7 @@ type Company = {
   id: number
   image: string | null
   name: string
+  
 }
 
 
