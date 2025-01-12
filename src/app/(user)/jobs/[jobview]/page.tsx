@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { getSingleJob } from '@/app/actions/actions'
 import { Params } from 'next/dist/server/request/params'
 import Link from 'next/link'
+import ShareButton from '@/components/snippets/ShareButton'
 
 export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params
@@ -30,9 +31,14 @@ export default async function JobView({ params }: { params: Params }) {
 
           <div className="flex flex-wrap gap-2 sm:gap-4">
             <Badge variant="outline" className="text-xs sm:text-sm">{jobData?.jobtype}</Badge>
-            {/* <Badge variant="outline" className="text-xs sm:text-sm">Remote</Badge> */}
+            <Badge variant="outline" className="text-xs sm:text-sm">{jobData?.experience}</Badge>
             <Badge variant="outline" className="text-xs sm:text-sm">{jobData?.salary}</Badge>
           </div>
+          <p className='text-sm font-bold'><span className='text-primary'>Date of Posted :</span> {jobData?.createdAt.toLocaleDateString('en-US',{
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          })}</p>
         </div>
 
         <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
@@ -97,9 +103,13 @@ export default async function JobView({ params }: { params: Params }) {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-8">
-          <Button asChild>
+          <Button 
+            asChild
+            className="px-6 rounded-full"
+          >
             <Link href={jobData?.url!} target='_blank'>Apply Now</Link>
           </Button>
+          <ShareButton />
         </div>
       </div>
     </div>

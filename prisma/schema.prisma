@@ -209,6 +209,8 @@ model Jobs {
   skills           String[]
   benefits         String[]
   url              String
+  createdAt        DateTime @default(now())
+  experience       String
 }
 
 enum InternType {
@@ -233,4 +235,6 @@ model internships {
   benefits         String[]
   url              String
   internType       InternType
+  createdAt        DateTime   @default(now())
+  experience       String
 }

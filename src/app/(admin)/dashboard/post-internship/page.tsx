@@ -57,6 +57,10 @@ export default function PostInternship() {
                 <Label htmlFor="stipend">Stipend Range</Label>
                 <Input id="stipend" name="stipend" placeholder="e.g. $500 - $1000" className="border-muted" />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="experience">Eexperience</Label>
+                <Input id="experience" name="experience" placeholder="e.g. 1+ years" className="border-muted" />
+              </div>
             </div>
 
             <div className="space-y-2">

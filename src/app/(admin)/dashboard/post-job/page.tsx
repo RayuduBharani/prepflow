@@ -56,6 +56,10 @@ async function PostJob() {
                 <Label htmlFor="salary">Salary Range</Label>
                 <Input name="salary" id="salary" placeholder="e.g. $80K - $120K" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="experience">Experience</Label>
+                <Input name="experience" id="experience" placeholder="e.g. 5+ years" className="border-muted" suppressContentEditableWarning={true}/>
+              </div>
             </div>
 
             <div className="space-y-2">
