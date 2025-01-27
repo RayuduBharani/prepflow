@@ -19,6 +19,11 @@ export const getCarouselsData = cache(async () => {
   return results;
 });
 
+export const getProblemsData = async () => {
+  const results = await prisma.problem.findMany({select : {title : true, slug:true}})
+  return results
+}
+
 export const addCarouselsData = async (formData: FormData) => {};
 
 export const getProblemsNameandSlug = cache(async () => {

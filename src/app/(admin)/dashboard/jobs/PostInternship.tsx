@@ -15,8 +15,7 @@ import { internshipPosting } from "@/app/actions/actions";
 
 export default function PostInternship() {
   return (
-    <div className="w-full h-full pt-[4rem] overflow-hidden sm:px-10">
-      <div className="w-full py-5 px-2 h-full flex flex-col overflow-y-scroll scrollbar-hide">
+      <div className="w-full px-2 flex flex-col">
         <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Internship</h1>
         <p className="text-muted-foreground mt-1">Fill in the details below to create a new internship listing.</p>
 
@@ -141,6 +140,5 @@ export default function PostInternship() {
           </div>
         </Form>
       </div>
-    </div>
   );
 }

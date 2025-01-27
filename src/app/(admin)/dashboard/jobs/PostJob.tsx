@@ -15,12 +15,11 @@ import FormButton from "@/components/snippets/FormButton";
 
 async function PostJob() {
   return (
-    <div className="w-full h-full pt-[4rem] overflow-hidden sm:px-10">
-      <div className="w-full py-5 px-2 h-full flex flex-col overflow-y-scroll scrollbar-hide">
+      <div className="w-full px-2 flex flex-col">
         <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Job</h1>
         <p className="text-muted-foreground mt-1 text-sm">Fill in the details below to create a new job listing.</p>
 
-        <Form action={jobPosting} className="w-full h-full mt-7 space-y-6">
+        <Form action={jobPosting} className="w-full pt-2 space-y-6">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
@@ -32,7 +31,6 @@ async function PostJob() {
                 <Input name="title" id="title" placeholder="Enter job title" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               <div className="space-y-2">
                 <Label htmlFor="type">Job Type</Label>
@@ -61,7 +59,6 @@ async function PostJob() {
                 <Input name="experience" id="experience" placeholder="e.g. 5+ years" className="border-muted" suppressContentEditableWarning={true}/>
               </div>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="logo">Company Logo URL</Label>
               <Input name="logo" id="logo" type="text" placeholder="Enter logo URL" className="border-muted" suppressContentEditableWarning={true}/>
@@ -135,7 +132,6 @@ async function PostJob() {
           </div>
         </Form>
       </div>
-    </div>
   );
 }
 

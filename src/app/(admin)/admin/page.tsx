@@ -14,7 +14,7 @@ async function Admin() {
     }
     const usersData = await prisma.user.findMany()
     return (
-        <div className='py-[4rem] px-12 w-full gap-4 h-full flex justify-center items-center flex-col'>
+        <div className='py-[4rem] px-6 w-full gap-4 h-full flex justify-center items-center flex-col'>
             <h1 className='text-2xl font-bold'>Admin Page</h1>
             <div className='w-full h-fit flex flex-wrap flex-col gap-3'>
                 {usersData.map(user => (

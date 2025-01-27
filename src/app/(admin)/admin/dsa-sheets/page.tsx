@@ -1,6 +1,5 @@
 import {
   getCarouselsData,
-  getProblemsNameandSlug,
 } from "@/app/actions/adminActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
@@ -8,9 +7,8 @@ import CarouselForm from "@/components/DSA/CarouselForm";
 
 const AdminDSAPage = async () => {
   const data = await getCarouselsData();
-  const problemsData = await getProblemsNameandSlug();
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full pt-[4rem] px-6">
       <Tabs defaultValue="add" className="max-w-xs">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="view">View Carousels</TabsTrigger>
@@ -36,7 +34,7 @@ const AdminDSAPage = async () => {
           )}
         </TabsContent>
         <TabsContent className="flex flex-col gap-2" value="add">
-          <CarouselForm problemsData={problemsData.slice(0, 100)} />
+          <CarouselForm />
         </TabsContent>
       </Tabs>
     </div>

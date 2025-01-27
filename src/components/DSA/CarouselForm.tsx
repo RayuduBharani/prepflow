@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
-import Form from "next/form";
 import ProblemsMultiSelect from "./ProblemsCombobox";
 
 interface CategoryEntry {
@@ -13,12 +12,7 @@ interface CategoryEntry {
   problems: Array<{ title: string; slug: string }>;
 }
 
-interface CarouselFormProps {
-  problemsData: Array<{ title: string; slug: string }>;
-  //   onSubmit: (data: any) => void;
-}
-
-const CarouselForm: React.FC<CarouselFormProps> = ({ problemsData }) => {
+const CarouselForm = () => {
   const [carouselName, setCarouselName] = useState<string>("");
   const [entries, setEntries] = useState<CategoryEntry[]>([
     { id: crypto.randomUUID(), category: "", problems: [] },
@@ -95,9 +89,8 @@ const CarouselForm: React.FC<CarouselFormProps> = ({ problemsData }) => {
             </div>
               
             <ProblemsMultiSelect
-                maxHeight="20rem"
+                maxHeight="15rem"
                 placeholder="Search for problems..."
-                options={problemsData.slice(0, 100)}
                 onChange={(selected) =>
                   handleProblemsChange(entry.id, selected)
                 }

@@ -1,6 +1,20 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
+
+const items = [
+  {
+    title: "Post Jobs",
+    description: "Create and Manage Job Listings",
+    link: "dashboard/jobs",
+  },
+];
 
 export default function AdminDashboard() {
   return (
@@ -13,30 +27,25 @@ export default function AdminDashboard() {
             <CardDescription>Create and manage job listings</CardDescription>
           </CardHeader>
           <CardContent>
-              <Button className="w-full" asChild><Link href="dashboard/post-job">Create New Job</Link></Button>
+            <Button size={'sm'} className="w-full" asChild>
+              <Link href="dashboard/post-job">Get There</Link>
+            </Button>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Internships</CardTitle>
-            <CardDescription>Create and manage internship listings</CardDescription>
-          </CardHeader>
-          <CardContent>
-              <Button className="w-full" asChild><Link href="dashboard/post-internship">Create New Job</Link></Button>
-          </CardContent>
-        </Card>
-
         <Card>
           <CardHeader>
             <CardTitle>Post Roadmaps</CardTitle>
-            <CardDescription>Create learning paths and roadmaps</CardDescription>
+            <CardDescription>
+              Create learning paths and roadmaps
+            </CardDescription>
           </CardHeader>
           <CardContent>
-              <Button className="w-full"><Link href="/post-roadmap">Create New Roadmap</Link></Button>
+            <Button className="w-full">
+              <Link href="/post-roadmap">Create New Roadmap</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
