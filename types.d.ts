@@ -6,10 +6,17 @@ declare module "*.svg" {
 }
 
 type Company = {
-  id: number;
-  image: string | null;
-  name: string;
-};
+  id: number
+  image: string | null
+  name: string
+  
+}
+type IsearchParams = {
+    salaryRange: string;
+    jobType: string;
+    experience: any;slugs : string[] | string | undefined 
+}
+
 
 interface ICarousel {
     name: string;

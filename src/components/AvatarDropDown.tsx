@@ -34,8 +34,9 @@ const AvatarDropDown: React.FC<{ session: Session | null }> = ({ session }) => {
           className="text-xs w-full"
           iconPlacement="right"
           icon={LogOutIcon}
-          variant={"ghost"}
+          variant={"default"}
           size={"sm"}
+          effect={"expandIcon"}
         >
           Logout
         </Button>

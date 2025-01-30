@@ -20,7 +20,6 @@ export default function Experience() {
             params.delete('experience')
             currentExp.forEach(exp => {
                 if (exp !== level) {
-                    console.log("exp" , exp)
                     params.append('experience', exp)
                 }
             })
@@ -32,12 +31,10 @@ export default function Experience() {
 
     const isChecked = (level: string) => {
         const experiences = searchParam.getAll('experience')
-        console.log(experiences)
         return experiences.includes(level)
     }
 
     const [open, setOpen] = useState(false)
-
     return (
         <div className="space-y-4">
             <motion.div
