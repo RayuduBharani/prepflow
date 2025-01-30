@@ -2,6 +2,8 @@
 import { prisma } from "@/prisma";
 import { readFileSync } from "fs";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import sheetsData from "../../../sheetsData";
 
 export async function seedData(formData: FormData): Promise<void> {
   console.log(`[${new Date().toISOString()}] Starting data seeding process...`);
@@ -215,6 +217,9 @@ export async function seedData(formData: FormData): Promise<void> {
     console.log(
       `[${new Date().toISOString()}] Data seeding process completed successfully.`
     );
+    const cookieStore = await cookies();
+    cookieStore.set("seed", "seed-value", { expires: 2 });
+    revalidatePath("/admin");
   } catch (error) {
     console.error(
       `[${new Date().toISOString()}] Error during data seeding:`,
@@ -302,6 +307,46 @@ export async function seedCompaniesImages(formData: FormData) {
     console.error("Error seeding companies images:", error);
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma client
-    revalidatePath('/admin/companies')
+    revalidatePath("/admin/companies");
   }
+}
+
+export async function seedDSASheets(formData: FormData) {
+  try {
+      await prisma.$transaction(async (prisma) => {
+        const sheet = await prisma.sheets.create({
+          data: {
+            name: sheetsData.name,
+            slug : sheetsData.slug,
+            categories: {
+              create: sheetsData.categories.map(({ name, problems, slug }) => ({
+                name: name,
+                problems: {
+                  connect: problems.map((problem) => ({ slug : problem.slug })),
+                },
+                slug : slug
+              })),
+            },
+          },
+        });
+        console.log("Sheet and categories added:", sheet);
+      });
+    } catch (err) {
+      console.dir(err, { depth: 3 });
+    } finally {
+      await prisma.$disconnect();
+    }
+}
+
+export async function getSheets() {
+  const results = await prisma.sheets.findMany({
+    select: {
+      name : true,
+      categories: {
+        select: { name :true, problems: { select: { title: true, slug: true }, }, _count : false, id : false },
+      },
+      _count : false,
+    },
+  });
+  return results
 }

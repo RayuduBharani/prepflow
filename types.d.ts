@@ -6,12 +6,31 @@ declare module "*.svg" {
 }
 
 type Company = {
-  id: number
-  image: string | null
-  name: string
-  
-}
+  id: number;
+  image: string | null;
+  name: string;
+};
 
+interface ICarousel {
+    name: string;
+    _count: {
+      [key: string]: number;
+    };
+    categories: {
+      name: string;
+      _count: {
+        problems: number;
+        solved : number;
+      };
+      problems: {
+        title: string;
+        slug: string;
+        difficulty: string;
+        isCompleted?: boolean;
+        UserProgress?: Array<{ isCompleted: boolean }>;
+      }[];
+    }[];
+  };
 
 interface ISimilarQuestion {
   id?: number;
@@ -42,27 +61,27 @@ interface IProblem {
 
 interface IPrismaDsaSheetData {
   prismaData: {
-    id: number,
-    title: string,
-    difficulty: string,
-    acceptanceRate: number,
+    id: number;
+    title: string;
+    difficulty: string;
+    acceptanceRate: number;
     mainTopics: {
-      name: string
-    }[],
+      name: string;
+    }[];
     companyTags: {
-      name: string
-    }[],
-    url: string
-  }[]
+      name: string;
+    }[];
+    url: string;
+  }[];
 }
 
 interface Iinfo {
-  id: number,
-  userId: string,
-  problemId: number,
-  isCompleted: boolean,
-  completedAt: Date | null,
-  updatedAt: Date
+  id: number;
+  userId: string;
+  problemId: number;
+  isCompleted: boolean;
+  completedAt: Date | null;
+  updatedAt: Date;
 }
 
 interface Session {
@@ -72,7 +91,7 @@ interface Session {
     email: string;
     emailVerified: string | null;
     image: string;
-    role: 'ADMIN' | 'USER'
+    role: "ADMIN" | "USER";
     createdAt: string;
     updatedAt: string;
   };

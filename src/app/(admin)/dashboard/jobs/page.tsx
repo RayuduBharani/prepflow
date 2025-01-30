@@ -5,7 +5,7 @@ import PostInternship from "./PostInternship";
 
 const AdminJobs = () => {
   return (
-    <Tabs defaultValue="post-job" className="pt-[4rem] px-6">
+    <Tabs defaultValue="post-job" className="pt-[5rem] px-6">
       <TabsList>
         <TabsTrigger value="post-job">Post Jobs</TabsTrigger>
         <TabsTrigger value="post-internship">Post Internships</TabsTrigger>

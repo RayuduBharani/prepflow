@@ -32,9 +32,18 @@ export  const getDifficultyColor = (difficulty: string) => {
       case 'hard':
           return 'text-red-500 font-semibold';
       default:
-          return '';
+          return 'text-gray-500';
   }
 };
+
+export function toSlug(str: string): string {
+  return str
+    .toLowerCase()                      // Convert to lowercase
+    .replace(/\s+/g, '-')                // Replace spaces with hyphens
+    .replace(/[^\w\-]+/g, '')            // Remove special characters (except hyphens and alphanumeric)
+    .replace(/--+/g, '-')                // Replace multiple hyphens with a single one
+    .replace(/^-+|-+$/g, '');            // Trim leading/trailing hyphens
+}
 
 export function toTitleCase(str : string) {
   if (!str) return "";

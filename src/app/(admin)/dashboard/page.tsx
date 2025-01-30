@@ -28,7 +28,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <Button size={'sm'} className="w-full" asChild>
-              <Link href="dashboard/post-job">Get There</Link>
+              <Link href="dashboard/jobs">Get There</Link>
             </Button>
           </CardContent>
         </Card>
