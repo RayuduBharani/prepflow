@@ -229,12 +229,10 @@ model internships {
   stipend          String
   duration         String
   about            String
-  responsibilities String[]
   requirements     String[]
   skills           String[]
   benefits         String[]
   url              String
   internType       InternType
   createdAt        DateTime   @default(now())
-  experience       String
 }

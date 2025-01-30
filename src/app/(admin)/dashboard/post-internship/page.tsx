@@ -21,7 +21,6 @@ export default function PostInternship() {
         <p className="text-muted-foreground mt-1">Fill in the details below to create a new internship listing.</p>
 
         <Form action={internshipPosting} className="w-full h-full mt-4 space-y-6">
-          {/* Basic Information */}
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
@@ -42,10 +41,10 @@ export default function PostInternship() {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Full-time">Full-time</SelectItem>
-                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Full_time">Full-time</SelectItem>
+                    <SelectItem value="Part_time">Part-time</SelectItem>
                     <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="on-site">On-site</SelectItem>
+                    <SelectItem value="on_site">On-site</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -56,10 +55,6 @@ export default function PostInternship() {
               <div className="space-y-2">
                 <Label htmlFor="stipend">Stipend Range</Label>
                 <Input id="stipend" name="stipend" placeholder="e.g. $500 - $1000" className="border-muted" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="experience">Eexperience</Label>
-                <Input id="experience" name="experience" placeholder="e.g. 1+ years" className="border-muted" />
               </div>
             </div>
 
@@ -90,18 +85,6 @@ export default function PostInternship() {
               placeholder="Provide a brief overview of the internship and its goals"
               className="min-h-[100px] border-muted resize-none"
             />
-          </div>
-
-          {/* Responsibilities */}
-          <div className="space-y-2">
-            <Label htmlFor="responsibilities">Key Responsibilities</Label>
-            <Textarea
-              name="responsibilities"
-              id="responsibilities"
-              placeholder="List the key responsibilities (one per line)"
-              className="min-h-[150px] border-muted resize-none"
-            />
-            <p className="text-xs text-muted-foreground">Enter each responsibility on a new line</p>
           </div>
 
           {/* Requirements */}

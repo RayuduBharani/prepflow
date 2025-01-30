@@ -51,19 +51,6 @@ export default async function InternshipView({ params }: { params: Params }) {
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-base sm:text-lg font-semibold">Responsibilities</h2>
-            <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
-              {
-                internshipData?.responsibilities.map((item, index) => {
-                  return (
-                    <li key={index}>{item}</li>
-                  )
-                })
-              }
-            </ul>
-          </section>
-
-          <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Requirements</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {

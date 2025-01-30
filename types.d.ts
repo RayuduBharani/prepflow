@@ -11,6 +11,12 @@ type Company = {
   name: string
   
 }
+type IsearchParams = {
+    salaryRange: string;
+    jobType: string;
+    experience: any;slugs : string[] | string | undefined 
+}
+
 
 
 interface ISimilarQuestion {
