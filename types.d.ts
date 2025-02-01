@@ -11,6 +11,8 @@ type Company = {
   name: string
   
 }
+type Platform = "LEETCODE" | "GFG";
+
 type IsearchParams = {
     salaryRange: string;
     jobType: string;

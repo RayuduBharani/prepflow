@@ -1,11 +1,11 @@
 import React from "react";
 
-const Leetcode = () => {
+const Leetcode = ({size} : {size? : number}) => {
   return (
     <svg
       fill="currentColor"
-      width="24px"
-      height="24px"
+      width={`${size ? size : 24}px`}
+      height={`${size ? size : 24}px`}
       viewBox="0 0 24 24"
       role="img"
       xmlns="http://www.w3.org/2000/svg"

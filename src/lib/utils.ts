@@ -55,3 +55,13 @@ export function toTitleCase(str : string) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
+export const createProblemLink = (platform: Platform, slug: string): string => {
+  const baseUrls = {
+    LEETCODE: "https://leetcode.com/problems/",
+    GFG: "https://www.geeksforgeeks.org/",
+  };
+
+  const urlSlug = slug.startsWith("/") ? slug.slice(1) : slug;
+  
+  return `${baseUrls[platform]}${urlSlug}${platform === "LEETCODE" ? "/" : ""}`;
+};

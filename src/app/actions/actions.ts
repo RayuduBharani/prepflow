@@ -322,11 +322,17 @@ export const getCarouselCategoryData = cache(
             title: true,
             slug: true,
             difficulty: true,
+            platform : true,
             UserProgress: {
-              where: { AND : [{userId : userId, isCompleted : true}]},
-              select : {userId : true, isCompleted : true, }
+              where: { userId: userId, isCompleted: true },
+              select: { userId: true, isCompleted: true },
+              take: 1, // Ensures we return a single object, not an array
+            },
+            companyTags: {
+              select: { name: true, _count: true },
             },
           },
+          orderBy: { difficulty: "asc" },
         },
       },
     });
@@ -334,16 +340,25 @@ export const getCarouselCategoryData = cache(
     if (!results) {
       return null;
     }
-    const totalProblemsCount = results.problems.length;
 
-    const solvedProblemsCount = results.problems.filter((problem) =>
-      problem.UserProgress.length > 0
+    // Convert UserProgress from an array to an object for each problem
+    const formattedProblems = results.problems.map((problem) => ({
+      ...problem,
+      UserProgress: problem.UserProgress[0] || null, // Convert array to single object or null
+    }));
+
+    const totalProblemsCount = formattedProblems.length;
+    const solvedProblemsCount = formattedProblems.filter(
+      (problem) => problem.UserProgress?.isCompleted
     ).length;
 
     return {
       ...results,
+      problems: formattedProblems,
       totalProblemsCount,
       solvedProblemsCount,
     };
   }
 );
+
+
