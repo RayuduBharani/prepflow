@@ -2,10 +2,10 @@ import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { getSingleJob } from '@/app/actions/actions'
 import { Params } from 'next/dist/server/request/params'
 import Link from 'next/link'
 import ShareButton from '@/components/snippets/ShareButton'
+import { getSingleJob } from '@/app/actions/job-actions'
 
 export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params

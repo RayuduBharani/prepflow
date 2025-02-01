@@ -7,15 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-
-const items = [
-  {
-    title: "Post Jobs",
-    description: "Create and Manage Job Listings",
-    link: "dashboard/jobs",
-  },
-];
-
 export default function AdminDashboard() {
   return (
     <div className="w-full h-full pt-[4rem] sm:px-12 mt-7 px-2">

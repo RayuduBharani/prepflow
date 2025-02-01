@@ -14,6 +14,9 @@ type Company = {
 type Platform = "LEETCODE" | "GFG";
 
 type IsearchParams = {
+    workType: any;
+    stipend: any;
+    duration: any;
     salaryRange: string;
     jobType: string;
     experience: any;slugs : string[] | string | undefined 

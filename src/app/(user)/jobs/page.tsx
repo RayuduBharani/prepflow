@@ -30,7 +30,7 @@ const JobsPage = async ({searchParams} : {searchParams : IsearchParams}) => {
                     <JobContent experenceParams={searchParam}/>
                 </TabsContent>
                 <TabsContent value="internships" className="motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
-                    <InternContent />
+                    <InternContent experenceParams={searchParam}/>
                 </TabsContent>
             </div>
         </Tabs>

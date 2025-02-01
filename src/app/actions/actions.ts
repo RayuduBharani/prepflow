@@ -180,135 +180,27 @@ export const jobPosting = cache(async (formData: FormData) => {
 });
 
 export const internshipPosting = cache(async (formData: FormData) => {
-    const company = formData.get("company") as string;
-    const title = formData.get("title") as string;
-    const internType = formData.get("internType") as InternType
-    const location = formData.get("location") as string;
-    const stipend = formData.get("stipend") as string;
-    const url = formData.get("url") as string;
-    const logo = formData.get("logo") as string;
-    const about = formData.get("about") as string;
-    const requirements = (formData.get("requirements") as string).split("\n");
-    const skills = (formData.get("skills") as string).split(",").map(skill => skill.trim());
-    const benefits = (formData.get("benefits") as string).split("\n");
-    const duration = formData.get("duration") as string
+  const company = formData.get("company") as string;
+  const title = formData.get("title") as string;
+  const internType = formData.get("internType") as InternType
+  const location = formData.get("location") as string;
+  const stipend = formData.get("stipend") as string;
+  const url = formData.get("url") as string;
+  const logo = formData.get("logo") as string;
+  const about = formData.get("about") as string;
+  const requirements = (formData.get("requirements") as string).split("\n");
+  const skills = (formData.get("skills") as string).split(",").map(skill => skill.trim());
+  const benefits = (formData.get("benefits") as string).split("\n");
+  const duration = formData.get("duration") as string
 
-    await prisma.internships.create({
-        data: {
-            company, title, internType, location, stipend, url, logo, about, requirements, skills, benefits,
-            duration
-        },
-    });
+  await prisma.internships.create({
+    data: {
+      company, title, internType, location, stipend, url, logo, about, requirements, skills, benefits,
+      duration
+    },
+  });
 
   revalidatePath("dashboard/post-internship");
-});
-
-export const getJobs = cache(async (searchParams: IsearchParams) => {
-    const params = await searchParams;
-    const experienceArray = params.experience ? (Array.isArray(params.experience) ? params.experience : [params.experience]) : [];
-    const jobTypeArray = params.jobType ? (Array.isArray(params.jobType) ? params.jobType : [params.jobType]) : [];
-    const salaryRangeArray = params.salaryRange ? (Array.isArray(params.salaryRange) ? params.salaryRange : [params.salaryRange]) : [];
-    const where: any = {};
-    
-    if (jobTypeArray.length > 0) {
-        where.jobtype = {
-            in: jobTypeArray.map(type => {
-                if (type === "Full-time") return JobType.Full_time;
-                if (type === "Part-time") return JobType.Part_time;
-                if (type === "Contract") return JobType.Contract;
-                if (type === "Freelance") return JobType.Remote;
-                return null;
-            }).filter(Boolean)
-        };
-    }
-    
-    const allJobs = await prisma.jobs.findMany({
-        where: where
-    });
-
-    let filteredJobs = allJobs;
-
-    // Filter by experience
-    if (experienceArray.length > 0) {
-        // ...existing experience filtering code...
-    }
-
-    // Filter by salary
-    if (salaryRangeArray.length > 0) {
-        filteredJobs = filteredJobs.filter((job) => {
-            const jobSalary = parseSalary(job.salary);
-            if (!jobSalary) return false;
-
-            return salaryRangeArray.some((range) => {
-                if (range === "25 LPA+") {
-                    return jobSalary.min >= 25;
-                }
-                
-                const [minStr, maxStr] = range.split('-');
-                const rangeMin = parseInt(minStr);
-                const rangeMax = parseInt(maxStr);
-                
-                return jobSalary.min >= rangeMin && jobSalary.max <= rangeMax;
-            });
-        });
-    }
-
-    return filteredJobs;
-});
-
-const parseExperience = (expString: string) => {
-    if (!expString) 
-        return null;
-
-    if (expString.toLowerCase() === "fresher") 
-        return { min: 0, max: 0, label: "Fresher" };
-
-    const match = expString.match(/(\d+)[+-]?/g);
-    if (!match) 
-        return null;
-
-    const minExp = parseInt(match[0]);
-    const maxExp = match.length > 1 ? parseInt(match[1]) : minExp;
-
-    return { min: minExp, max: maxExp };
-};
-
-const parseSalary = (salaryString: string) => {
-    if (!salaryString) return null;
-    const numbers = salaryString.match(/\d+/g);
-    if (!numbers) return null;
-
-    if (salaryString.includes('+')) {
-        const min = parseInt(numbers[0]);
-        return { min, max: min };
-    }
-
-    const min = parseInt(numbers[0]);
-    const max = numbers.length > 1 ? parseInt(numbers[1]) : min;
-    return { min, max };
-}
-
-export const getSingleJob = cache(async (id: string) => {
-  const result = await prisma.jobs.findFirst({
-    where: {
-      id: id,
-    },
-  });
-  return result;
-});
-
-export const getInternships = cache(async () => {
-  const results = await prisma.internships.findMany();
-  return results;
-});
-
-export const getSingleIntern = cache(async (id: string) => {
-  const results = await prisma.internships.findFirst({
-    where: {
-      id: id,
-    },
-  });
-  return results;
 });
 
 export const getCarouselCategoryData = cache(
@@ -361,4 +253,14 @@ export const getCarouselCategoryData = cache(
   }
 );
 
-
+export const getComapanyLogoForJobs = cache(async (name: string) => {
+  const results = await prisma.problemCompany.findMany({
+    where: {
+      name: {
+        contains: name,
+        mode: "insensitive",
+      },
+    },
+  });
+  return results;
+})
