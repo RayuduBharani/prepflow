@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Params } from 'next/dist/server/request/params';
-import { getSingleIntern } from '@/app/actions/actions';
 import Link from 'next/link';
+import { getSingleIntern } from '@/app/actions/job-actions';
 
 export default async function InternshipView({ params }: { params: Params }) {
   const { id } = await params
@@ -12,7 +12,6 @@ export default async function InternshipView({ params }: { params: Params }) {
   return (
     <div className="w-full h-full overflow-hidden pt-[4rem] sm:px-10">
       <div className="w-full h-full px-4 py-6 overflow-y-auto scrollbar-hide">
-        {/* Header Section */}
         <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
@@ -41,7 +40,6 @@ export default async function InternshipView({ params }: { params: Params }) {
 
         <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
 
-        {/* Details Section */}
         <div className="space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">About the Internship</h2>
@@ -86,7 +84,6 @@ export default async function InternshipView({ params }: { params: Params }) {
           </section>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-8">
           <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]" asChild>
             <Link href={internshipData?.url!} target='_blank'>Apply Now</Link>
