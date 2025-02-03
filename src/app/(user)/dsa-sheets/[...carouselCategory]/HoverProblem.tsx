@@ -1,6 +1,5 @@
 import React from "react";
 import { createProblemLink, getDifficultyColor } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   HoverCard,
   HoverCardContent,
@@ -11,8 +10,9 @@ import GFGIcon from "@/components/icons/GFG";
 import Leetcode from "@/components/icons/Leetcode";
 import Link from "next/link";
 import { Link2Icon } from "lucide-react";
+import UserProblemForm from "./UserProblemForm";
 
-const HoverProblem = ({
+const HoverProblem = async ({
   problems,
   userId,
 }: {
@@ -23,20 +23,29 @@ const HoverProblem = ({
     slug: string;
     platform: Platform;
     companyTags: { name: string }[];
-    UserProgress: { isCompleted: boolean; userId: string };
+    UserProgress: { isCompleted?: boolean; userId?: string };
   }[];
 }) => {
   return (
-    <div className="flex flex-col mt-4 flex-1 gap-2">
+    <div className="flex max-sm:pb-4 flex-col mt-4 gap-2">
       {problems.map((problem) => (
         <div
-          className="flex w-full gap-4 items-center border p-2"
+          className="flex w-full rounded-md items-center border p-2"
           key={problem.slug}
         >
-          {userId && <Checkbox />}
+          {userId && (
+            <UserProblemForm
+              UserProgress={problem.UserProgress}
+              slug={problem.slug}
+              userId={userId}
+            />
+          )}
           <HoverCard>
             <HoverCardTrigger asChild>
-              <Button variant={"link"} className="text-sm text-wrap  h-fit max-sm:text-xs text-foreground">
+              <Button
+                variant={"link"}
+                className="text-sm text-wrap  h-fit max-sm:text-xs text-foreground"
+              >
                 {problem.title}
               </Button>
             </HoverCardTrigger>
@@ -70,7 +79,7 @@ const HoverProblem = ({
           <p
             className={`${getDifficultyColor(
               problem.difficulty
-            )} text-sm ml-auto`}
+            )} text-[0.675rem] ml-auto`}
           >
             {problem.difficulty}
           </p>

@@ -16,8 +16,8 @@ export const getCarouselsData = cache(async (userId?: string) => {
           name: true,
           _count: {
             select: {
-              problems: true
-            }
+              problems: true,
+            },
           },
           problems: {
             select: {
@@ -39,15 +39,20 @@ export const getCarouselsData = cache(async (userId?: string) => {
     },
   });
 
-  const data = results.map(sheet => ({
+  const data = results.map((sheet) => ({
     ...sheet,
-    categories: sheet.categories.map(category => ({
+    categories: sheet.categories.map((category) => ({
       ...category,
       _count: {
         problems: category.problems.length,
-        solved : category.problems.reduce((acc, problem) => acc + (problem.UserProgress && problem.UserProgress.length > 0 ? 1 : 0), 0)
+        solved: category.problems.reduce(
+          (acc, problem) =>
+            acc +
+            (problem.UserProgress?.some((progress) => progress.isCompleted) ? 1 : 0),
+          0
+        ),
       },
-      problems: category.problems.map(problem => ({
+      problems: category.problems.map((problem) => ({
         ...problem,
         ...(userId && {
           isCompleted: problem.UserProgress?.[0]?.isCompleted ?? false,
@@ -141,14 +146,14 @@ export const addSheets = async (formData: FormData) => {
       const sheet = await prisma.sheets.create({
         data: {
           name: carouselName,
-          slug : toSlug(carouselName),
+          slug: toSlug(carouselName),
           categories: {
             create: categories.map(({ category, problems }) => ({
               name: category,
               problems: {
                 connect: problems.map((slug) => ({ slug })),
               },
-              slug : toSlug(category)
+              slug: toSlug(category),
             })),
           },
         },

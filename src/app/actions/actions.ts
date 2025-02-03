@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/prisma";
 import { cache } from "react";
 import { InternType, JobType } from "@prisma/client";
+import { cookies } from "next/headers";
 
 export async function changeToAdmin(formData: FormData) {
   const user = await prisma.user.findUnique({
@@ -182,21 +183,33 @@ export const jobPosting = cache(async (formData: FormData) => {
 export const internshipPosting = cache(async (formData: FormData) => {
   const company = formData.get("company") as string;
   const title = formData.get("title") as string;
-  const internType = formData.get("internType") as InternType
+  const internType = formData.get("internType") as InternType;
   const location = formData.get("location") as string;
   const stipend = formData.get("stipend") as string;
   const url = formData.get("url") as string;
   const logo = formData.get("logo") as string;
   const about = formData.get("about") as string;
   const requirements = (formData.get("requirements") as string).split("\n");
-  const skills = (formData.get("skills") as string).split(",").map(skill => skill.trim());
+  const skills = (formData.get("skills") as string)
+    .split(",")
+    .map((skill) => skill.trim());
   const benefits = (formData.get("benefits") as string).split("\n");
-  const duration = formData.get("duration") as string
+  const duration = formData.get("duration") as string;
 
   await prisma.internships.create({
     data: {
-      company, title, internType, location, stipend, url, logo, about, requirements, skills, benefits,
-      duration
+      company,
+      title,
+      internType,
+      location,
+      stipend,
+      url,
+      logo,
+      about,
+      requirements,
+      skills,
+      benefits,
+      duration,
     },
   });
 
@@ -214,7 +227,7 @@ export const getCarouselCategoryData = cache(
             title: true,
             slug: true,
             difficulty: true,
-            platform : true,
+            platform: true,
             UserProgress: {
               where: { userId: userId, isCompleted: true },
               select: { userId: true, isCompleted: true },
@@ -263,4 +276,67 @@ export const getComapanyLogoForJobs = cache(async (name: string) => {
     },
   });
   return results;
-})
+});
+
+export const submitUserProblem = async (prevState: { isCompleted?: boolean }, formData: FormData) => {
+  try {
+    const userId = formData.get("userid") as string;
+    const problemSlug = formData.get("problemslug") as string;
+    
+    const problem = await prisma.problem.findUnique({
+      where: { slug: problemSlug },
+    });
+
+    if (!problem) {
+      return {
+        isCompleted: prevState.isCompleted, // Keep previous state
+        status: "Error",
+        message: "Problem not found.",
+      };
+    }
+
+    let userProgress = await prisma.userProgress.findFirst({
+      where: {
+        userId: userId,
+        problemId: problem.id,
+      },
+    });
+
+    let updatedIsCompleted: boolean;
+
+    if (!userProgress) {
+      userProgress = await prisma.userProgress.create({
+        data: {
+          userId: userId,
+          problemId: problem.id,
+          isCompleted: true,
+        },
+      });
+      updatedIsCompleted = true;
+    } else {
+      updatedIsCompleted = !userProgress.isCompleted;
+      userProgress = await prisma.userProgress.update({
+        where: { id: userProgress.id },
+        data: { isCompleted: updatedIsCompleted },
+      });
+    }
+
+    return {
+      isCompleted: updatedIsCompleted,
+      status: "Success",
+      message: updatedIsCompleted
+        ? `Yay! You've completed ${problem.title}.`
+        : `You've unmarked ${problem.title} as completed.`,
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      isCompleted: prevState.isCompleted, // Keep previous state in case of error
+      status: "Error",
+      message: "Internal Server Error.",
+    };
+  } finally {
+    revalidatePath("/dsa-sheets");
+  }
+};
+
