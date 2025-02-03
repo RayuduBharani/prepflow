@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import React from 'react'
-import { changeToAdmin } from '@/app/actions/actions';
-import { dropTables, seedData } from '@/app/actions/seedAction';
+import { changeToAdmin } from '@/actions/actions';
+import { dropTables, seedData } from '@/actions/seedAction';
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';

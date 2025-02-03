@@ -1,4 +1,4 @@
-import { getCarouselCategoryData } from "@/app/actions/actions";
+import { getCarouselCategoryData } from "@/actions/actions";
 import { notFound, redirect } from "next/navigation";
 import DSABreadCrumb from "./DSABreadCrumb";
 import { auth } from "@/auth";

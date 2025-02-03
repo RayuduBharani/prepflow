@@ -3,7 +3,6 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/prisma";
 import { cache } from "react";
 import { InternType, JobType } from "@prisma/client";
-import { cookies } from "next/headers";
 
 export async function changeToAdmin(formData: FormData) {
   const user = await prisma.user.findUnique({
@@ -278,7 +277,7 @@ export const getComapanyLogoForJobs = cache(async (name: string) => {
   return results;
 });
 
-export const submitUserProblem = async (prevState: { isCompleted?: boolean }, formData: FormData) => {
+export const submitUserProblem = async (prevState: { isCompleted?: boolean, path : string }, formData: FormData) => {
   try {
     const userId = formData.get("userid") as string;
     const problemSlug = formData.get("problemslug") as string;
@@ -291,6 +290,7 @@ export const submitUserProblem = async (prevState: { isCompleted?: boolean }, fo
       return {
         isCompleted: prevState.isCompleted, // Keep previous state
         status: "Error",
+        path : prevState.path,
         message: "Problem not found.",
       };
     }
@@ -324,6 +324,7 @@ export const submitUserProblem = async (prevState: { isCompleted?: boolean }, fo
     return {
       isCompleted: updatedIsCompleted,
       status: "Success",
+      path : prevState.path,
       message: updatedIsCompleted
         ? `Yay! You've completed ${problem.title}.`
         : `You've unmarked ${problem.title} as completed.`,
@@ -333,10 +334,11 @@ export const submitUserProblem = async (prevState: { isCompleted?: boolean }, fo
     return {
       isCompleted: prevState.isCompleted, // Keep previous state in case of error
       status: "Error",
+      path : prevState.path,
       message: "Internal Server Error.",
     };
   } finally {
-    revalidatePath("/dsa-sheets");
+    revalidatePath(prevState.path);
   }
 };
 

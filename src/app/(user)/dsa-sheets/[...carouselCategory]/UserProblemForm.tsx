@@ -1,9 +1,10 @@
 'use client'
 import React, { useActionState, useEffect, useState } from "react";
 import Form from "next/form";
-import { submitUserProblem } from "@/app/actions/actions";
+import { submitUserProblem } from "@/actions/actions";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { usePathname } from "next/navigation";
 
 interface UserProblemFormProps {
   slug: string;
@@ -15,13 +16,20 @@ interface UserProblemFormProps {
 }
 
 const UserProblemForm : React.FC<UserProblemFormProps> = ({slug, userId, UserProgress}) => {
-  const [state, formAction, isPending] = useActionState(submitUserProblem, {isCompleted : (UserProgress && UserProgress.isCompleted), status : '', message :''})
+  const {toast} = useToast()
+  const path = usePathname()
+  const [state, formAction, isPending] = useActionState(submitUserProblem, {isCompleted : (UserProgress && UserProgress.isCompleted), status : '', message :'', path : path})
   const [message, setMessage] = useState("");
 
 useEffect(() => {
   if (state?.message && state.message !== message) {
     setMessage(state.message);
-    toast(state.status, { description: state.message });
+    toast({
+      title : state.status,
+      description : state.message,
+      variant : state.status === 'Success' ? 'default' : 'destructive',
+      className : state.status === 'Success' ? 'dark:bg-green-900 bg-green-600' : ''
+    })
   }
 }, [state, message]);
   return (

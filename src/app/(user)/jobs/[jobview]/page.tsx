@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Params } from 'next/dist/server/request/params'
 import Link from 'next/link'
 import ShareButton from '@/components/snippets/ShareButton'
-import { getSingleJob } from '@/app/actions/job-actions'
+import { getSingleJob } from '@/actions/job-actions'
 
 export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params

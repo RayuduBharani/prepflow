@@ -6,7 +6,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { cn } from "@/lib/utils";
 import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
-import { searchProblems } from "@/app/actions/adminActions";
+import { searchProblems } from "@/actions/adminActions";
 import {
   Command,
   CommandEmpty,

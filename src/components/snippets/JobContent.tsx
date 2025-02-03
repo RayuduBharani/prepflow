@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import Experience from "./Experience";
 import Jobtype from "./Jobtype";
 import SalaryRange from "./Salaryrange";
-import { getJobs } from "@/app/actions/job-actions";
+import { getJobs } from "@/actions/job-actions";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import NotFound from "@/app/(user)/jobs/not-found";

@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import Duration from "./Duration";
 import WorkType from "./WorkType";
 import Stipand from "./Stipand";
-import { getInternships } from "@/app/actions/job-actions";
+import { getInternships } from "@/actions/job-actions";
 import { cookies } from "next/headers";
 import NotFound from "@/app/(user)/jobs/not-found";
 

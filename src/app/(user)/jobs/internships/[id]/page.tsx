@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Params } from 'next/dist/server/request/params';
 import Link from 'next/link';
-import { getSingleIntern } from '@/app/actions/job-actions';
+import { getSingleIntern } from '@/actions/job-actions';
 
 export default async function InternshipView({ params }: { params: Params }) {
   const { id } = await params

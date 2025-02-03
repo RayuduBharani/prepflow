@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import Form from "next/form"
-import { seedCompaniesImages } from "@/app/actions/seedAction"
+import { seedCompaniesImages } from "@/actions/seedAction"
 import { Button } from "@/components/ui/button"
 import { DownloadCloud } from "lucide-react"
 

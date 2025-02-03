@@ -1,4 +1,4 @@
-import { getCompanies } from "@/app/actions/actions";
+import { getCompanies } from "@/actions/actions";
 import { auth } from "@/auth";
 import React from "react";
 

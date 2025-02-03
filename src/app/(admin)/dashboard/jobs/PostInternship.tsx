@@ -11,7 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import FormButton from "@/components/snippets/FormButton";
 import Form from "next/form";
-import { internshipPosting } from "@/app/actions/actions";
+import { internshipPosting } from "@/actions/actions";
 
 export default function PostInternship() {
   return (

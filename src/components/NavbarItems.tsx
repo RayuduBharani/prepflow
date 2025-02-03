@@ -22,7 +22,7 @@ const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
   return (
     <>
       <div className="flex gap-8 items-center max-md:hidden">
-        <NavigationMenuItem tabIndex={0} className="text-xl max-sm:text-lg font-bold">
+        <NavigationMenuItem asChild tabIndex={0} className="text-xl max-sm:text-lg font-bold">
           <Link
             onClick={(e) => handleClick(e, "/")}
             className={isActive("/", pathname)}
@@ -32,7 +32,7 @@ const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
           </Link>
         </NavigationMenuItem>
         {navItems.map(({ href, label }) => (
-          <NavigationMenuItem tabIndex={0} key={href}>
+          <NavigationMenuItem asChild tabIndex={0} key={href}>
             <Link href={href} legacyBehavior passHref>
               <NavigationMenuLink
                 onClick={(e) => handleClick(e, href)}
@@ -44,7 +44,7 @@ const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
           </NavigationMenuItem>
         ))}
         {session?.user.role === "ADMIN" && (
-          <NavigationMenuItem tabIndex={0}>
+          <NavigationMenuItem asChild tabIndex={0}>
             <Link href={"/dashboard"} legacyBehavior passHref>
               <NavigationMenuLink
                 onClick={(e) => handleClick(e, "/dashboard")}

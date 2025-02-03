@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Checkbox } from '../ui/checkbox'
 import type { Session } from "next-auth";
 import { toast } from '@/hooks/use-toast';
-import { createUserProgress } from '@/app/actions/actions';
+import { createUserProgress } from '@/actions/actions';
 export default function UserCheckBox({ session, question, info }:
     {
         session: Session | null,

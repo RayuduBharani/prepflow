@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
 import ProblemsCombobox from "./ProblemsCombobox";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { addSheets } from "@/app/actions/adminActions";
+import { addSheets } from "@/actions/adminActions";
 
 const queryClient = new QueryClient()
 

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import Form from "next/form";
-import { getComapanyLogoForJobs, jobPosting } from "@/app/actions/actions";
+import { getComapanyLogoForJobs, jobPosting } from "@/actions/actions";
 import FormButton from "@/components/snippets/FormButton";
 import { CompanyLogo } from "@/components/snippets/CompanyLogo";
 

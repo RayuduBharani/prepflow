@@ -1,4 +1,4 @@
-import { getCarouselsData } from "@/app/actions/adminActions";
+import { getCarouselsData } from "@/actions/adminActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import CarouselForm from "@/components/DSA/CarouselForm";
@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { seedDSASheets } from "@/app/actions/seedAction";
+import { seedDSASheets } from "@/actions/seedAction";
 import { Button } from "@/components/ui/button";
 
 const AdminDSAPage = async () => {

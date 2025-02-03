@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FileCheck } from "lucide-react";
-import { getProblemsByCompany } from "@/app/actions/actions";
+import { getProblemsByCompany } from "@/actions/actions";
 import { getDifficultyColor } from "@/lib/utils";
 import Link from "next/link";
 

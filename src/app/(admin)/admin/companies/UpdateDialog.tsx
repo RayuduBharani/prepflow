@@ -1,4 +1,4 @@
-import { updateCompanyImage } from "@/app/actions/adminActions";
+import { updateCompanyImage } from "@/actions/adminActions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

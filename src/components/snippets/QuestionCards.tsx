@@ -4,7 +4,7 @@ import UserCheckBox from './UserCheckBox';
 import { auth } from '@/auth';
 import type { Session } from "next-auth";
 import { Checkbox } from '../ui/checkbox';
-import { getUserProgress } from '@/app/actions/actions';
+import { getUserProgress } from '@/actions/actions';
 
 async function QuestionCards({ prismaData }: IPrismaDsaSheetData) {
     const session: Session | null = await auth()
