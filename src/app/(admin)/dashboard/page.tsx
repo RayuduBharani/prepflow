@@ -1,41 +1,24 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { actions } from "@/lib/utils";
+import { ChevronsRight } from "lucide-react";
 import Link from "next/link";
+
 export default function AdminDashboard() {
   return (
     <div className="w-full h-full pt-[4rem] sm:px-12 mt-7 px-2">
       <h1 className="text-lg font-bold text-primary">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 mt-4 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Jobs</CardTitle>
-            <CardDescription>Create and manage job listings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button size={'sm'} className="w-full" asChild>
-              <Link href="dashboard/jobs">Get There</Link>
+      <div className="flex flex-wrap gap-2">
+        {actions.map((action, idx) => (
+          <div key={idx} className="min-w-[20rem] flex p-4 rounded-lg bg-background border shadow">
+            <div className="flex flex-col">
+            <h2 className="font-semibold text-foreground">{action.title}</h2>
+            <p className="text-xs text-muted-foreground">{action.description}</p>
+            </div>
+            <Button asChild className="ml-auto rounded-xl" size={'icon'} icon={ChevronsRight} effect={'shineHover'} iconPlacement="right" variant={'outline'}>
+              <Link href={action.link}></Link>
             </Button>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Roadmaps</CardTitle>
-            <CardDescription>
-              Create learning paths and roadmaps
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full">
-              <Link href="/post-roadmap">Create New Roadmap</Link>
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
     </div>
   );

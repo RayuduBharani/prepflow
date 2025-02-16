@@ -70,6 +70,8 @@ const HoverProblem = async ({
               </div>
               <Link
                 className="text-xs text-primary"
+                target="_blank"
+                rel="noopener noreferrer"
                 href={createProblemLink(problem.platform, problem.slug)}
               >
                 <Link2Icon strokeWidth={2} size={20} /> Link

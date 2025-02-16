@@ -65,3 +65,42 @@ export const createProblemLink = (platform: Platform, slug: string): string => {
   
   return `${baseUrls[platform]}${urlSlug}${platform === "LEETCODE" ? "/" : ""}`;
 };
+
+export function objectToQueryParams(params: Record<string, any>): string {
+  return Object.entries(params)
+    .filter(([_, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => 
+      Array.isArray(value) 
+        ? value.map(v => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`).join('&') 
+        : `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join('&');
+}
+
+
+export const actions = [
+  {
+    title: "Post Jobs",
+    description: "Create and Manage Job Listings",
+    link: "dashboard/jobs",
+  },
+  {
+    title: "Post Roadmaps",
+    description: "Create Learning Paths and Roadmaps",
+    link: "dashboard/roadmaps",
+  },
+  {
+    title: "Companies",
+    description: "Create and Manage Companies Data",
+    link: "dashboard/companies",
+  },
+  {
+    title: "DSA Sheets",
+    description: "Create and Manage DSA Sheets",
+    link: "dashboard/dsa-sheets",
+  },
+  {title : "Add Admins",
+    description : 'Create and Manage Admins',
+    link : 'dashboard/admin'
+  }
+];

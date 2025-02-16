@@ -32,14 +32,6 @@ export async function changeCompanyImage(formData: FormData) {
   }
 }
 
-export const getProblemsByCompany = cache(async (name: string) => {
-  const results = await prisma.problemCompany.findUnique({
-    where: { name },
-    include: { problems: true },
-  });
-  return results;
-});
-
 export const getCompanies = cache(async (userId?: string) => {
   const companies = await prisma.problemCompany.findMany({
     include: {
@@ -64,6 +56,7 @@ export const getCompanies = cache(async (userId?: string) => {
         _count: "desc",
       },
     },
+    take : 10
   });
 
   const results = companies.map((company) => ({

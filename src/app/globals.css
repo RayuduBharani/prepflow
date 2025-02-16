@@ -89,6 +89,7 @@ body {
   --duration: 8s;
 
   animation: spin 2s linear infinite;
+  -webkit-animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
@@ -106,6 +107,7 @@ body {
   stroke-linecap: round;
   stroke-dashoffset: 360;
   animation: active-animation var(--duration) ease-in-out infinite;
+  -webkit-animation: active-animation var(--duration) ease-in-out infinite;
 }
 
 @keyframes active-animation {

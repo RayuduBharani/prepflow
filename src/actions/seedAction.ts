@@ -3,7 +3,7 @@ import { prisma } from "@/prisma";
 import { readFileSync } from "fs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import sheetsData from "../../../sheetsData";
+import sheetsData from "../../sheetsData";
 
 export async function seedData(formData: FormData): Promise<void> {
   console.log(`[${new Date().toISOString()}] Starting data seeding process...`);

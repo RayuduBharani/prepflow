@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "next-themes";
-import { useThemeColor } from "./theme-data-provider";
+import { useThemeContext } from "./theme-data-provider";
 import { themeColors } from "@/lib/theme-registry";
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Palette } from "lucide-react";
 
 export function ThemeColorToggle() {
-  const [themeColor, setThemeColor] = useThemeColor();
+  const {themeColor, setThemeColor} = useThemeContext();
   const { theme } = useTheme();
   const createDropItems = () => {
     return themeColors.map((tc) => (

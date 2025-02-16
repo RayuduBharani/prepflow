@@ -12,7 +12,7 @@ const getCompaniesData = cache(async() => {
 const page = async () => {
   const companiesData = await getCompaniesData()
   return (
-    <div className='flex max-sm:flex-col gap-4 pt-[4rem] px-6 max-md:px-4 w-full pb-4'>
+    <div className='flex max-sm:flex-col gap-4 pt-[5rem] px-6 max-md:px-4 w-full pb-4'>
       <div>
       <h1 className='text-base text-primary font-semibold'>Company Images</h1>
       <DataTable columns={columns} data={companiesData} />

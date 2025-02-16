@@ -1,5 +1,5 @@
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
   // url       = env("DATABASE_URL")
   url      = env("LOCAL_URI")
   // directUrl = env("DIRECT_URL")
@@ -52,6 +52,7 @@ model ProblemTopic {
 model ProblemCompany {
   id       Int       @id @default(autoincrement())
   name     String    @unique
+  slug     String    @unique
   image    String?
   problems Problem[] @relation("ProblemCompanyProblems")
 }
@@ -185,35 +186,36 @@ enum InternType {
 }
 
 model internships {
-  id               String     @id @default(uuid())
-  company          String
-  logo             String
-  title            String
-  location         String
-  stipend          String
-  duration         String
-  about            String
-  requirements     String[]
-  skills           String[]
-  benefits         String[]
-  url              String
-  internType       InternType
-  createdAt        DateTime   @default(now())
+  id           String     @id @default(uuid())
+  company      String
+  logo         String
+  title        String
+  location     String
+  stipend      String
+  duration     String
+  about        String
+  requirements String[]
+  skills       String[]
+  benefits     String[]
+  url          String
+  internType   InternType
+  createdAt    DateTime   @default(now())
 }
+
 model Sheets {
   id         Int             @id @default(autoincrement())
   name       String
-  slug String? @unique
+  slug       String?         @unique
   categories SheetCategory[] @relation("SheetCategories")
 }
 
 model SheetCategory {
-  id        Int       @id @default(autoincrement())
-  name      String
-  slug String
-  sheetId   Int
-  sheet     Sheets    @relation("SheetCategories", fields: [sheetId], references: [id], onDelete: Cascade)
-  problems  Problem[] @relation("SheetCategoryProblems")
+  id       Int       @id @default(autoincrement())
+  name     String
+  slug     String
+  sheetId  Int
+  sheet    Sheets    @relation("SheetCategories", fields: [sheetId], references: [id], onDelete: Cascade)
+  problems Problem[] @relation("SheetCategoryProblems")
 }
 
 model ProblemCategory {
@@ -221,8 +223,8 @@ model ProblemCategory {
   name      String    @unique
   slug      String    @unique
   problems  Problem[] @relation("ProblemCategoryProblems")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Problem {

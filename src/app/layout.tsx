@@ -11,7 +11,7 @@ import ThemeDataProvider from "@/components/theme-data-provider";
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
-  
+
 export const metadata: Metadata = {
   title: "PrepFlow",
   description: "Created by Bharani in colab with Cygnuxxs",
@@ -19,10 +19,10 @@ export const metadata: Metadata = {
 const META_THEME_COLORS = {
   light: "#ffffff",
   dark: "#09090b",
-}
-export const viewport : Viewport = {
-  themeColor : META_THEME_COLORS.light
-}
+};
+export const viewport: Viewport = {
+  themeColor: META_THEME_COLORS.light,
+};
 
 export default function RootLayout({
   children,
@@ -32,34 +32,34 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-      <script
-            dangerouslySetInnerHTML={{
-              __html: `
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
               try {
                 if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
                 }
               } catch (_) {}
             `,
-            }}
-          />
+          }}
+        />
       </head>
       <body
         className={`${poppins.className} antialiased bg-background w-screen h-svh`}
       >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            enableColorScheme
-            disableTransitionOnChange
-          >
-            <ThemeDataProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          enableColorScheme
+          disableTransitionOnChange
+        >
+          <ThemeDataProvider>
             <Navbar />
             <Suspense fallback={<Loading />}>{children}</Suspense>
             <Toaster />
-            </ThemeDataProvider>
-          </ThemeProvider>
+          </ThemeDataProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

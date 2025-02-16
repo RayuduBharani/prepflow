@@ -3,7 +3,11 @@ declare module "*.svg" {
   import React from "react";
   const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
   export default ReactComponent;
+  
 }
+
+type Difficulty = "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL";
+
 
 type Company = {
   id: number
@@ -48,7 +52,7 @@ interface ISimilarQuestion {
   id?: number;
   slug: string;
   title: string;
-  difficulty: "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL"; // Updated difficulty levels
+  difficulty: Difficulty;// Updated difficulty levels
 }
 
 interface IProblem {
@@ -58,7 +62,7 @@ interface IProblem {
   isPremium?: boolean;
   dislikes?: number | null;
   likes?: number;
-  difficulty: "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL"; // Updated difficulty levels
+  difficulty: Difficulty, // Updated difficulty levels
   similarQuestions: ISimilarQuestion[];
   topicTags: string[];
   accepted?: number;
@@ -75,7 +79,7 @@ interface IPrismaDsaSheetData {
   prismaData: {
     id: number;
     title: string;
-    difficulty: string;
+    difficulty: Difficulty;
     acceptanceRate: number;
     mainTopics: {
       name: string;
@@ -112,3 +116,4 @@ interface Session {
   createdAt: string;
   updatedAt: string;
 }
+

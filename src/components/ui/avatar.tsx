@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
-
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -16,9 +16,17 @@ const Avatar = React.forwardRef<
       className
     )}
     {...props}
-  />
-))
-Avatar.displayName = AvatarPrimitive.Root.displayName
+  >
+    <motion.div
+      whileHover={{ scale: 1.1 }} // Scale up on hover
+      transition={{ type: "spring", stiffness: 300, damping: 10 }}
+      className="h-full w-full"
+    >
+      {props.children}
+    </motion.div>
+  </AvatarPrimitive.Root>
+));
+Avatar.displayName = AvatarPrimitive.Root.displayName;
 
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
@@ -43,8 +51,16 @@ const AvatarFallback = React.forwardRef<
       className
     )}
     {...props}
-  />
-))
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+  >
+    <motion.span
+      initial={{ opacity: 0 }} // Fade in fallback
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {props.children}
+    </motion.span>
+  </AvatarPrimitive.Fallback>
+));
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export { Avatar, AvatarImage, AvatarFallback }
+export { Avatar, AvatarImage, AvatarFallback };
