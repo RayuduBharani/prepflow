@@ -1,11 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import React from 'react'
-import { changeToAdmin } from '@/actions/actions';
-import { dropTables, seedData } from '@/actions/seedAction';
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import AdminForm from './AdminForm';
 
 async function Admin() {
     const session = await auth()
@@ -14,8 +11,9 @@ async function Admin() {
     }
     const usersData = await prisma.user.findMany()
     return (
-        <div className='py-[4rem] px-6 w-full gap-4 h-full flex justify-center items-center flex-col'>
-            <h1 className='text-2xl font-bold'>Admin Page</h1>
+        <div className='px-6 pt-[5rem] max-sm:px-3 w-full gap-4 h-full overflow-y-auto flex justify-center items-center flex-col'>
+            <AdminForm />
+            <h1 className='font-bold text-2xl'>Users Data</h1>
             <div className='w-full h-fit flex flex-wrap flex-col gap-3'>
                 {usersData.map(user => (
                     <div key={user.id} className='flex justify-between items-center bg-muted p-3 rounded-md'>
@@ -24,16 +22,7 @@ async function Admin() {
                     </div>
                 ))}
             </div>
-            <form action={changeToAdmin} className='min-w-[25%] h-fit flex flex-col gap-3'>
-                <Input name='email' className='h-10 bg-muted' type='email' placeholder='Enter user email' />
-                <Button size={'sm'}>Change Role</Button>
-            </form>
-            <form action={seedData}>
-                <Button type='submit' variant={'outline'}>Seed Data</Button>
-            </form>
-            <form action={dropTables}>
-                <Button variant={'destructive'} type='submit'>Drop Tables</Button>
-            </form>
+            
         </div>
     )
 }

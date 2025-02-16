@@ -4,25 +4,32 @@ import { prisma } from "@/prisma";
 import { cache } from "react";
 import { InternType, JobType } from "@prisma/client";
 
-export async function changeToAdmin(formData: FormData) {
-  const user = await prisma.user.findUnique({
-    where: { email: formData.get("email") as string },
-  });
-  if (!user) {
-    return console.log("user not found");
-  }
-  if (user.role == "USER") {
-    await prisma.user.update({
-      where: { email: formData.get("email") as string },
-      data: { role: "ADMIN" },
+
+export async function changeToAdmin(prevState: any, formData: FormData) {
+  const email = formData.get("email") as string;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
     });
-  } else {
+
+    if (!user) {
+      return { error: "User not found." };
+    }
+
+    const newRole = user.role === "USER" ? "ADMIN" : "USER";
     await prisma.user.update({
-      where: { email: formData.get("email") as string },
-      data: { role: "USER" },
+      where: { email },
+      data: { role: newRole },
     });
+
+    revalidatePath("/admin");
+
+    return { success: `Role changed to ${newRole} successfully!` };
+  } catch (error) {
+    console.error("Error changing role:", error);
+    return { error: "Failed to change role." };
   }
-  revalidatePath("/admin");
 }
 
 export async function changeCompanyImage(formData: FormData) {
