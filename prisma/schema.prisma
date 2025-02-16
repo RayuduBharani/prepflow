@@ -8,6 +8,26 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
 
 enum UserRole {
   USER
@@ -98,110 +118,6 @@ model UserProgress {
   @@index([problemId])
 }
 
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
-}
-
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
-}
-
-// Optional for WebAuthn support
-model Authenticator {
-  credentialID         String  @unique
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, credentialID])
-}
-
-enum JobType {
-  Full_time
-  Remote
-  Part_time
-  Contract
-}
-
-model Jobs {
-  id               String   @id @default(uuid())
-  company          String
-  title            String
-  jobtype          JobType
-  location         String
-  salary           String
-  logo             String
-  about            String
-  responsibilities String[]
-  requirements     String[]
-  skills           String[]
-  benefits         String[]
-  url              String
-  createdAt        DateTime @default(now())
-  experience       String
-}
-
-enum InternType {
-  Full_time
-  remote
-  Part_time
-  on_site
-}
-
-model internships {
-  id           String     @id @default(uuid())
-  company      String
-  logo         String
-  title        String
-  location     String
-  stipend      String
-  duration     String
-  about        String
-  requirements String[]
-  skills       String[]
-  benefits     String[]
-  url          String
-  internType   InternType
-  createdAt    DateTime   @default(now())
-}
-
 model Sheets {
   id         Int             @id @default(autoincrement())
   name       String
@@ -252,4 +168,90 @@ model Problem {
 
   @@index([difficulty])
   @@index([difficulty, platform])
+}
+
+
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+
+enum JobType {
+  Full_time
+  Remote
+  Part_time
+  Contract
+}
+
+model Jobs {
+  id               String   @id @default(uuid())
+  company          String
+  title            String
+  jobtype          JobType
+  location         String
+  salary           String
+  logo             String
+  about            String
+  responsibilities String[]
+  requirements     String[]
+  skills           String[]
+  benefits         String[]
+  url              String
+  createdAt        DateTime @default(now())
+  experience       String
+}
+
+enum InternType {
+  Full_time
+  remote
+  Part_time
+  on_site
+}
+
+model internships {
+  id           String     @id @default(uuid())
+  company      String
+  logo         String
+  title        String
+  location     String
+  stipend      String
+  duration     String
+  about        String
+  requirements String[]
+  skills       String[]
+  benefits     String[]
+  url          String
+  internType   InternType
+  createdAt    DateTime   @default(now())
 }
