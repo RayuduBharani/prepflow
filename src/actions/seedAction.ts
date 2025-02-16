@@ -4,8 +4,9 @@ import { readFileSync } from "fs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import sheetsData from "../../sheetsData";
+import { toSlug } from "@/lib/utils";
 
-export async function seedData(formData: FormData): Promise<void> {
+export async function seedData(): Promise<void> {
   console.log(`[${new Date().toISOString()}] Starting data seeding process...`);
 
   try {
@@ -75,7 +76,7 @@ export async function seedData(formData: FormData): Promise<void> {
 
       prisma.problemCompany
         .createMany({
-          data: Array.from(companiesToCreate).map((name) => ({ name })),
+          data: Array.from(companiesToCreate).map((name) => ({ name, slug: toSlug(name) })),
           skipDuplicates: true,
         })
         .then(() =>
