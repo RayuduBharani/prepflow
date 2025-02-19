@@ -46,8 +46,7 @@ export const companyTopics = cache(async (slug: string) => {
         include: { _count: { select: { problems: { where: { companyTags: { some: { slug } }, platform: 'LEETCODE' } }, } } }
     })
     return result
-})
-
+}) // leetcode company topics
 
 export const GFGcompanyTopics = cache(async (slug: string) => {
     const result = await prisma.problemTopicSlug.findMany({
@@ -67,28 +66,28 @@ export const GFGcompanyTopics = cache(async (slug: string) => {
         include: { _count: { select: { problems: { where: { companyTags: { some: { slug } }, platform: 'GFG' } }, } } }
     })
     return result
-})
+}) // gfg company topics
 
 
-export const getLeetcodeTopicQuestions = cache(async (company : string , companyTopic : string) => {
+export const getPlatformQuestions = cache(async (company: string, companyTopic: string , platform : "LEETCODE" | "GFG") => {
+    console.log(company , companyTopic)
     const data = await prisma.problemCompany.findMany({
-        where : {
-            slug : company,
-            problems : {
-                some : {
-                    platform : 'LEETCODE',
-                    companyTags : {
+        where: {
+            slug : company
+        },
+        include: {
+            problems: {
+                where: {
+                    platform : platform,
+                    topicSlugs : {
                         some : {
-                            slug : companyTopic
+                            slug : companyTopic,
                         }
-                    }
+                    },
                 }
             },
-        },
-        include : {
             _count : true
         }
     })
-    console.log(data)
     return data
 })

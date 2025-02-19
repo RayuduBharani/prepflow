@@ -26,11 +26,11 @@ export const getTwoAlphabets = (name: string): string => {
 export  const getDifficultyColor = (difficulty: string) => {
   switch (difficulty.toLowerCase()) {
       case 'easy':
-          return 'text-green-500 font-semibold';
+          return 'text-green-500 font-medium';
       case 'medium':
-          return 'text-orange-500 font-semibold';
+          return 'text-orange-500 font-medium';
       case 'hard':
-          return 'text-red-500 font-semibold';
+          return 'text-red-500 font-medium';
       default:
           return 'text-gray-500';
   }

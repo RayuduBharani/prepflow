@@ -12,7 +12,7 @@ export default async function GFGQuestions({ company }: { company: string }) {
         data.length > 0 && data.map((topic, index) => {
           return (
             <div key={index} className="min-w-[13rem] cursor-pointer border rounded-lg p-4 transition-all duration-300 bg-background hover:bg-muted flex-1 shadow-md">
-              <Link href={`/companies/${company}/${topic.slug}`}>
+              <Link href={`/companies/${company}/${topic.slug}/GFG`}>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm">{toTitleCase(topic.slug)}</h2>
