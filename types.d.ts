@@ -117,3 +117,16 @@ interface Session {
   updatedAt: string;
 }
 
+type SearchParams = {
+  searchParams: {
+    page?: string;
+    search?: string;
+  };
+};
+
+interface Topic {
+  slug: string
+  _count: {
+      problems: number
+  }
+}

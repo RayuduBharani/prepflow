@@ -55,6 +55,12 @@ export function toTitleCase(str : string) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
+export function slugToTitle(slug: string): string {
+  return slug
+    .split('-') // Split by hyphens
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(' '); // Join words with spaces
+}
 export const createProblemLink = (platform: Platform, slug: string): string => {
   const baseUrls = {
     LEETCODE: "https://leetcode.com/problems/",

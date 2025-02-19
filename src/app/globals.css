@@ -235,3 +235,13 @@ body {
     transform: translateY(0);
   }
 }
+
+.scrollbar-hide {
+  overflow: auto; /* or scroll */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* WebKit Browsers */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
