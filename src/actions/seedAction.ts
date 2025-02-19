@@ -1,134 +1,121 @@
 "use server";
 import { prisma } from "@/prisma";
 import problems from "../../platform_data";
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";  
 import companiesData from "../../companies";
 import sheetsData from "../../sheetsData";
 import { toSlug } from "@/lib/utils";
 
-export async function seedData(formData: FormData) {
+export async function seedData(prevState: any, formData: FormData) {
+  if (!problems || problems.length === 0) {
+    return { message: "No problems to seed.", processed: 0, total: 0 };
+  }
+
   const totalProblems = problems.length;
   let processedProblems = 0;
 
   console.log(`Starting seeding process for ${totalProblems} problems...`);
 
   for (const problemData of problems) {
-    console.log(
-      `Processing problem: ${problemData.title} (${
-        processedProblems + 1
-      }/${totalProblems})`
-    );
+    console.log(`Processing problem: ${problemData.title} (${processedProblems + 1}/${totalProblems})`);
 
-    // Create or find TopicTags
-    const topicTags = await Promise.all(
-      problemData.topicTags.map(async (tag) => {
-        return prisma.problemTopic.upsert({
-          where: { name: tag },
-          update: {},
-          create: { name: tag },
-        });
-      })
-    );
-
-    // Create or find CompanyTags
-    const companyTags = await Promise.all(
-      problemData.companyTags.map(async (company) => {
-        let slug = toSlug(company);
-        let existingCompany = await prisma.problemCompany.findUnique({
-          where: { slug },
-        });
-
-        // If the slug already exists, append a unique identifier
-        if (existingCompany) {
-          slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
-        }
-
-        return prisma.problemCompany.upsert({
-          where: { name: company },
-          update: {},
-          create: { name: company, slug },
-        });
-      })
-    );
-
-    // Create or find MainTopics
-    const mainTopics = await Promise.all(
-      problemData.mainTopics.map(async (topic) => {
-        return prisma.problemMainTopic.upsert({
-          where: { name: topic },
-          update: {},
-          create: { name: topic },
-        });
-      })
-    );
-
-    // Create or find TopicSlugs
-    const topicSlugs = await Promise.all(
-      problemData.topicSlugs.map(async (slug) => {
-        return prisma.problemTopicSlug.upsert({
-          where: { slug },
-          update: {},
-          create: { slug },
-        });
-      })
-    );
-
-    let slug = problemData.slug;
-    const existingProblem = await prisma.problem.findUnique({
-      where: { slug },
-    });
-
-    // If the slug already exists, append a unique identifier
-    if (existingProblem) {
-      slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
-    }
-
-    const problem = await prisma.problem.create({
-      data: {
-        title: problemData.title,
-        slug,
-        isPremium: problemData.isPremium,
-        dislikes: problemData.dislikes,
-        likes: problemData.likes,
-        difficulty: problemData.difficulty,
-        url: problemData.url,
-        accepted: problemData.accepted,
-        submissions: problemData.submissions,
-        acceptanceRate: problemData.acceptanceRate,
-        platform: problemData.platform,
-        topicTags: { connect: topicTags.map((tag) => ({ id: tag.id })) },
-        companyTags: {
-          connect: companyTags.map((company) => ({ id: company.id })),
-        },
-        mainTopics: { connect: mainTopics.map((topic) => ({ id: topic.id })) },
-        topicSlugs: { connect: topicSlugs.map((slug) => ({ id: slug.id })) },
-      },
-    });
-
-    // Create SimilarProblems
-    for (const similarQuestion of problemData.similarQuestions) {
-      const similarProblem = await prisma.problem.findUnique({
-        where: { slug: similarQuestion.slug },
+    await prisma.$transaction(async (prisma) => {
+      // 1️⃣ Upsert TopicTags
+      const topicTags = await prisma.problemTopic.createMany({
+        data: problemData.topicTags.map((tag) => ({ name: tag })),
+        skipDuplicates: true,
       });
 
-      if (similarProblem) {
-        await prisma.similarProblem.create({
-          data: {
-            problemId: problem.id,
-            similarId: similarProblem.id,
-          },
-        });
-      }
-    }
+      // 2️⃣ Upsert CompanyTags
+      const companyTags = await Promise.all(
+        problemData.companyTags.map(async (company) => {
+          let slug = toSlug(company);
+          const existingCompany = await prisma.problemCompany.findUnique({ where: { slug } });
 
-    processedProblems++;
-    console.log(
-      `Completed problem: ${problemData.title} (${processedProblems}/${totalProblems})`
-    );
+          if (existingCompany) {
+            slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
+          }
+
+          return prisma.problemCompany.upsert({
+            where: { name: company },
+            update: {},
+            create: { name: company, slug },
+          });
+        })
+      );
+
+      // 3️⃣ Upsert MainTopics
+      const mainTopics = await prisma.problemMainTopic.createMany({
+        data: problemData.mainTopics.map((topic) => ({ name: topic })),
+        skipDuplicates: true,
+      });
+
+      // 4️⃣ Upsert TopicSlugs
+      const topicSlugs = await prisma.problemTopicSlug.createMany({
+        data: problemData.topicSlugs.map((slug) => ({ slug })),
+        skipDuplicates: true,
+      });
+
+      // 5️⃣ Handle Slug Uniqueness
+      let slug = problemData.slug;
+      const existingProblem = await prisma.problem.findUnique({ where: { slug } });
+
+      if (existingProblem) {
+        slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
+      }
+
+      // 6️⃣ Create Problem
+      const problem = await prisma.problem.create({
+        data: {
+          title: problemData.title,
+          slug,
+          isPremium: problemData.isPremium ?? false,
+          dislikes: problemData.dislikes ?? 0,
+          likes: problemData.likes ?? 0,
+          difficulty: problemData.difficulty,
+          url: problemData.url ?? "",
+          accepted: problemData.accepted ?? 0,
+          submissions: problemData.submissions ?? 0,
+          acceptanceRate: problemData.acceptanceRate ?? 0,
+          platform: problemData.platform,
+          topicTags: {
+            connect: problemData.topicTags.map((tag) => ({ name: tag })),
+          },
+          companyTags: {
+            connect: companyTags.map((company) => ({ id: company.id })),
+          },
+          mainTopics: {
+            connect: problemData.mainTopics.map((topic) => ({ name: topic })),
+          },
+          topicSlugs: {
+            connect: problemData.topicSlugs.map((slug) => ({ slug })),
+          },
+        },
+      });
+
+      // 7️⃣ Create SimilarProblems
+      await prisma.similarProblem.createMany({
+        data: await Promise.all(
+          problemData.similarQuestions.map(async (similarQuestion) => {
+            const similarProblem = await prisma.problem.findUnique({
+              where: { slug: similarQuestion.slug },
+            });
+
+            return similarProblem
+              ? { problemId: problem.id, similarId: similarProblem.id }
+              : null;
+          })
+        ).then((results) => results.filter((x) => x !== null)),
+        skipDuplicates: true,
+      });
+
+      processedProblems++;
+      console.log(`Completed problem: ${problemData.title} (${processedProblems}/${totalProblems})`);
+    });
   }
 
   console.log("Database seeded successfully!");
+  return { message: "Database seeded successfully!", processed: processedProblems, total: totalProblems };
 }
 
 export async function dropTables(): Promise<void> {

@@ -8,7 +8,7 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
     return redirect("/");
   }
   return (
-      <main className="w-full h-svh overflow-hidden">{children}</main>
+      <main className="w-full h-svh">{children}</main>
   );
 };
 
