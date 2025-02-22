@@ -6,26 +6,34 @@ import { Building2 } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 const CompaniesPage = async ({ searchParams }: SearchParams) => {
 
 	const { page } = await searchParams;
 	const currentPage = page ? parseInt(page) : 1;
-	const totalPages = 30;
-	const companies = await getCompanies(currentPage);
+	const getCookie = await cookies()
+	const searchValue = getCookie.get("searchValue")?.value
+	const companies = await getCompanies(currentPage , searchValue);
+	const totalPages = searchValue ? 1 : 30;
 	return (
 		<div className="w-full h-full pt-[5rem] max-sm:px-2 sm:px-6 overflow-hidden scrollbar-hide">
 			<div className=" w-full flex flex-wrap items-center justify-between gap-4">
 				<div className="w-full md:w-auto ">
 					<h1 className="text-lg font-bold text-primary">Company Wise Questions</h1>
 				</div>
-				<form className="flex w-full md:w-auto flex-wrap gap-3">
-					<Input className="w-full md:w-[20rem]" placeholder="Search Comapanies..." />
+				<form action={async(formData: FormData) => {
+					"use server"
+					const searchValue = formData.get('search') as string;
+					const getCookies = await cookies();
+					getCookies.set('searchValue', searchValue, { maxAge: 5 });
+				}} className="flex w-full md:w-auto flex-wrap gap-3">
+					<Input name="search" className="w-full md:w-[20rem]" placeholder="Search Comapanies..." />
 					<Button size={"sm"} className="w-full md:w-auto">Search</Button>
 				</form>
 			</div>
 
 			<div className="flex flex-wrap gap-4 mt-5">
-				{companies.map((company, index) => (
+				{companies.length>0 ? companies.map((company, index) => (
 					<div key={index} className="group relative flex-1 min-w-[280px]">
 						<div className="relative block overflow-hidden rounded-lg border bg-background p-6 hover:border-primary transition-all duration-200 hover:shadow-lg h-full">
 							<div className="flex items-center gap-4">
@@ -59,7 +67,11 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
 							</Button>
 						</div>
 					</div>
-				))}
+				)) : 
+				<div className="w-full h-full flex justify-center items-center">
+					<h1 className="font-semibold my-auto">No Companies found</h1>
+				</div>
+				}
 			</div>
 
 			<Pagination className="my-8 ">

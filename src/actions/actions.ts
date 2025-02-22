@@ -90,30 +90,57 @@ export const getMainTopics = cache(async () => {
   return results;
 });
 
-export const getUserProgressQuuestions = cache(async (userId: string) => {
+export const getUserProgressQuuestions = cache(async (userId: string , company : string) => {
   const results = await prisma.userProgress.findMany({
     where: {
       userId,
+      problem : {
+        companyTags : {
+          some : {
+            slug : company
+          }
+        }
+      }
     },
-    include: {
-      problem: true,
-    },
+    include : {
+      problem : {
+        select : {
+          topicSlugs : true
+        }
+      }
+    }
   });
   return results;
 });
 
-export const getUserProgress = cache(async (userId: string) => {
-  const results = await prisma.userProgress.findMany({
-    where: {
-      userId: userId,
-      isCompleted: true,
-    },
-  });
-  return results;
+export const getUserProgress = cache(async (userId: string , difficulty ?: "EASY" | "MEDIUM" | "HARD" | "All") => {
+  if (difficulty == "All") {
+    const results = await prisma.userProgress.findMany({
+      where: {
+        userId: userId,
+        isCompleted: true,
+      },
+    });
+    // console.log(results)
+    return results;
+  }
+  else {
+    const results = await prisma.userProgress.findMany({
+      where: {
+        userId: userId,
+        isCompleted: true,
+        problem : {
+          difficulty : difficulty
+        }
+      }
+    });
+    // console.log("results" , results)
+    return results;
+  }
 });
 
 export const createUserProgress = cache(
-  async (userId: string, problemId: number, isCompleted: boolean) => {
+  async (userId: string, problemId: number, isCompleted: boolean , path : string) => {
     const findUserQuestion = await prisma.userProgress.findFirst({
       where: {
         userId: userId,
@@ -129,6 +156,7 @@ export const createUserProgress = cache(
           isCompleted,
         },
       });
+      revalidatePath(path)
       return results;
     } else {
       const deleteQuestion = await prisma.userProgress.delete({
@@ -136,6 +164,7 @@ export const createUserProgress = cache(
           id: findUserQuestion.id,
         },
       });
+      revalidatePath(path)
       console.log("deleteQuestion", deleteQuestion);
     }
   }

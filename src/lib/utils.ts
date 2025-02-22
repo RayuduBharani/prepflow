@@ -28,7 +28,7 @@ export  const getDifficultyColor = (difficulty: string) => {
       case 'easy':
           return 'text-green-500 font-medium';
       case 'medium':
-          return 'text-orange-500 font-medium';
+          return 'text-yellow-500 font-medium';
       case 'hard':
           return 'text-red-500 font-medium';
       default:

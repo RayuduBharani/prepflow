@@ -1,18 +1,25 @@
 import { companyTopics, getCompanyImg } from "@/actions/company-actions";
 import { Progress } from "@/components/ui/progress";
-import { toTitleCase } from "@/lib/utils";
-import { Building2, ChevronsRight } from "lucide-react";
+import { Building2 } from "lucide-react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
 import LeetcodeQuestions from "./Leetcode";
 import GFGQuestions from "./GFG";
+import { getUserProgressQuuestions } from "@/actions/actions";
+import { auth } from "@/auth";
 
 
-async function CompanyPage({ params }: { params: { company: string } }) {
+async function CompanyPage({ params , searchParams}: { params: { company: string } , searchParams : {difficulty ?: string} }) {
     const { company } = await params;
+    const { difficulty } = await searchParams
+    console.log("difficulty" , difficulty)
     const Img = await getCompanyImg(company);
+    console.log(Img)
+    const session = await auth()
+    const userProgress = await getUserProgressQuuestions(session?.user.id as string , company)
+    // console.log(userProgress)
     return (
         <Tabs defaultValue="LEETCODE" className="w-full h-full pt-[5rem] pb-2 max-sm:px-2 sm:px-5 overflow-hidden overflow-y-scroll scrollbar-hide">
             <div className="flex items-center gap-4 mb-8 justify-between max-sm:flex-col">
@@ -33,8 +40,10 @@ async function CompanyPage({ params }: { params: { company: string } }) {
                             {company} Practice Topics
                         </h1>
                         <div className="space-y-2">
-                            <Progress value={33} />
-                            <p className="text-sm text-muted-foreground">Overall Progress: 24/ {Img?._count.problems} questions solved</p>
+                            {
+                                Img?._count.problems ? <Progress value={(userProgress.length / Img?._count.problems) * 100} /> : <Progress value={0}/>
+                            }
+                            <p className="text-sm text-muted-foreground">Overall Progress: {userProgress.length}/ {Img?._count.problems} questions solved</p>
                         </div>
                     </div>
                 </div>

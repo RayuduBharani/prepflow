@@ -4,7 +4,7 @@ import { Checkbox } from '../ui/checkbox'
 import type { Session } from "next-auth";
 import { toast } from '@/hooks/use-toast';
 import { createUserProgress } from '@/actions/actions';
-export default function UserCheckBox({ session, question, info }:
+export default function UserCheckBox({ session, question, info , path }:
     {
         session: Session | null,
         question: {
@@ -12,10 +12,10 @@ export default function UserCheckBox({ session, question, info }:
             title: string,
             difficulty: string,
             acceptanceRate: number,
-            mainTopics: {
+            mainTopics ?: {
                 name: string
             }[],
-            companyTags: {
+            companyTags ?: {
                 name: string
             }[],
             url: string
@@ -27,13 +27,14 @@ export default function UserCheckBox({ session, question, info }:
             isCompleted: boolean,
             completedAt: Date | null,
             updatedAt: Date
-        }[]
+        }[],
+        path : string
     }) {
     const [checked, setChecked] = useState(info.some((item) => item.problemId === question.id && item.isCompleted));
     const handleCheck = async () => {
         setChecked((prev) => !prev)
         if (session?.user?.id) {
-            const data = await createUserProgress(session.user.id, question.id, !checked);
+            const data = await createUserProgress(session.user.id, question.id, !checked , path);
             if (data?.isCompleted) {
                 toast({
                     title: "Success",

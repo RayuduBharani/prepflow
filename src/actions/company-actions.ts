@@ -18,14 +18,31 @@ export const getCompanyImg = cache(async (name: string) => {
     })
 })
 
-export const getCompanies = cache(async (currentPage: number) => {
-    const data = await prisma.problemCompany.findMany({
-        orderBy: { problems: { _count: 'desc' } },
-        include: { _count: { select: { problems: true } } },
-        take: 10,
-        skip: (currentPage - 1) * 10,
-    })
-    return data
+export const getCompanies = cache(async (currentPage: number , searchValue ?: string) => {
+    if (searchValue){
+        const data = await prisma.problemCompany.findMany({
+            where : {
+                name : {
+                    contains : searchValue,
+                    mode : "insensitive"
+                },
+            },
+            orderBy: { problems: { _count: 'desc' } },
+            include: { _count: { select: { problems: true } } },
+            take: 10,
+            skip: (currentPage - 1) * 10,
+        })
+        return data
+    }
+    else{
+        const data = await prisma.problemCompany.findMany({
+            orderBy: { problems: { _count: 'desc' } },
+            include: { _count: { select: { problems: true } } },
+            take: 10,
+            skip: (currentPage - 1) * 10,
+        })
+        return data
+    }
 })
 
 export const companyTopics = cache(async (slug: string) => {
@@ -68,26 +85,98 @@ export const GFGcompanyTopics = cache(async (slug: string) => {
     return result
 }) // gfg company topics
 
-
-export const getPlatformQuestions = cache(async (company: string, companyTopic: string , platform : "LEETCODE" | "GFG") => {
-    console.log(company , companyTopic)
-    const data = await prisma.problemCompany.findMany({
-        where: {
-            slug : company
-        },
-        include: {
-            problems: {
-                where: {
-                    platform : platform,
-                    topicSlugs : {
-                        some : {
-                            slug : companyTopic,
+export const getPlatformQuestions = cache(async (company: string, companyTopic: string, platform: "LEETCODE" | "GFG" , difficulty: "EASY" | "MEDIUM" | "HARD" | "All") => {
+    if (difficulty != "All") {
+        const data = await prisma.problemCompany.findMany({
+            where: {
+                slug: company
+            },
+            include: {
+                problems: {
+                    where: {
+                        platform: platform,
+                        topicSlugs: {
+                            some: {
+                                slug: companyTopic,
+                            }
+                        },
+                        difficulty : difficulty
+                    },
+                    
+                },
+                _count: true
+            }
+        })
+        return data
+    }
+    else {
+        const data = await prisma.problemCompany.findMany({
+            where: {
+                slug: company
+            },
+            include: {
+                problems: {
+                    where: {
+                        platform: platform,
+                        topicSlugs: {
+                            some: {
+                                slug: companyTopic,
+                            }
                         }
                     },
-                }
+                    
+                },
+                _count: true
+            }
+        })
+        return data
+    }
+})
+
+export const getComapanyProgress = cache(async (userId: string, topic: string, company: string, platform: "LEETCODE" | "GFG" , difficulty : "EASY" | "MEDIUM" | "HARD" | "All") => {
+    if (difficulty != "All") {
+        const data = await prisma.userProgress.count({
+            where: {
+                isCompleted: true,
+                problem: {
+                    difficulty : difficulty,
+                    companyTags: {
+                        some: {
+                            slug: company
+                        }
+                    },
+                    topicSlugs: {
+                        some: {
+                            slug: topic
+                        }
+                    },
+                    platform: platform,
+                },
+                userId: userId,
             },
-            _count : true
-        }
-    })
-    return data
+        })
+        return data
+    }
+    else {
+        const data = await prisma.userProgress.count({
+            where: {
+                isCompleted: true,
+                problem: {
+                    companyTags: {
+                        some: {
+                            slug: company
+                        }
+                    },
+                    topicSlugs: {
+                        some: {
+                            slug: topic
+                        }
+                    },
+                    platform: platform,
+                },
+                userId: userId
+            }
+        })
+        return data
+    }
 })
