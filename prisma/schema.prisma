@@ -255,3 +255,55 @@ model internships {
   internType   InternType
   createdAt    DateTime   @default(now())
 }
+
+
+enum NodeType {
+  MAIN
+  SUB
+  END
+  OPTIONAL
+}
+
+model Roadmap {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  nodes       Node[]
+  edges       Edge[]
+}
+
+model Node {
+  id          String   @id @default(uuid())
+  type        NodeType
+  label       String
+  positionX   Float
+  positionY   Float
+  data        Json? // Store additional data like color, custom properties
+  roadmap     Roadmap @relation(fields: [roadmapId], references: [id])
+  roadmapId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // For edge connections
+  sourceEdges Edge[] @relation("SourceEdges")
+  targetEdges Edge[] @relation("TargetEdges")
+
+  @@index([roadmapId])
+}
+
+model Edge {
+  id          String   @id @default(uuid())
+  source      Node     @relation("SourceEdges", fields: [sourceNodeId], references: [id])
+  sourceNodeId String
+  target      Node     @relation("TargetEdges", fields: [targetNodeId], references: [id])
+  targetNodeId String
+  label       String?
+  roadmap     Roadmap @relation(fields: [roadmapId], references: [id])
+  roadmapId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([roadmapId])
+}
