@@ -26,11 +26,11 @@ export const getTwoAlphabets = (name: string): string => {
 export  const getDifficultyColor = (difficulty: string) => {
   switch (difficulty.toLowerCase()) {
       case 'easy':
-          return 'text-green-500 font-semibold';
+          return 'text-green-500 font-medium';
       case 'medium':
-          return 'text-orange-500 font-semibold';
+          return 'text-yellow-500 font-medium';
       case 'hard':
-          return 'text-red-500 font-semibold';
+          return 'text-red-500 font-medium';
       default:
           return 'text-gray-500';
   }
@@ -54,6 +54,12 @@ export function toTitleCase(str : string) {
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+export function slugToTitle(slug: string): string {
+  return slug
+    .split('-') // Split by hyphens
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(' '); // Join words with spaces
 }
 export const createProblemLink = (platform: Platform, slug: string): string => {
   const baseUrls = {
