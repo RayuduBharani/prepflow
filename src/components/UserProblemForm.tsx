@@ -31,7 +31,7 @@ useEffect(() => {
       className : state.status === 'Success' ? 'dark:bg-green-900 bg-green-600' : ''
     })
   }
-}, [state, message]);
+}, [state, message, toast]);
   return (
     <Form
       action={formAction} className="grid place-content-center"

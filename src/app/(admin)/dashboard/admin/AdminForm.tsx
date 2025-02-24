@@ -16,7 +16,7 @@ const AdminForm = () => {
   const [seedState, seedAction, isSeedPending] = useActionState(seedData, null);
 
   // State and action for dropping tables
-  const [dropTablesState, dropTablesAction, isDropTablesPending] =
+  const [, dropTablesAction, isDropTablesPending] =
     useActionState(dropTables, null);
 
   return (

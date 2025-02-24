@@ -72,9 +72,10 @@ export const createProblemLink = (platform: Platform, slug: string): string => {
   return `${baseUrls[platform]}${urlSlug}${platform === "LEETCODE" ? "/" : ""}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function objectToQueryParams(params: Record<string, any>): string {
   return Object.entries(params)
-    .filter(([_, value]) => value !== undefined && value !== null)
+    .filter(([, value]) => value !== undefined && value !== null)
     .map(([key, value]) => 
       Array.isArray(value) 
         ? value.map(v => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`).join('&') 

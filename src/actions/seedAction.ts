@@ -6,7 +6,7 @@ import companiesData from "../../companies";
 import sheetsData from "../../sheetsData";
 import { toSlug } from "@/lib/utils";
 
-export async function seedData(prevState: any, formData: FormData) {
+export async function seedData() {
   if (!problems || problems.length === 0) {
     return { message: "No problems to seed.", processed: 0, total: 0 };
   }
@@ -21,7 +21,7 @@ export async function seedData(prevState: any, formData: FormData) {
 
     await prisma.$transaction(async (prisma) => {
       // 1️⃣ Upsert TopicTags
-      const topicTags = await prisma.problemTopic.createMany({
+      await prisma.problemTopic.createMany({
         data: problemData.topicTags.map((tag) => ({ name: tag })),
         skipDuplicates: true,
       });
@@ -45,13 +45,13 @@ export async function seedData(prevState: any, formData: FormData) {
       );
 
       // 3️⃣ Upsert MainTopics
-      const mainTopics = await prisma.problemMainTopic.createMany({
+      await prisma.problemMainTopic.createMany({
         data: problemData.mainTopics.map((topic) => ({ name: topic })),
         skipDuplicates: true,
       });
 
       // 4️⃣ Upsert TopicSlugs
-      const topicSlugs = await prisma.problemTopicSlug.createMany({
+      await prisma.problemTopicSlug.createMany({
         data: problemData.topicSlugs.map((slug) => ({ slug })),
         skipDuplicates: true,
       });
@@ -174,7 +174,7 @@ export async function dropTables(): Promise<void> {
   }
 }
 
-export async function seedCompaniesImages(formData: FormData) {
+export async function seedCompaniesImages() {
   try {
     // Prepare update operations for each company
     const updateOperations = companiesData.map((company) =>
@@ -195,7 +195,7 @@ export async function seedCompaniesImages(formData: FormData) {
   }
 }
 
-export async function seedDSASheets(formData: FormData) {
+export async function seedDSASheets() {
   try {
     await prisma.$transaction(async (prisma) => {
       const sheet = await prisma.sheets.create({

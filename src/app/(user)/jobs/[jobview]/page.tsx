@@ -6,6 +6,7 @@ import { Params } from 'next/dist/server/request/params'
 import Link from 'next/link'
 import ShareButton from '@/components/snippets/ShareButton'
 import { getSingleJob } from '@/actions/job-actions'
+import Image from 'next/image'
 
 export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params
@@ -21,9 +22,9 @@ export default async function JobView({ params }: { params: Params }) {
               <p className="text-sm sm:text-base text-foreground font-medium">{jobData?.company}</p>
             </div>
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
-              <img
-                src={jobData?.logo}
-                alt={jobData?.company}
+              <Image
+                src={jobData?.logo as string} 
+                alt={jobData?.company || 'company logo'}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -107,7 +108,7 @@ export default async function JobView({ params }: { params: Params }) {
             asChild
             className="px-6 rounded-full"
           >
-            <Link href={jobData?.url!} target='_blank'>Apply Now</Link>
+            <Link href={jobData?.url || '#'} target='_blank'>Apply Now</Link>
           </Button>
           <ShareButton />
         </div>

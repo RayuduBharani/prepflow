@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Params } from 'next/dist/server/request/params';
 import Link from 'next/link';
 import { getSingleIntern } from '@/actions/job-actions';
+import Image from 'next/image';
 
 export default async function InternshipView({ params }: { params: Params }) {
   const { id } = await params
@@ -23,9 +24,9 @@ export default async function InternshipView({ params }: { params: Params }) {
               </p>
             </div>
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
-              <img
-                src={internshipData?.logo}
-                alt={internshipData?.company}
+              <Image
+                src={internshipData?.logo as string}
+                alt={internshipData?.company || 'Company Logo'}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -86,7 +87,7 @@ export default async function InternshipView({ params }: { params: Params }) {
 
         <div className="flex items-center gap-4 mt-8">
           <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]" asChild>
-            <Link href={internshipData?.url!} target='_blank'>Apply Now</Link>
+            <Link href={internshipData?.url || '#'} target='_blank'>Apply Now</Link>
           </Button>
         </div>
       </div>

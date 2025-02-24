@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Palette } from "lucide-react";
 
 export function ThemeColorToggle() {
-  const {themeColor, setThemeColor} = useThemeContext();
+  const {setThemeColor} = useThemeContext();
   const { theme } = useTheme();
   const createDropItems = () => {
     return themeColors.map((tc) => (

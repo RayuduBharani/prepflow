@@ -45,7 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${poppins.className} antialiased bg-background w-screen h-svh`}
+        className={`${poppins.className} antialiased bg-background w-screen h-lvh`}
       >
         <ThemeProvider
           attribute="class"

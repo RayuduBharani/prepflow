@@ -1,5 +1,5 @@
 import React from "react";
-import { createProblemLink, getDifficultyColor } from "@/lib/utils";
+import { getDifficultyColor } from "@/lib/utils";
 import {
   HoverCard,
   HoverCardContent,
@@ -12,22 +12,15 @@ import Link from "next/link";
 import { Link2Icon } from "lucide-react";
 import UserProblemForm from "./UserProblemForm";
 
-const HoverProblem = async ({
+const HoverProblem = ({
   problems,
   userId,
 }: {
   userId?: string;
-  problems: {
-    title: string;
-    difficulty: string;
-    slug: string;
-    platform: Platform;
-    companyTags: { name: string }[];
-    UserProgress: { isCompleted?: boolean; userId?: string };
-  }[];
+  problems: Problem[]
 }) => {
   return (
-    <div className="flex max-sm:pb-4 flex-col mt-4 gap-2">
+    <div className="flex max-sm:pb-4 pb-4 flex-col mt-4 gap-2">
       {problems.map((problem) => (
         <div
           className="flex w-full rounded-md items-center border p-2"
@@ -72,7 +65,7 @@ const HoverProblem = async ({
                 className="text-xs text-primary"
                 target="_blank"
                 rel="noopener noreferrer"
-                href={createProblemLink(problem.platform, problem.slug)}
+                href={problem.url}
               >
                 <Link2Icon strokeWidth={2} size={20} /> Link
               </Link>

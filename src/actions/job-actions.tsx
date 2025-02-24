@@ -10,6 +10,7 @@ export const getJobs = cache(async (searchParams: IsearchParams, searchValue?: s
     const experienceArray = params.experience ? (Array.isArray(params.experience) ? params.experience : [params.experience]) : [];
     const jobTypeArray = params.jobType ? (Array.isArray(params.jobType) ? params.jobType : [params.jobType]) : [];
     const salaryRangeArray = params.salaryRange ? (Array.isArray(params.salaryRange) ? params.salaryRange : [params.salaryRange]) : [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
     if (searchValue) {
         where.OR = [
@@ -143,6 +144,7 @@ export const getInternships = cache(async (searchParams: IsearchParams, searchVa
         ? (Array.isArray(searchParams.duration) ? searchParams.duration : [searchParams.duration]) 
         : [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
 
     if (searchValue) {

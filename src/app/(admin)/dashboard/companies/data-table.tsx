@@ -37,7 +37,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [filterMissingImages, setFilterMissingImages] = useState(false)
+  const [filterMissingImages, ] = useState(false)
 
   // Create the combined filters outside of the table state
   const combinedFilters = filterMissingImages 

@@ -40,8 +40,8 @@ export default function NotFound() {
             Job Not Found!
           </h1>
           <p className="text-slate-300 mb-8">
-            The job listing you're looking for doesn't exist or has been removed.
-            Let's explore other opportunities!
+            The job listing you&apos;re looking for doesn&apos;t exist or has been removed.
+            Let&apos;s explore other opportunities!
           </p>
           
           <Link href="/jobs">
@@ -62,7 +62,7 @@ export default function NotFound() {
           transition={{ delay: 0.6 }}
           className="mt-12 text-slate-400 text-sm"
         >
-          <p>Can't find what you're looking for? Check our job search tips</p>
+          <p>Can&apos;t find what you&apos;re looking for? Check our job search tips</p>
         </motion.div>
       </div>
     </div>

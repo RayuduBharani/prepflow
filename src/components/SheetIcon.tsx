@@ -5,7 +5,10 @@ import createLinearGradient from "@/lib/createGradient";
 const SheetIcon = () => {
   return (
     <div
-      className={cn('p-4 rounded-lg', createLinearGradient('to-r', {transitions : true}))}
+      className={cn(
+        "p-4 rounded-lg",
+        createLinearGradient("to-r", { transitions: true })
+      )}
     >
       <Waypoints />
     </div>

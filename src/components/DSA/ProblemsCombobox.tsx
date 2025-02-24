@@ -109,7 +109,7 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        onClick={(e: React.MouseEvent): void =>
+                        onClick={(): void =>
                           handleRemove(slug)
                         }
                         onKeyDown={(e: React.KeyboardEvent): void => {

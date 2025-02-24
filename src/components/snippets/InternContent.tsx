@@ -10,6 +10,7 @@ import Stipand from "./Stipand";
 import { getInternships } from "@/actions/job-actions";
 import { cookies } from "next/headers";
 import NotFound from "@/app/(user)/jobs/not-found";
+import Image from "next/image";
 
 export async function InternContent({ experenceParams }: { experenceParams: IsearchParams }) {
   const getCookies = await cookies();
@@ -67,7 +68,7 @@ export async function InternContent({ experenceParams }: { experenceParams: Isea
                   {/* Company Logo and Title with adjusted sizes */}
                   <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border bg-background p-1.5 sm:p-2 flex-shrink-0">
-                      <img className="w-full h-full object-contain" src={internship.logo} alt={`${internship.company} logo`} />
+                      <Image className="w-full h-full object-contain" src={internship.logo} alt={`${internship.company} logo`} />
                     </div>
                     <div className="min-w-0">
                       <h3 className="font-semibold text-base truncate group-hover:text-primary transition-colors">

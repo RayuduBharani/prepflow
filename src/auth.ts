@@ -52,11 +52,12 @@ export const {signIn, signOut, auth, handlers} = NextAuth({
   callbacks: {
     async session({ session, user }) {
       // Attach `role` and `id` to the session object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       session.user.role = (user as any).role ?? UserRole.USER;
       session.user.id = user.id;
       return session;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }) {
       return baseUrl;
     },
   },

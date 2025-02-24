@@ -9,16 +9,28 @@ import { navItems, isActive } from "@/lib/utils";
 
 const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
   const router = useRouter();
-  const pathname = '/' + usePathname().split('/')[1];
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/").filter(Boolean); // Remove empty segments
+
+  // Dynamically determine the base path
+  const getBasePath = (href: string) => {
+    if (pathSegments[0] === href.replace("/", "")) {
+      return `/${pathSegments.slice(0, 1).join("/")}`; // Keep first 2 segments
+    }
+    return href; // Default to normal href
+  };
+
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
     e.preventDefault();
-    if (pathname !== href) {
-      router.push(href);
+    const newPath = getBasePath(href);
+    if (pathname !== newPath) {
+      router.push(newPath);
     }
   };
+
   return (
     <>
       <div className="flex gap-8 items-center max-md:hidden">

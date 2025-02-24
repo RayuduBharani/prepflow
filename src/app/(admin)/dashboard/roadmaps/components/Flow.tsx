@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   ReactFlow,
   Background,
@@ -7,8 +7,6 @@ import {
   ColorMode,
   useNodesState,
   useEdgesState,
-  OnNodesDelete,
-  Edge,
   Panel,
 } from "@xyflow/react";
 import { useTheme } from "next-themes";
@@ -48,7 +46,7 @@ export default function Flow() {
       )
     );
     setSelectedNode(null);
-  }, [selectedNode]);
+  }, [selectedNode, setNodes, setEdges, setSelectedNode]);
 
   const onEditNode = useCallback(() => {
     if (!selectedNode) return;
@@ -63,7 +61,7 @@ export default function Flow() {
         )
       );
     }
-  }, [selectedNode]);
+  }, [selectedNode, setNodes]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

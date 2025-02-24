@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { useCallback, useState } from "react";
 import {
   applyEdgeChanges,
@@ -37,6 +38,7 @@ export function useEdgeHandlers(setEdges: Function) {
 
   const onEdgeClick = useCallback((event : React.MouseEvent, edge : Edge) => {
     setSelectedEdge(edge)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEdge])
 
   const onConnect: OnConnect = useCallback(
@@ -71,7 +73,7 @@ export function useConnectEndHandler(setNodes: Function, setEdges: Function) {
         ]);
       }
     },
-    [screenToFlowPosition]
+    [screenToFlowPosition, setEdges, setNodes]
   );
 
   return onConnectEnd;

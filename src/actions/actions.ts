@@ -5,7 +5,7 @@ import { cache } from "react";
 import { InternType, JobType } from "@prisma/client";
 
 
-export async function changeToAdmin(prevState: any, formData: FormData) {
+export async function changeToAdmin(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
 
   try {
@@ -29,13 +29,6 @@ export async function changeToAdmin(prevState: any, formData: FormData) {
   } catch (error) {
     console.error("Error changing role:", error);
     return { error: "Failed to change role." };
-  }
-}
-
-export async function changeCompanyImage(formData: FormData) {
-  const entries = formData.entries();
-  for (const [key, value] of entries) {
-    console.log(key);
   }
 }
 
@@ -253,6 +246,7 @@ export const getCarouselCategoryData = cache(
         problems: {
           select: {
             title: true,
+            url : true,
             slug: true,
             difficulty: true,
             platform: true,

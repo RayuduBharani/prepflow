@@ -124,7 +124,8 @@ export const searchProblems = async (query: string) => {
 export const addSheets = async (formData: FormData) => {
   const carouselName = formData.get("carouselName") as string;
   let problems: string[] = [];
-  let categories: { category: string; problems: string[] }[] = [];
+  // eslint-disable-next-line no-var
+  var categories: { category: string; problems: string[] }[] = [];
   let currCategory = "";
 
   for (const [key, value] of formData.entries()) {

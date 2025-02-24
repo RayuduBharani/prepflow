@@ -3,9 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import DSABreadCrumb from "./DSABreadCrumb";
 import { auth } from "@/auth";
 import { Progress } from "@/components/ui/progress";
-import SheetIcon from "./SheetIcon";
+import SheetIcon from "@/components/SheetIcon";
 import { CircleCheck } from "lucide-react";
-import HoverProblem from "./HoverProblem";
+import HoverProblem from "@/components/HoverProblem";
 
 const CarouselCategoryPage = async ({
   params,
@@ -27,7 +27,7 @@ const CarouselCategoryPage = async ({
   }
   return (
     <div className="pt-[5rem] max-sm:px-3 px-6">
-      <div className="mx-auto w-1/2 max-sm:w-full">
+      <div className="mx-auto max-w-[40rem] max-md:w-full">
         <DSABreadCrumb
           carouselCategory={carouselCategory}
           sheetName={data.sheet.name}

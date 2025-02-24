@@ -10,13 +10,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import Form from "next/form";
-import { getComapanyLogoForJobs, jobPosting } from "@/actions/actions";
+import {jobPosting } from "@/actions/actions";
 import FormButton from "@/components/snippets/FormButton";
-import { CompanyLogo } from "@/components/snippets/CompanyLogo";
 
 async function PostJob() {
-  // const ComapanyName = await getComapanyLogoForJobs("")
-  // console.log(ComapanyName)
   return (
     <div className="w-full px-2 flex flex-col">
       <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Job</h1>

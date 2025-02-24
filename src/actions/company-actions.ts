@@ -1,182 +1,268 @@
-'use server'
+"use server";
 
-import { prisma } from "@/prisma"
-import { cache } from "react"
+import { prisma } from "@/prisma";
+import { cache } from "react";
 
 export const getCompanyImg = cache(async (name: string) => {
-    return prisma.problemCompany.findFirst({
-        where: {
-            slug: name
+  return prisma.problemCompany.findFirst({
+    where: {
+      slug: name,
+    },
+    include: {
+      _count: {
+        select: {
+          problems: true,
         },
-        include: {
-            _count: {
-                select: {
-                    problems: true
-                }
-            }
-        }
-    })
-})
+      },
+    },
+  });
+});
 
-export const getCompanies = cache(async (currentPage: number , searchValue ?: string) => {
-    if (searchValue){
-        const data = await prisma.problemCompany.findMany({
-            where : {
-                name : {
-                    contains : searchValue,
-                    mode : "insensitive"
-                },
+export const getCompanies = cache(
+  async (currentPage: number, searchValue?: string) => {
+    return await prisma.problemCompany.findMany({
+      where: searchValue
+        ? {
+            name: {
+              contains: searchValue,
+              mode: "insensitive",
             },
-            orderBy: { problems: { _count: 'desc' } },
-            include: { _count: { select: { problems: true } } },
-            take: 10,
-            skip: (currentPage - 1) * 10,
-        })
-        return data
-    }
-    else{
-        const data = await prisma.problemCompany.findMany({
-            orderBy: { problems: { _count: 'desc' } },
-            include: { _count: { select: { problems: true } } },
-            take: 10,
-            skip: (currentPage - 1) * 10,
-        })
-        return data
-    }
-})
+          }
+        : undefined,
+      orderBy: { problems: { _count: "desc" } },
+      include: { _count: { select: { problems: true } } },
+      take: 20,
+      skip: (currentPage - 1) * 20,
+    });
+  }
+);
+
 
 export const companyTopics = cache(async (slug: string) => {
-    const result = await prisma.problemTopicSlug.findMany({
-        where: {
-            problems: {
-                some: {
-                    companyTags: {
-                        some: {
-                            slug: slug
-                        },
-                    },
-                    platform: 'LEETCODE',
-                },
+  const result = await prisma.problemTopicSlug.findMany({
+    where: {
+      problems: {
+        some: {
+          companyTags: {
+            some: {
+              slug: slug,
             },
+          },
+          platform: "LEETCODE",
         },
-        orderBy: { problems: { _count: 'desc' } },
-        include: { _count: { select: { problems: { where: { companyTags: { some: { slug } }, platform: 'LEETCODE' } }, } } }
-    })
-    return result
-}) // leetcode company topics
+      },
+    },
+    orderBy: { problems: { _count: "desc" } },
+    include: {
+      _count: {
+        select: {
+          problems: {
+            where: { companyTags: { some: { slug } }, platform: "LEETCODE" },
+          },
+        },
+      },
+    },
+  });
+  return result;
+}); // leetcode company topics
 
 export const GFGcompanyTopics = cache(async (slug: string) => {
-    const result = await prisma.problemTopicSlug.findMany({
-        where: {
-            problems: {
-                some: {
-                    companyTags: {
-                        some: {
-                            slug: slug
-                        },
-                    },
-                    platform: 'GFG',
-                },
+  const result = await prisma.problemTopicSlug.findMany({
+    where: {
+      problems: {
+        some: {
+          companyTags: {
+            some: {
+              slug: slug,
             },
+          },
+          platform: "GFG",
         },
-        orderBy: { problems: { _count: 'desc' } },
-        include: { _count: { select: { problems: { where: { companyTags: { some: { slug } }, platform: 'GFG' } }, } } }
-    })
-    return result
-}) // gfg company topics
+      },
+    },
+    orderBy: { problems: { _count: "desc" } },
+    include: {
+      _count: {
+        select: {
+          problems: {
+            where: { companyTags: { some: { slug } }, platform: "GFG" },
+          },
+        },
+      },
+    },
+  });
+  return result;
+}); // gfg company topics
 
-export const getPlatformQuestions = cache(async (company: string, companyTopic: string, platform: "LEETCODE" | "GFG" , difficulty: "EASY" | "MEDIUM" | "HARD" | "All") => {
+export const getPlatformQuestions = cache(
+  async (
+    company: string,
+    companyTopic: string,
+    platform: "LEETCODE" | "GFG",
+    difficulty: "EASY" | "MEDIUM" | "HARD" | "All"
+  ) => {
     if (difficulty != "All") {
-        const data = await prisma.problemCompany.findMany({
+      const data = await prisma.problemCompany.findMany({
+        where: {
+          slug: company,
+        },
+        include: {
+          problems: {
             where: {
-                slug: company
-            },
-            include: {
-                problems: {
-                    where: {
-                        platform: platform,
-                        topicSlugs: {
-                            some: {
-                                slug: companyTopic,
-                            }
-                        },
-                        difficulty : difficulty
-                    },
-                    
+              platform: platform,
+              topicSlugs: {
+                some: {
+                  slug: companyTopic,
                 },
-                _count: true
-            }
-        })
-        return data
-    }
-    else {
-        const data = await prisma.problemCompany.findMany({
+              },
+              difficulty: difficulty,
+            },
+          },
+          _count: true,
+        },
+      });
+      return data;
+    } else {
+      const data = await prisma.problemCompany.findMany({
+        where: {
+          slug: company,
+        },
+        include: {
+          problems: {
             where: {
-                slug: company
-            },
-            include: {
-                problems: {
-                    where: {
-                        platform: platform,
-                        topicSlugs: {
-                            some: {
-                                slug: companyTopic,
-                            }
-                        }
-                    },
-                    
+              platform: platform,
+              topicSlugs: {
+                some: {
+                  slug: companyTopic,
                 },
-                _count: true
-            }
-        })
-        return data
+              },
+            },
+          },
+          _count: true,
+        },
+      });
+      return data;
     }
-})
+  }
+);
 
-export const getComapanyProgress = cache(async (userId: string, topic: string, company: string, platform: "LEETCODE" | "GFG" , difficulty : "EASY" | "MEDIUM" | "HARD" | "All") => {
+export const getComapanyProgress = cache(
+  async (
+    userId: string,
+    topic: string,
+    company: string,
+    platform: "LEETCODE" | "GFG",
+    difficulty: "EASY" | "MEDIUM" | "HARD" | "All"
+  ) => {
     if (difficulty != "All") {
-        const data = await prisma.userProgress.count({
-            where: {
-                isCompleted: true,
-                problem: {
-                    difficulty : difficulty,
-                    companyTags: {
-                        some: {
-                            slug: company
-                        }
-                    },
-                    topicSlugs: {
-                        some: {
-                            slug: topic
-                        }
-                    },
-                    platform: platform,
-                },
-                userId: userId,
+      const data = await prisma.userProgress.count({
+        where: {
+          isCompleted: true,
+          problem: {
+            difficulty: difficulty,
+            companyTags: {
+              some: {
+                slug: company,
+              },
             },
-        })
-        return data
+            topicSlugs: {
+              some: {
+                slug: topic,
+              },
+            },
+            platform: platform,
+          },
+          userId: userId,
+        },
+      });
+      return data;
+    } else {
+      const data = await prisma.userProgress.count({
+        where: {
+          isCompleted: true,
+          problem: {
+            companyTags: {
+              some: {
+                slug: company,
+              },
+            },
+            topicSlugs: {
+              some: {
+                slug: topic,
+              },
+            },
+            platform: platform,
+          },
+          userId: userId,
+        },
+      });
+      return data;
     }
-    else {
-        const data = await prisma.userProgress.count({
-            where: {
-                isCompleted: true,
-                problem: {
-                    companyTags: {
-                        some: {
-                            slug: company
-                        }
-                    },
-                    topicSlugs: {
-                        some: {
-                            slug: topic
-                        }
-                    },
-                    platform: platform,
-                },
-                userId: userId
-            }
+  }
+);
+
+// Cygnuxxs Area
+
+export const getCompanyTopicWiseProblems = cache(
+  async (companySlug: string, topicSlug: string, platform:Platform, userId?: string) => {
+    const results = await prisma.problem.findMany({
+      where: {
+        companyTags: { some: { slug: companySlug } },
+        topicSlugs: { some: { slug: topicSlug } },
+        platform : platform
+      },
+      select: {
+        title: true,
+        slug: true,
+        platform: true,
+        companyTags: { select: { name: true } },
+        UserProgress: {
+          where: { userId: userId, isCompleted: true },
+          select: { isCompleted: true, userId: true },
+          take: 1,
+        },
+        difficulty: true,
+        url: true,
+      },
+    });
+
+    const problems = results.map(problem => ({
+      ...problem,
+      UserProgress: problem.UserProgress[0] || null,
+    }));
+
+    const totalProblems = results.length;
+
+    const solvedProblems = userId
+      ? await prisma.userProgress.count({
+          where: {
+            userId: userId,
+            isCompleted: true,
+            problem: {
+              companyTags: { some: { slug: companySlug } },
+              topicSlugs: { some: { slug: topicSlug } },
+            },
+          },
         })
-        return data
-    }
-})
+      : 0;
+
+    // Count problems by difficulty
+    const difficultyCount = results.reduce(
+      (acc, problem) => {
+        const status = problem.UserProgress[0]?.isCompleted ? "solved" : "unsolved";
+        acc[problem.difficulty][status] += 1;
+        return acc;
+      },
+      {
+        SCHOOL: { solved: 0, unsolved: 0 },
+        BASIC: { solved: 0, unsolved: 0 },
+        EASY: { solved: 0, unsolved: 0 },
+        MEDIUM: { solved: 0, unsolved: 0 },
+        HARD: { solved: 0, unsolved: 0 },
+      }
+    );
+    
+    return { totalProblems, solvedProblems, problems, difficultyCount };
+  }
+);
+

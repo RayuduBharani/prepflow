@@ -6,6 +6,12 @@ declare module "*.svg" {
   
 }
 
+type ThemeColors = "Zinc" | "Slate" | "Neutral" | "Gray" | "Stone" | "Red" | "Rose" | "Orange" | "Green" | "Blue" | "Yellow" | "Violet"
+interface ThemeColorStateParams {
+    themeColor : ThemeColors
+    setThemeColor : React.Dispatch<React.SetStateAction<ThemeColors>>
+}
+
 type Difficulty = "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL";
 
 
@@ -18,12 +24,13 @@ type Company = {
 type Platform = "LEETCODE" | "GFG";
 
 type IsearchParams = {
-    workType: any;
-    stipend: any;
-    duration: any;
+    workType: string;
+    stipend: string;
+    duration: string;
     salaryRange: string;
     jobType: string;
-    experience: any;slugs : string[] | string | undefined 
+    experience: string;
+    slugs : string[] | string | undefined;
 }
 
 
@@ -73,6 +80,21 @@ interface IProblem {
   platform: "LEETCODE" | "GFG"; // Updated platforms
   mainTopics: string[];
   topicSlugs: string[];
+}
+
+interface Problem {
+  UserProgress: {
+      userId: string;
+      isCompleted: boolean;
+  };
+  title: string;
+  slug: string;
+  difficulty: $Enums.Difficulty;
+  url: string;
+  platform: $Enums.Platform;
+  companyTags: {
+      name: string;
+  }[];
 }
 
 interface IPrismaDsaSheetData {
