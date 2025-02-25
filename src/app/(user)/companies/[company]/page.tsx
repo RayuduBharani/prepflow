@@ -59,8 +59,7 @@ async function CompanyPage({
                 <Progress value={0} />
               )}
               <p className="text-sm text-muted-foreground">
-                Overall Progress: {userProgress.length}/ {Img?._count.problems}{" "}
-                questions solved
+                Overall Progress: {userProgress.length}/ {Img?._count.problems} {"  "}questions solved
               </p>
             </div>
           </div>

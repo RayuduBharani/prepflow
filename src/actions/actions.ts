@@ -84,6 +84,9 @@ export const getMainTopics = cache(async () => {
 });
 
 export const getUserProgressQuuestions = cache(async (userId: string , company : string) => {
+  if (!userId) {
+    return []
+  }
   const results = await prisma.userProgress.findMany({
     where: {
       userId,

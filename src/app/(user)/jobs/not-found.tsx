@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="p-5 flex items-center w-[calc(100vw-30rem)] h-[calc(100vh-20rem)] px-4 ">
+    <div className="p-5 flex items-center w-[calc(100vw-30rem)] h-[calc(100vh-20rem)] max-md:w-full max-lg:w-full mt-3 px-4 ">
       <div className="w-full space-y-8 text-center">
         <motion.div
           initial={{ scale: 0 }}
@@ -36,10 +36,10 @@ export default function NotFound() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h1 className="text-3xl font-bold text-white mb-4">
+          <h1 className="text-3xl font-bold text-foreground mb-4">
             Job Not Found!
           </h1>
-          <p className="text-slate-300 mb-8">
+          <p className="text-muted-foreground mb-8">
             The job listing you&apos;re looking for doesn&apos;t exist or has been removed.
             Let&apos;s explore other opportunities!
           </p>

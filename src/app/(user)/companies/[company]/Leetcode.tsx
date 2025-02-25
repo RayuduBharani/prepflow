@@ -1,4 +1,5 @@
-import { companyTopics } from '@/actions/company-actions'
+import { companyTopics, getCompanyTopicProgress } from '@/actions/company-actions'
+import { auth } from '@/auth'
 import { Progress } from '@/components/ui/progress'
 import { toTitleCase } from '@/lib/utils'
 import { ChevronsRight } from 'lucide-react'
@@ -7,30 +8,37 @@ import React from 'react'
 
 async function LeetcodeQuestions({ company }: { company: string }) {
     const data = await companyTopics(company)
+    const session = await auth()
+    const progress = session?.user ? await getCompanyTopicProgress(session.user.id, company, "LEETCODE") : [];
     return (
         <div className="flex flex-wrap gap-4">
-            {
-                data.length > 0 && data.map((topic, index) => {
-                    return (
-                        <div key={index} className="min-w-[13rem] cursor-pointer border rounded-lg p-4 transition-all duration-300 bg-background hover:bg-muted flex-1 shadow-md">
-                            <Link href={`/companies/${company}/${topic.slug}/LEETCODE`}>
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-sm">{toTitleCase(topic.slug)}</h2>
-                                    </div>
+            {data.length > 0 && data.map((topic, index) => {
+                const topicProgress = progress?.filter(p => 
+                    topic.problems.some(prob => prob.id === p.problemId)
+                )?.length ?? 0;
+                
+                const progressPercentage = topic._count.problems > 0 ? 
+                    (topicProgress / topic._count.problems) * 100 : 0;
 
-                                    <Progress value={0} />
-
-                                    <div className="flex justify-between items-center text-xs">
-                                        <span>0 / {topic._count.problems} solved</span>
-                                        <ChevronsRight className="w-5 h-5 text-primary" />
-                                    </div>
+                return (
+                    <div key={index} className="min-w-[13rem] cursor-pointer border rounded-lg p-4 transition-all duration-300 bg-background hover:bg-muted flex-1 shadow-md">
+                        <Link href={`/companies/${company}/${topic.slug}/LEETCODE`}>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-sm">{toTitleCase(topic.slug)}</h2>
                                 </div>
-                            </Link>
-                        </div>
-                    )
-                })
-            }
+
+                                <Progress value={progressPercentage} className="my-2" />
+
+                                <div className="flex justify-between items-center text-xs">
+                                    <span>{topicProgress} / {topic._count.problems} solved</span>
+                                    <ChevronsRight className="w-5 h-5 text-primary" />
+                                </div>
+                            </div>
+                        </Link>
+                    </div>
+                )
+            })}
         </div>
     )
 }
