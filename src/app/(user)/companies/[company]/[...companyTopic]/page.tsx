@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
 import FiltersPanel from "./FiltersPanel";
+import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
 
 const CarouselCategoryPage = async ({
   params,
@@ -24,7 +25,8 @@ const CarouselCategoryPage = async ({
     notFound();
   }
   return (
-    <div className="pt-[5rem] max-sm:px-3 px-6">
+    <div className="pt-[5rem] max-sm:px-3 px-6 mx-auto max-w-[40rem]">
+      <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
       <div className="mx-auto max-sm:w-full max-w-[40rem]">
         <FiltersPanel
           difficultyCount={difficultyCount}

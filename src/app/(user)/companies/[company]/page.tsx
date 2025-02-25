@@ -10,6 +10,7 @@ import GFGQuestions from "./GFG";
 import { getUserProgressQuuestions } from "@/actions/actions";
 import { auth } from "@/auth";
 import { toTitleCase } from "@/lib/utils";
+import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
 
 async function CompanyPage({
   params,
@@ -30,7 +31,8 @@ async function CompanyPage({
       defaultValue="LEETCODE"
       className="w-full h-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5 overflow-hidden overflow-y-scroll scrollbar-hide"
     >
-      <div className="flex max-sm:flex-col items-center border p-4 rounded-lg mb-8 gap-4 justify-between">
+      <CompaniesBreadcrumb companyName={company} />
+      <div className="flex max-sm:flex-col items-center border p-4 rounded-lg mb-3 gap-4 justify-between">
         <div className="w-full flex items-center gap-4">
           <div className="w-[4rem] relative h-[4rem]">
             {Img && Img.image != "None" ? (
