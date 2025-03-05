@@ -33,6 +33,9 @@ export async function changeToAdmin(prevState: unknown, formData: FormData) {
 }
 
 export const getUserProgressQuuestions = cache(async (userId: string , company : string) => {
+  if (!userId) {
+    return []
+  }
   const results = await prisma.userProgress.findMany({
     where: {
       userId,
@@ -55,31 +58,31 @@ export const getUserProgressQuuestions = cache(async (userId: string , company :
   return results;
 });
 
-export const getUserProgress = cache(async (userId: string , difficulty ?: "EASY" | "MEDIUM" | "HARD" | "All") => {
-  if (difficulty == "All") {
-    const results = await prisma.userProgress.findMany({
-      where: {
-        userId: userId,
-        isCompleted: true,
-      },
-    });
-    // console.log(results)
-    return results;
-  }
-  else {
-    const results = await prisma.userProgress.findMany({
-      where: {
-        userId: userId,
-        isCompleted: true,
-        problem : {
-          difficulty : difficulty
-        }
-      }
-    });
-    // console.log("results" , results)
-    return results;
-  }
-});
+// export const getUserProgress = cache(async (userId: string , difficulty ?: "EASY" | "MEDIUM" | "HARD" | "All") => {
+//   if (difficulty == "All") {
+//     const results = await prisma.userProgress.findMany({
+//       where: {
+//         userId: userId,
+//         isCompleted: true,
+//       },
+//     });
+//     // console.log(results)
+//     return results;
+//   }
+//   else {
+//     const results = await prisma.userProgress.findMany({
+//       where: {
+//         userId: userId,
+//         isCompleted: true,
+//         problem : {
+//           difficulty : difficulty
+//         }
+//       }
+//     });
+//     // console.log("results" , results)
+//     return results;
+//   }
+// });
 
 export const jobPosting = cache(async (formData: FormData) => {
   const company = formData.get("company") as string;

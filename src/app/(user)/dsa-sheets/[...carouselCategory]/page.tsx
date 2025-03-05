@@ -37,6 +37,7 @@ const CarouselCategoryPage = async ({
     carouselCategory[1],
     userId
   );
+  console.log(userId)
   if (!data) {
     notFound();
   }
@@ -56,11 +57,11 @@ const CarouselCategoryPage = async ({
           <div className="flex items-center w-full">
             <CircleCheck size={20} strokeWidth={1} className="mr-1" />
             <p className="text-xs text-nowrap mr-4">
-              {`${data.solvedProblemsCount}/${data.totalProblemsCount}`} solved
+              {`${userId != undefined ? data.solvedProblemsCount : 0}/${data.totalProblemsCount}`} solved 
             </p>
             <Progress
-              aria-label="Progress Bar"
-              value={(data.solvedProblemsCount / data.totalProblemsCount) * 100}
+              className=""
+              value={userId != undefined ?(data.solvedProblemsCount / data.totalProblemsCount) * 100 : 0}
             />
           </div>
         </div>

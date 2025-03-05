@@ -37,23 +37,26 @@ export const getCompanies = cache(
   }
 );
 
-
 export const companyTopics = cache(async (slug: string) => {
   const result = await prisma.problemTopicSlug.findMany({
     where: {
       problems: {
         some: {
           companyTags: {
-            some: {
-              slug: slug,
-            },
+            some: { slug }
           },
           platform: "LEETCODE",
         },
       },
     },
-    orderBy: { problems: { _count: "desc" } },
     include: {
+      problems: {
+        where: {
+          companyTags: { some: { slug } },
+          platform: "LEETCODE"
+        },
+        select: { id: true }
+      },
       _count: {
         select: {
           problems: {
@@ -72,16 +75,20 @@ export const GFGcompanyTopics = cache(async (slug: string) => {
       problems: {
         some: {
           companyTags: {
-            some: {
-              slug: slug,
-            },
+            some: { slug }
           },
           platform: "GFG",
         },
       },
     },
-    orderBy: { problems: { _count: "desc" } },
     include: {
+      problems: {
+        where: {
+          companyTags: { some: { slug } },
+          platform: "GFG"
+        },
+        select: { id: true }
+      },
       _count: {
         select: {
           problems: {
@@ -97,12 +104,17 @@ export const GFGcompanyTopics = cache(async (slug: string) => {
 // Cygnuxxs Area
 
 export const getCompanyTopicWiseProblems = cache(
-  async (companySlug: string, topicSlug: string, platform:Platform, userId?: string) => {
+  async (
+    companySlug: string,
+    topicSlug: string,
+    platform: Platform,
+    userId?: string
+  ) => {
     const results = await prisma.problem.findMany({
       where: {
         companyTags: { some: { slug: companySlug } },
         topicSlugs: { some: { slug: topicSlug } },
-        platform : platform
+        platform: platform,
       },
       select: {
         title: true,
@@ -119,7 +131,7 @@ export const getCompanyTopicWiseProblems = cache(
       },
     });
 
-    const problems = results.map(problem => ({
+    const problems = results.map((problem) => ({
       ...problem,
       UserProgress: problem.UserProgress[0] || null,
     }));
@@ -142,7 +154,9 @@ export const getCompanyTopicWiseProblems = cache(
     // Count problems by difficulty
     const difficultyCount = results.reduce(
       (acc, problem) => {
-        const status = problem.UserProgress[0]?.isCompleted ? "solved" : "unsolved";
+        const status = problem.UserProgress[0]?.isCompleted
+          ? "solved"
+          : "unsolved";
         acc[problem.difficulty][status] += 1;
         return acc;
       },
@@ -154,8 +168,7 @@ export const getCompanyTopicWiseProblems = cache(
         HARD: { solved: 0, unsolved: 0 },
       }
     );
-    
+
     return { totalProblems, solvedProblems, problems, difficultyCount };
   }
 );
-

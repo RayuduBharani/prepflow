@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import Share from "@/components/Share";
 
 interface DifficultyLevel {
   label: string;
@@ -66,7 +67,7 @@ const DifficultyFilter: React.FC<{
       {difficultyLevels.map(({ label, value, color }) =>
         (difficultyCount[value]?.solved || 0) +
           (difficultyCount[value]?.unsolved || 0) >
-        0 ? (
+          0 ? (
           <ToggleGroupItem
             key={value}
             variant="outline"
@@ -135,8 +136,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
       solvedFilter === "all"
         ? true
         : solvedFilter === "solved"
-        ? problem.UserProgress?.isCompleted
-        : !problem.UserProgress?.isCompleted;
+          ? problem.UserProgress?.isCompleted
+          : !problem.UserProgress?.isCompleted;
     return matchesDifficulty && matchesSolvedFilter;
   });
 
@@ -150,6 +151,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
           </h1>
           <Popover>
             <PopoverTrigger className="ml-auto" asChild>
+
               <Button size="sm" variant="outline">
                 <Filter />
               </Button>
@@ -175,6 +177,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
               />
             </PopoverContent>
           </Popover>
+          <Share/>
         </div>
         <div className="flex items-center w-full">
           <CircleCheck size={20} strokeWidth={1} className="mr-1" />
