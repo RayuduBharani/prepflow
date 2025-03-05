@@ -221,21 +221,3 @@ export async function seedDSASheets() {
     await prisma.$disconnect();
   }
 }
-
-export async function getSheets() {
-  const results = await prisma.sheets.findMany({
-    select: {
-      name: true,
-      categories: {
-        select: {
-          name: true,
-          problems: { select: { title: true, slug: true } },
-          _count: false,
-          id: false,
-        },
-      },
-      _count: false,
-    },
-  });
-  return results;
-}

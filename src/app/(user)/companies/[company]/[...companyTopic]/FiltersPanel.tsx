@@ -49,7 +49,7 @@ const updateQueryParam = (
 ) => {
   const params = new URLSearchParams(searchParams.toString());
   value ? params.set(param, value) : params.delete(param);
-  router.push(`?${params.toString()}`, { scroll: false });
+  router.replace(`?${params.toString()}`, { scroll: false });
 };
 
 const DifficultyFilter: React.FC<{

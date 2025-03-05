@@ -12,6 +12,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "PrepFlow - Company Wise Questions",
+};
+
 const CompaniesPage = async ({ searchParams }: SearchParams) => {
   const { page } = await searchParams;
   const currentPage = page ? parseInt(page) : 1;
@@ -55,8 +61,8 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
                 <div className="flex items-center gap-4">
                   {company.image !== "None" ? (
                     <Image
-                    height={100}
-                    width={100}
+                      height={76}
+                      width={76}
                       src={company.image as string}
                       alt={company.name}
                       className="h-12 w-12 bg-background dark:bg-white rounded-lg object-contain border p-1"

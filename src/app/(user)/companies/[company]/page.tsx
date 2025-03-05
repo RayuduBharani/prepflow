@@ -10,6 +10,18 @@ import GFGQuestions from "./GFG";
 import { getUserProgressQuuestions } from "@/actions/actions";
 import { auth } from "@/auth";
 import { toTitleCase } from "@/lib/utils";
+import type { Metadata } from "next";
+
+type Props = {
+  params : Promise<{company : string}>
+}
+
+export async function generateMetadata({params} : Props) : Promise<Metadata> {
+  const {company} = (await params)
+  return {
+    title : `PrepFlow - ${toTitleCase(company)} Problems`,
+  }
+}
 
 async function CompanyPage({
   params,

@@ -6,9 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 export const navItems = [
   { href: "/jobs", label: "Jobs" },
-  { href: "/roadmaps", label: "Roadmaps" },
+  // { href: "/roadmaps", label: "Roadmaps" },
   { href: "/companies", label: "Companies" },
   { href: "/dsa-sheets", label: "DSA Sheets" },
+  {href : '/ats-checker', label : 'ATS Checker'}
 ];
 export const isActive = (href: string, pathname: string) =>
   pathname === href ? "text-primary" : "text-muted-foreground";
@@ -61,16 +62,7 @@ export function slugToTitle(slug: string): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
     .join(' '); // Join words with spaces
 }
-export const createProblemLink = (platform: Platform, slug: string): string => {
-  const baseUrls = {
-    LEETCODE: "https://leetcode.com/problems/",
-    GFG: "https://www.geeksforgeeks.org/",
-  };
 
-  const urlSlug = slug.startsWith("/") ? slug.slice(1) : slug;
-  
-  return `${baseUrls[platform]}${urlSlug}${platform === "LEETCODE" ? "/" : ""}`;
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function objectToQueryParams(params: Record<string, any>): string {

@@ -40,6 +40,7 @@ useEffect(() => {
       <input hidden name="userid" defaultValue={userId} />
       <Checkbox
         type="submit"
+        aria-label="Progress Checkbox"
         className="mx-2"
         disabled = {isPending}
         checked={UserProgress ? UserProgress.isCompleted : false}

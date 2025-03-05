@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from "react";
+'use client'
+import React from "react";
 import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
 } from "./ui/navigation-menu";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Drawer,
@@ -17,36 +18,45 @@ import {
 import { Menu } from "lucide-react";
 import { navItems, isActive } from "@/lib/utils";
 import type { Session } from "next-auth";
+import { Button } from "./ui/button";
 
-const Navsheet: React.FC<{ pathname: string; session: Session | null }> = ({
-  pathname,
+const Navsheet: React.FC<{session: Session | null }> = ({
   session,
 }) => {
-  const [open, setOpen] = useState(false);
   const router = useRouter();
-  const onOpen = useCallback((open: boolean) => {
-    setOpen(open);
-  }, []);
-  const handleClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
-  ) => {
-    e.preventDefault();
-    setOpen(!open);
-    if (pathname !== href) {
-      router.push(href);
-    }
-  };
+  const pathname = usePathname()
+  const pathSegments = pathname.split("/").filter(Boolean); // Remove empty segments
+  
+    // Dynamically determine the base path
+    const getBasePath = (href: string) => {
+      if (pathSegments[0] === href.replace("/", "")) {
+        return `/${pathSegments.slice(0, 1).join("/")}`; // Keep first 2 segments
+      }
+      return href; // Default to normal href
+    };
+  
+    const handleClick = (
+      e: React.MouseEvent<HTMLAnchorElement>,
+      href: string
+    ) => {
+      e.preventDefault();
+      const newPath = getBasePath(href);
+      if (pathname !== newPath) {
+        router.push(newPath);
+      }
+    };
   return (
-    <Drawer open={open} onOpenChange={onOpen}>
-      <DrawerTrigger className="p-1 rounded-md border">
+    <Drawer>
+      <DrawerTrigger asChild aria-label="Open Navigation Drawer" className="rounded-md border">
+        <Button size={'icon'} variant={'ghost'}>
         <Menu />
+        </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <NavigationMenuList>
-          <DrawerHeader className="flex flex-col gap-8 font-medium">
+        <NavigationMenuList className="flex flex-col pb-8 justify-center gap-6">
+          <DrawerHeader className="font-medium">
             <DrawerTitle>
-              <NavigationMenuItem className="text-xl font-bold">
+              <NavigationMenuItem tabIndex={0} className="text-xl font-bold">
                 <Link
                   onClick={(e) => handleClick(e, "/")}
                   className={isActive("/", pathname)}
@@ -56,10 +66,12 @@ const Navsheet: React.FC<{ pathname: string; session: Session | null }> = ({
                 </Link>
               </NavigationMenuItem>
             </DrawerTitle>
-            <DrawerDescription className="flex text-base flex-col gap-6 pb-2">
+            <DrawerDescription className="hidden">Navigation for Mobile</DrawerDescription>
+          </DrawerHeader>
+          <>
               {navItems.map(({ href, label }) => (
                 <NavigationMenuItem key={href}>
-                  <Link href={href} legacyBehavior passHref>
+                  <Link tabIndex={0} href={href} legacyBehavior passHref>
                     <NavigationMenuLink
                       onClick={(e) => handleClick(e, href)}
                       className={isActive(href, pathname)}
@@ -71,10 +83,10 @@ const Navsheet: React.FC<{ pathname: string; session: Session | null }> = ({
               ))}
               {/* Dashboard Link for Admin LOGIN */}
               {session && session.user.role === "ADMIN" && (
-                <NavigationMenuItem>
-                  <Link href={"/dashboard"} legacyBehavior passHref>
+                <NavigationMenuItem >
+                  <Link tabIndex={0} href={"/dashboard"} legacyBehavior passHref>
                     <NavigationMenuLink
-                      onClick={(e) => handleClick(e, "/dashboar")}
+                      onClick={(e) => handleClick(e, "/dashboard")}
                       className={isActive("/dashboard", pathname)}
                     >
                       Dashboard
@@ -82,8 +94,7 @@ const Navsheet: React.FC<{ pathname: string; session: Session | null }> = ({
                   </Link>
                 </NavigationMenuItem>
               )}
-            </DrawerDescription>
-          </DrawerHeader>
+            </>
         </NavigationMenuList>
       </DrawerContent>
     </Drawer>

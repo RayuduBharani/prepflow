@@ -36,7 +36,7 @@ export function ThemeColorToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"outline"} size={"icon"}>
+        <Button aria-label="Change Color Variant" variant={"outline"} size={"icon"}>
           <Palette className="text-primary" />
         </Button>
       </DropdownMenuTrigger>

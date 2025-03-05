@@ -32,57 +32,6 @@ export async function changeToAdmin(prevState: unknown, formData: FormData) {
   }
 }
 
-export const getCompanies = cache(async (userId?: string) => {
-  const companies = await prisma.problemCompany.findMany({
-    include: {
-      problems: {
-        include: {
-          UserProgress: {
-            where: {
-              userId,
-              isCompleted: true,
-            },
-          },
-        },
-      },
-      _count: {
-        select: {
-          problems: true,
-        },
-      },
-    },
-    orderBy: {
-      problems: {
-        _count: "desc",
-      },
-    },
-    take : 10
-  });
-
-  const results = companies.map((company) => ({
-    id: company.id,
-    name: company.name,
-    image: company.image,
-    totalProblems: company._count.problems,
-    solvedProblems: company.problems.reduce(
-      (acc, problem) => acc + (problem.UserProgress.length > 0 ? 1 : 0),
-      0
-    ),
-  }));
-  return results;
-});
-
-export const getMainTopics = cache(async () => {
-  const results = await prisma.problemMainTopic.findMany({
-    include: {
-      _count: {
-        select: { problems: true },
-      },
-    },
-  });
-  return results;
-});
-
 export const getUserProgressQuuestions = cache(async (userId: string , company : string) => {
   const results = await prisma.userProgress.findMany({
     where: {
@@ -131,37 +80,6 @@ export const getUserProgress = cache(async (userId: string , difficulty ?: "EASY
     return results;
   }
 });
-
-export const createUserProgress = cache(
-  async (userId: string, problemId: number, isCompleted: boolean , path : string) => {
-    const findUserQuestion = await prisma.userProgress.findFirst({
-      where: {
-        userId: userId,
-        problemId: problemId,
-      },
-    });
-    console.log("findUserQuestion", findUserQuestion);
-    if (findUserQuestion == null) {
-      const results = await prisma.userProgress.create({
-        data: {
-          userId,
-          problemId,
-          isCompleted,
-        },
-      });
-      revalidatePath(path)
-      return results;
-    } else {
-      const deleteQuestion = await prisma.userProgress.delete({
-        where: {
-          id: findUserQuestion.id,
-        },
-      });
-      revalidatePath(path)
-      console.log("deleteQuestion", deleteQuestion);
-    }
-  }
-);
 
 export const jobPosting = cache(async (formData: FormData) => {
   const company = formData.get("company") as string;
@@ -287,18 +205,6 @@ export const getCarouselCategoryData = cache(
     };
   }
 );
-
-export const getComapanyLogoForJobs = cache(async (name: string) => {
-  const results = await prisma.problemCompany.findMany({
-    where: {
-      name: {
-        contains: name,
-        mode: "insensitive",
-      },
-    },
-  });
-  return results;
-});
 
 export const submitUserProblem = async (prevState: { isCompleted?: boolean, path : string }, formData: FormData) => {
   try {

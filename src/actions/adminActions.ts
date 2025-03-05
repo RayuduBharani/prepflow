@@ -65,19 +65,6 @@ export const getCarouselsData = cache(async (userId?: string) => {
   return data;
 });
 
-export const getProblemsData = async () => {
-  const results = await prisma.problem.findMany({
-    select: { title: true, slug: true },
-  });
-  return results;
-};
-export const getProblemsNameandSlug = cache(async () => {
-  const results = await prisma.problem.findMany({
-    select: { title: true, slug: true },
-  });
-  return results;
-});
-
 export const updateCompanyImage = async (formData: FormData) => {
   try {
     const name = formData.get("company") as string;

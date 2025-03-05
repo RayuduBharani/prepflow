@@ -15,6 +15,7 @@ export function ModeToggle() {
       size={"icon"}
       className="[&_svg]:shrink [&_svg]:size-5 hover:bg-opacity-80 transition-all"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="Change Light/Dark Mode"
     >
       <motion.svg
         xmlns="http://www.w3.org/2000/svg"

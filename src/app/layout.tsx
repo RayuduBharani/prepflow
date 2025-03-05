@@ -14,14 +14,41 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "PrepFlow",
-  description: "Created by Bharani in colab with Cygnuxxs",
-};
-const META_THEME_COLORS = {
-  light: "#ffffff",
-  dark: "#09090b",
+  description: "An Interview Preparation Platform with AI-powered features.",
+  generator: "Next.js",
+  applicationName: "PrepFlow",
+  referrer: "strict-origin-when-cross-origin",
+  keywords: [
+    "Prepflow",
+    "DSA",
+    "DSA sheet",
+    "DSA sheets",
+    "Interview Preparation",
+  ],
+  authors: [
+    {
+      name: "R.B.S.S Durga Prasad (Bharani)",
+      url: "https://www.linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad/",
+    },
+    {
+      name: "Ashok Atragadda (Cygnuxxs)",
+      url: "https://www.linkedin.com/in/ashok-atragadda/",
+    },
+  ],
+  creator : 'R.B.S.S Durga Prasad (Bharani)',
+  publisher : 'Ashok Atragadda (Cygnuxxs)',
+  formatDetection : {
+    address : false,
+    telephone :false,
+  },
+
+  openGraph: {
+    title: "PrepFlow",
+    description: "An Interview Preparation Platform with AI-powered features.",
+  },
 };
 export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light,
+  colorScheme : 'dark'
 };
 
 export default function RootLayout({
@@ -31,19 +58,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${poppins.className} antialiased bg-background w-screen h-lvh`}
       >

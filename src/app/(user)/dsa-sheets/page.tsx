@@ -1,6 +1,12 @@
 import DSASheet from "@/components/DSA/DSASheet";
 import { getCarouselsData } from "@/actions/adminActions";
 import { auth } from "@/auth";
+import type { Metadata } from "next";
+
+export const metadata : Metadata = {
+  title : 'PrepFlow - DSA Sheets'
+}
+
 
 const DSAPage = async () => {
   const session = await auth()

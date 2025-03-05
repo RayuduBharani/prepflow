@@ -1,0 +1,153 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/ui/file-upload";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { SquareChartGantt } from "lucide-react";
+
+const Upload = () => {
+  const [resume, setResume] = useState<File | null>(null);
+  const [jobDescription, setJobDescription] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = (file: File | null) => {
+    setResume(file);
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setJobDescription(e.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!resume || !jobDescription) {
+      toast({
+        title: "Resume or Description Empty",
+        description: "Please upload a resume and enter a job description",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    const formData = new FormData();
+    formData.append("resume", resume);
+    formData.append("jobdesc", jobDescription); // Matches server
+
+    try {
+      const response = await fetch("/api/check-score", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setResult(data.structuredData);
+      toast({
+        title: "Success",
+        description: "ATS analysis completed",
+        variant: "default",
+      });
+    } catch (error: any) {
+      setError(error.message || "Something went wrong.");
+      toast({
+        title: "Error",
+        description: error.message || "Failed to process request",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-6 pt-8 pb-16">
+      <form
+        className="flex flex-col gap-4 w-full max-w-xl"
+        onSubmit={handleSubmit}
+      >
+        <FileUpload onChange={handleFileChange} />
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="jobdesc">Job Description</Label>
+          <Textarea
+            name="jobdesc"
+            id="jobdesc"
+            rows={10}
+            className="w-full"
+            value={jobDescription}
+            onChange={handleTextareaChange}
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-fit text-xs self-end"
+          icon={SquareChartGantt}
+          iconPlacement="left"
+          effect="hoverUnderline"
+          size="sm"
+          variant="outline"
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Get Results"}
+        </Button>
+      </form>
+
+      {/* Display Results */}
+      {error && <p className="text-red-500">{error}</p>}
+
+      {result && (
+        <div className="bg-gray-100 p-4 rounded-lg shadow w-full max-w-xl">
+          <h3 className="text-lg font-semibold">ATS Analysis</h3>
+          <p>
+            <strong>ATS Score:</strong> {result.ats_score}%
+          </p>
+          <p>
+            <strong>Missing Sections:</strong>{" "}
+            {result.missing_sections.join(", ") || "None"}
+          </p>
+          <p>
+            <strong>Missing Skills:</strong>{" "}
+            {result.missing_skills.join(", ") || "None"}
+          </p>
+          <p>
+            <strong>Missing Achievements:</strong>{" "}
+            {result.missing_achievements.join(", ") || "None"}
+          </p>
+
+          <h4 className="mt-2 font-semibold">Contact Info:</h4>
+          <p>
+            <strong>Email:</strong> {result.contact_info.email || "Not Found"}
+          </p>
+          <p>
+            <strong>LinkedIn:</strong>{" "}
+            {result.contact_info.linkedin || "Not Found"}
+          </p>
+          <p>
+            <strong>GitHub:</strong> {result.contact_info.github || "Not Found"}
+          </p>
+
+          <h4 className="mt-2 font-semibold">AI Suggestions:</h4>
+          <p>{result.suggestions}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Upload;

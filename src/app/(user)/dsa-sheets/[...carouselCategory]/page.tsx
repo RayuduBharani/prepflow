@@ -6,6 +6,21 @@ import { Progress } from "@/components/ui/progress";
 import SheetIcon from "@/components/SheetIcon";
 import { CircleCheck } from "lucide-react";
 import HoverProblem from "@/components/HoverProblem";
+import type { Metadata } from "next";
+import { toTitleCase } from "@/lib/utils";
+
+type Props = {
+  params: Promise<{ carouselCategory: string[] }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { carouselCategory } = await params;
+  return {
+    title: `${toTitleCase(carouselCategory[1])} - ${toTitleCase(
+      carouselCategory[0]
+    )}`,
+  };
+}
 
 const CarouselCategoryPage = async ({
   params,
@@ -39,12 +54,12 @@ const CarouselCategoryPage = async ({
             <h1 className="text-2xl font-semibold">{data.name}</h1>
           </div>
           <div className="flex items-center w-full">
-          <CircleCheck size={20} strokeWidth={1} className="mr-1" />
+            <CircleCheck size={20} strokeWidth={1} className="mr-1" />
             <p className="text-xs text-nowrap mr-4">
-              {`${data.solvedProblemsCount}/${data.totalProblemsCount}`} solved 
+              {`${data.solvedProblemsCount}/${data.totalProblemsCount}`} solved
             </p>
             <Progress
-              className=""
+              aria-label="Progress Bar"
               value={(data.solvedProblemsCount / data.totalProblemsCount) * 100}
             />
           </div>

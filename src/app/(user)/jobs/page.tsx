@@ -2,6 +2,11 @@ import { InternContent } from "@/components/snippets/InternContent"
 import { JobContent } from "@/components/snippets/JobContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react'
+import type { Metadata } from "next";
+
+export const metadata : Metadata = {
+    title : 'PrepFlow - Find Jobs and Internships'
+  }
 
 const JobsPage = async ({searchParams} : {searchParams : IsearchParams}) => {
     const searchParam = await searchParams;
