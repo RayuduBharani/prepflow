@@ -139,73 +139,72 @@ export async function analyzeResume(
 
     // ATS Analysis
     const atsPrompt = `
-    Analyze the following **resume** against the provided **job description**, evaluating it for **ATS compliance, relevance, and overall effectiveness**. Provide a **structured JSON response** optimized for visualization.
-
-    ### **Evaluation Criteria:**
-    1. **ATS Score (0-100)**
-       - Based on **keyword match**, section completeness, and job relevance.
-       - Breakdown:
-         - **Relevance Score (0-40)**: Match between resume content and job description.
-         - **Keyword Match (0-30)**: Presence of important job-related keywords.
-         - **Formatting & Readability (0-20)**: Clear structure, bullet points, proper headings.
-         - **Contact & Link Completeness (0-10)**: Valid LinkedIn, GitHub, email, etc. Also give 10 if these LinkedIn, GitHub, email is present.
-
-    2. **Missing Sections** *(Categorized for better insights)*
-       - **Critical**: Work Experience, Education, Projects, Skills, Contact Info.
-       - **Recommended**: Certifications, Achievements, Summary, Technical Stack.
-
-    3. **Missing Skills** *(Must-have & Nice-to-have skills)*
-       - **Must-have:** Skills that are crucial for this role.
-       - **Nice-to-have:** Preferred but not mandatory skills.
-
-    4. **Missing Achievements**
-       - Identify **quantifiable achievements** missing from Work Experience or Projects.
-       - Examples: "Increased system efficiency by 25%" or "Reduced development time by 40%".
-
-    5. **Contact Information Validation**
-       - Extract **email, LinkedIn, GitHub, personal website**, and ensure validity.
-       - If any key link is missing, recommend adding it.
-
-    6. **AI-Powered Suggestions**
-       - Provide **detailed feedback** to improve the resume.
-       - Include specific action points like "Add bullet points under Experience" or "Highlight key achievements".
-
+    Analyze the provided resume against the job description for ATS compliance, relevance, and effectiveness. Provide a structured JSON response for visualization.
+    
+    **Evaluation Criteria:**
+    
+    1.  **ATS Score (0-100):**
+        * **Relevance (0-40):** Match between resume content and job requirements.
+        * **Keyword Match (0-30):** Presence of key job-related keywords.
+        * **Formatting/Readability (0-20):** Clear structure, bullet points, headings.
+        * **Contact Completeness (0-10):** Valid email, LinkedIn, GitHub, etc. (10 if all are present).
+    
+    2.  **Missing Sections:**
+        * **Critical:** Work Experience, Education, Skills, Contact Info, Projects.
+        * **Recommended:** Certifications, Achievements, Summary, Technical Stack.
+    
+    3.  **Missing Skills:**
+        * **Must-Have:** Essential skills from the job description.
+        * **Nice-to-Have:** Preferred but optional skills.
+    
+    4.  **Missing Achievements:**
+        * Identify and suggest quantifiable achievements for Work Experience and Projects.
+    
+    5.  **Contact Information Validation:**
+        * Extract and validate email, LinkedIn, GitHub, and portfolio links.
+        * Recommend adding missing links.
+    
+    6.  **AI-Powered Suggestions:**
+        * Provide detailed feedback in Markdown format for resume improvement.
+        * Include specific action points (e.g., "Add bullet points to Experience section").
+    
     ---
-    ### **Resume:**
+    **Resume:**
     ${resumeText}
-
-    ### **Job Description:**
+    
+    **Job Description:**
     ${jobDesc}
-
+    
     ---
-    **Expected JSON Response Format:**
+    **JSON Response Format:**
+    
     \`\`\`json
     {
       "ats_score": {
-        "total": "(0-100)",
+        "total": 0,
         "breakdown": {
-          "relevance": "(0-40)",
-          "keyword_match": "(0-30)",
-          "formatting": "(0-20)",
-          "contact_completeness": "(0-10)"
+          "relevance": 0,
+          "keyword_match": 0,
+          "formatting": 0,
+          "contact_completeness": 0
         }
       },
       "missing_sections": {
-        "critical": ["Missing critical sections"],
-        "recommended": ["Missing recommended sections"]
+        "critical": [],
+        "recommended": []
       },
       "missing_skills": {
-        "must_have": ["Missing essential skills"],
-        "nice_to_have": ["Preferred additional skills"]
+        "must_have": [],
+        "nice_to_have": []
       },
-      "missing_achievements": ["Missing quantifiable results"],
+      "missing_achievements": [],
       "contact_info": {
-        "email": "Extracted email or null",
-        "linkedin": "Extracted LinkedIn or null",
-        "github": "Extracted GitHub or null",
-        "portfolio": "Extracted portfolio or null"
+        "email": null,
+        "linkedin": null,
+        "github": null,
+        "portfolio": null
       },
-      "suggestions": ["Resume improvement suggestions"]
+      "suggestions": []
     }
     \`\`\`
     `;
@@ -222,7 +221,6 @@ export async function analyzeResume(
     }
 
     const analysis = result.response.text().replace(/^```json/, "").replace(/```$/, "").trim();
-    console.log(analysis)
     try {
       const parsedAnalysis: ApiResponse = JSON.parse(analysis);
       return { structuredData: parsedAnalysis };

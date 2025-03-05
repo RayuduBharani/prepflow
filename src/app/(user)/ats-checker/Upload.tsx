@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { SquareChartGantt } from "lucide-react";
 import { analyzeResume, ActionState, ApiResponse } from "@/actions/atsActions";
+import DisplayResults from "./DisplayResults";
 
 
 const Upload = () => {
@@ -93,17 +94,16 @@ const Upload = () => {
     <div className="flex flex-col items-center gap-6 pt-8 pb-16">
       <form className="flex flex-col gap-4 w-full max-w-xl" onSubmit={handleSubmit}>
         <div className="space-y-2">
-          <Label htmlFor="resume">Upload Resume</Label>
           <FileUpload onChange={handleFileChange} />
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="jobdesc">Job Description</Label>
+          <Label className="text-base text-transparent w-fit bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500 font-bold" htmlFor="jobdesc">Job Description</Label>
           <Textarea
             name="jobdesc"
             id="jobdesc"
             rows={10}
-            className="w-full"
+            className="w-full text-sm"
             value={jobDescription}
             onChange={handleTextareaChange}
             placeholder="Paste the job description here..."
@@ -117,7 +117,7 @@ const Upload = () => {
           iconPlacement="left"
           effect="hoverUnderline"
           size="sm"
-          variant="outline"
+          variant="secondary"
           disabled={loading}
         >
           {loading ? "Processing..." : "Get Results"}
@@ -132,11 +132,7 @@ const Upload = () => {
       )}
 
       {/* Display Results */}
-      {result && (
-        <div className="w-full">
-          
-        </div>
-      )}
+      {result && <DisplayResults result={result}  />}
     </div>
   );
 };
