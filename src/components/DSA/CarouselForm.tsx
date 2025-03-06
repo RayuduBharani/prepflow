@@ -59,7 +59,7 @@ const CarouselForm: React.FC = () => {
         name="carouselName"
         required
       />
-      <div className="overflow-y-scroll max-h-[calc(100vh-15rem)] scrollbar-hide">
+      <div className="max-h-[calc(100vh-15rem)]">
 
       {entries.map((entry, index) => (
         <div key={entry.id} className="flex flex-col gap-3">

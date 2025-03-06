@@ -56,8 +56,10 @@ export async function JobContent({ experenceParams }: { experenceParams: Isearch
                                 <div className="relative p-3 sm:p-4">
                                     {/* Company Logo and Title */}
                                     <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border bg-background p-1.5 sm:p-2 flex-shrink-0">
-                                            <Image className="w-full h-full object-contain" src={job.logo} alt={`${job.company} logo`} />
+                                        <div className="w-10 dark:bg-foreground h-10 sm:w-12 sm:h-12 rounded-lg border bg-background p-1.5 flex-shrink-0">
+                                            <Image className="w-full h-full object-fill rounded-md"
+                                            width={100}
+                                            height={100} src={job.logo} alt={`${job.company} logo`} />
                                         </div>
                                         <div className="min-w-0">
                                             <h3 className="font-semibold text-base truncate group-hover:text-primary transition-colors">

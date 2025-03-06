@@ -11,8 +11,8 @@ export const metadata : Metadata = {
 const JobsPage = async ({searchParams} : {searchParams : IsearchParams}) => {
     const searchParam = await searchParams;
     return (
-        <Tabs className="w-full h-full pt-[4rem] overflow-hidden sm:px-4" defaultValue="jobs">
-            <div className="w-full animate-fade-up h-full flex flex-col overflow-y-scroll scrollbar-hide" style={{
+        <Tabs className="w-full h-full pt-[4rem] sm:px-4" defaultValue="jobs">
+            <div className="w-full animate-fade-up h-full flex flex-col" style={{
                 animationFillMode: "forwards",
             }}>
                 <div className="w-full h-fit mt-7 flex sm:justify-between sm:px-5 items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">

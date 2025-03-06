@@ -26,7 +26,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
   const companies = await getCompanies(currentPage, searchValue);
   const totalPages = searchValue ? 1 : 16;
   return (
-    <div className="w-full h-full pt-[5rem] max-sm:px-2 sm:px-6 overflow-hidden scrollbar-hide">
+    <div className="w-full h-full pt-[5rem] max-sm:px-2 sm:px-6 ">
       <div className=" w-full flex flex-wrap items-center justify-between gap-4">
         <div className="w-full md:w-auto ">
           <h1 className="text-lg font-bold text-primary">

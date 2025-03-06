@@ -13,7 +13,7 @@ export default async function JobView({ params }: { params: Params }) {
   const jobData = await getSingleJob(jobview as string)
   return (
     <div className='w-full h-full overflow-hidden pt-[4rem] sm:px-10'>
-      <div className='w-full h-full px-4 py-6 overflow-y-auto scrollbar-hide'>
+      <div className='w-full h-full px-4 py-6'>
         {/* Header Section */}
         <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
           <div className="flex items-start justify-between gap-4">

@@ -41,7 +41,7 @@ async function CompanyPage({
   return (
     <Tabs
       defaultValue="LEETCODE"
-      className="w-full h-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5 overflow-hidden overflow-y-scroll scrollbar-hide"
+      className="w-full h-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5"
     >
       <CompaniesBreadcrumb companyName={company} />
       <div className="flex max-sm:flex-col items-center border p-4 rounded-lg mb-3 gap-4 justify-between">

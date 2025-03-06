@@ -59,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.className} antialiased bg-background w-screen h-lvh`}
+        className={`${poppins.className} no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
         <ThemeProvider
           attribute="class"
