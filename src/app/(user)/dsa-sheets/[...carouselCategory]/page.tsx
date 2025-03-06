@@ -37,7 +37,6 @@ const CarouselCategoryPage = async ({
     carouselCategory[1],
     userId
   );
-  console.log(userId)
   if (!data) {
     notFound();
   }

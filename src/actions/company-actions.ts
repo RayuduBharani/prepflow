@@ -101,6 +101,19 @@ export const GFGcompanyTopics = cache(async (slug: string) => {
   return result;
 }); // gfg company topics
 
+
+export async function getCompanyTopicProgress( userId: string, companySlug: string, platform: Platform) {
+  return prisma.userProgress.findMany({
+    where: {
+      userId: userId,
+      problem: {
+        companyTags: { some: { slug: companySlug } },
+        platform: platform,
+      },
+    },
+  });
+}
+
 // Cygnuxxs Area
 
 export const getCompanyTopicWiseProblems = cache(

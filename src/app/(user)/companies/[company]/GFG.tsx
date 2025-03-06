@@ -1,4 +1,5 @@
-import { GFGcompanyTopics, getCompanyTopicProgress } from "@/actions/company-actions"
+import { GFGcompanyTopics } from "@/actions/company-actions"
+import { getCompanyTopicProgress } from "@/actions/company-actions"
 import { auth } from "@/auth"
 import { Progress } from "@/components/ui/progress"
 import { toTitleCase } from "@/lib/utils"
@@ -9,7 +10,6 @@ export default async function GFGQuestions({ company }: { company: string }) {
   const data = await GFGcompanyTopics(company)
   const session = await auth()
   const progress = session?.user ? await getCompanyTopicProgress(session.user.id, company, "GFG") : null;
-
   return (
     <div className="flex flex-wrap gap-4">
       {data.length > 0 && data.map((topic, index) => {
