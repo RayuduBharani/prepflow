@@ -1,5 +1,4 @@
-import { GFGcompanyTopics } from "@/actions/company-actions"
-import { getCompanyTopicProgress } from "@/actions/company-actions"
+import { GFGcompanyTopics, getCompanyTopicProgress } from "@/actions/company-actions"
 import { auth } from "@/auth"
 import { Progress } from "@/components/ui/progress"
 import { toTitleCase } from "@/lib/utils"

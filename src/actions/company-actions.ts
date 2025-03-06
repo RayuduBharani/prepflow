@@ -127,7 +127,7 @@ export const getCompanyTopicWiseProblems = cache(
       where: {
         companyTags: { some: { slug: companySlug } },
         topicSlugs: { some: { slug: topicSlug } },
-        platform: platform,
+        platform,
       },
       select: {
         title: true,
@@ -157,6 +157,7 @@ export const getCompanyTopicWiseProblems = cache(
             userId: userId,
             isCompleted: true,
             problem: {
+              platform,
               companyTags: { some: { slug: companySlug } },
               topicSlugs: { some: { slug: topicSlug } },
             },
