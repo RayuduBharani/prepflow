@@ -132,5 +132,6 @@ export default {
     require("tailwindcss-animate"),
     require("tailwind-scrollbar-hide"),
     require("tailwindcss-motion"),
+		require('tailwindcss-intersect') 
   ],
 } satisfies Config;

@@ -60,7 +60,11 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
       <div className="flex flex-wrap gap-4 mt-5">
         {companies.length > 0 ? (
           companies.map((company, index) => (
-            <div key={index} className="group relative flex-1 min-w-[280px]">
+            <div
+              key={index}
+              className="group relative flex-1 min-w-[280px] intersect:motion-preset-slide-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="relative block overflow-hidden rounded-lg border bg-background p-6 hover:border-primary transition-all duration-200 hover:shadow-lg h-full">
                 <div className="flex items-center gap-4">
                   {company.image !== "None" ? (
@@ -100,6 +104,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       </div>
+
 
       <Pagination className="my-8 ">
         <PaginationContent className="w-full justify-between gap-3">

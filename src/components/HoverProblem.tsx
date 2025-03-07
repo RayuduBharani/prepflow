@@ -21,10 +21,11 @@ const HoverProblem = ({
 }) => {
   return (
     <div className="flex max-sm:pb-4 pb-4 flex-col mt-4 gap-2">
-      {problems.map((problem) => (
+      {problems.map((problem , index) => (
         <div
-          className="flex w-full rounded-md items-center border p-2"
+          className="flex w-full rounded-md items-center border p-2 intersect:motion-preset-slide-up motion-delay-0"
           key={problem.slug}
+          style={{ animationDelay: `${index * 100}ms` }}
         >
           {userId && (
             <UserProblemForm

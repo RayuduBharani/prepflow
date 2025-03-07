@@ -88,7 +88,7 @@ export default function DisplayResults({result} : {result : ApiResponse}) {
   const htmlArray = convertMarkdownArrayToHTML(result.suggestions);
 
   return (
-    <div className="flex max-sm:flex-col items-stretch max-w-2xl flex-wrap flex-1 gap-4 w-full">
+    <div className="flex max-sm:flex-col items-stretch max-w-xl flex-wrap flex-1 gap-4 w-full motion-preset-slide-up">
       <div className="flex h-fit items-center border py-3 rounded-xl flex-col gap-2">
         <ChartContainer
           config={chartConfig}

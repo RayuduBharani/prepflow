@@ -21,6 +21,7 @@ const CarouselCategoryPage = async ({
       companyTopic[1] as Platform,
       userId
     );
+  console.log(problems);
   if (problems.length == 0) {
     notFound();
   }
