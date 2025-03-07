@@ -21,11 +21,13 @@ export default async function JobView({ params }: { params: Params }) {
               <p className="text-sm sm:text-base text-foreground font-medium">{jobData?.company}</p>
             </div>
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
-              {
-                jobData?.logo ? <Image src={jobData?.logo} alt={jobData?.company} layout='fill' objectFit='contain' />
-                  : <span className='text-foreground text-2xl font-bold max-sm:px-1.5'>{jobData?.title[0]}
-                  </span>
-              }
+              <Image
+              width={100}
+              height={100}
+                src={jobData?.logo as string} 
+                alt={jobData?.company || 'company logo'}
+                className="w-full h-full object-fill rounded-md"
+              />
             </div>
           </div>
 
@@ -34,7 +36,7 @@ export default async function JobView({ params }: { params: Params }) {
             <Badge variant="outline" className="text-xs sm:text-sm">{jobData?.experience}</Badge>
             <Badge variant="outline" className="text-xs sm:text-sm">{jobData?.salary}</Badge>
           </div>
-          <p className='text-sm font-bold'><span className='text-primary'>Date of Posted :</span> {jobData?.createdAt.toLocaleDateString('en-US', {
+          <p className='text-sm font-bold'><span className='text-primary'>Date of Posted :</span> {jobData?.createdAt.toLocaleDateString('en-US',{
             month: 'short',
             day: 'numeric',
             year: 'numeric'
@@ -88,7 +90,7 @@ export default async function JobView({ params }: { params: Params }) {
             </div>
           </div>
 
-          {jobData?.benefits && jobData?.benefits.length > 0 ? <div className="space-y-3">
+          {jobData?.benefits && jobData.benefits.length > 1 ? <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {jobData?.benefits.map((item, index) => (
@@ -101,7 +103,7 @@ export default async function JobView({ params }: { params: Params }) {
         </div>
 
         <div className="flex items-center gap-4 mt-8">
-          <Button
+          <Button 
             asChild
             className="px-6 rounded-full"
           >

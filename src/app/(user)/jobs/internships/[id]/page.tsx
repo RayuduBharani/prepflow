@@ -6,14 +6,15 @@ import { Params } from 'next/dist/server/request/params';
 import Link from 'next/link';
 import { getSingleIntern } from '@/actions/job-actions';
 import Image from 'next/image';
+import Share from '@/components/Share';
 
 export default async function InternshipView({ params }: { params: Params }) {
   const { id } = await params
   const internshipData = await getSingleIntern(id as string)
   return (
-    <div className="w-full h-full overflow-hidden pt-[4rem] sm:px-10">
-      <div className="w-full h-full px-4 py-6">
-        <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
+    <div className="max-w-[50rem] mx-auto h-full pt-[4rem] sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
+      <div className='w-full h-fit px-4 py-6 motion-preset-fade motion-duration-2000'>
+        <div className="space-y-4 md:space-y-6">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-lg text-primary sm:text-xl font-bold">
@@ -23,8 +24,10 @@ export default async function InternshipView({ params }: { params: Params }) {
                 {internshipData?.company}
               </p>
             </div>
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
+            <div className="w-12 h-12 dark:bg-foreground sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
               <Image
+                width={100}
+                height={100}
                 src={internshipData?.logo as string}
                 alt={internshipData?.company || 'Company Logo'}
                 className="w-full h-full object-contain"
@@ -39,9 +42,9 @@ export default async function InternshipView({ params }: { params: Params }) {
           </div>
         </div>
 
-        <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
+        <Separator className="my-6" />
 
-        <div className="space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
+        <div className="space-y-6">
           <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">About the Internship</h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -73,7 +76,7 @@ export default async function InternshipView({ params }: { params: Params }) {
             </div>
           </section>
 
-          <section className="space-y-3">
+          {internshipData?.benefits && internshipData.benefits.length > 1 ? <section className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {internshipData?.benefits.map((item, index) => (
@@ -82,13 +85,14 @@ export default async function InternshipView({ params }: { params: Params }) {
                 </li>
               ))}
             </ul>
-          </section>
+          </section> : null}
         </div>
 
         <div className="flex items-center gap-4 mt-8">
           <Button size="lg" className="flex-1 sm:flex-none sm:min-w-[200px]" asChild>
             <Link href={internshipData?.url || '#'} target='_blank'>Apply Now</Link>
           </Button>
+          <Share />
         </div>
       </div>
     </div>

@@ -9,7 +9,12 @@ export const getJobsCount = cache(async () => {
     return count;
 });
 
-const ITEMS_PER_PAGE = 20;
+export const getInternshipsCount = cache(async () => {
+    const count = await prisma.internships.count();
+    return count;
+})
+
+const ITEMS_PER_PAGE = 10;
 
 export const getJobs = cache(async (searchParams: IsearchParams, currentPage: number, searchValue?: string) => {
     const params = await searchParams;

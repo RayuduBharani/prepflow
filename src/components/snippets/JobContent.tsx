@@ -21,8 +21,7 @@ export async function JobContent({ experenceParams, searchParams }: { experenceP
     const searchValue = getCookies.get('searchValue')?.value;
     const currentPage = searchParams?.page ? parseInt(searchParams.page) : 1;
     const totalItems = await getJobsCount();
-    const ITEMS_PER_PAGE = 20;
-    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(totalItems / 10);
     const jobsData = await getJobs(experenceParams, currentPage, searchValue);
 
     return (
