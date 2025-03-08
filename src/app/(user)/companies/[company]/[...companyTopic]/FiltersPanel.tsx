@@ -30,6 +30,12 @@ const updateQueryParam = (
   router.replace(`?${params.toString()}`, { scroll: false });
 };
 
+ const difficultyLevels = [
+  { label: "Easy", value: "EASY", color: "green" },
+  { label: "Medium", value: "MEDIUM", color: "yellow" },
+  { label: "Hard", value: "HARD", color: "red" },
+];
+
 const DifficultyFilter: React.FC<{
   selectedDifficulty: string | null;
   difficultyCount: Record<string, { solved: number; unsolved: number }>;

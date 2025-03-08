@@ -20,7 +20,7 @@ export default function CompaniesBreadcrumb({companyName , topic} : {companyName
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/companies/${companyName}`}>{companyName}</BreadcrumbLink>
+                    <BreadcrumbLink href={`/companies/${companyName}`}>{toTitleCase(companyName)}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
