@@ -1,5 +1,6 @@
 import React from "react";
 import Upload from "./Upload";
+import { Suspense } from "react";
 import Loading from "@/app/loading";
 
 const AtsPage = () => {
