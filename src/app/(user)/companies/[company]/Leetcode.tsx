@@ -23,7 +23,7 @@ async function LeetcodeQuestions({ company }: { company: string }) {
 				return (
 					<div key={index} className="min-w-[13rem] cursor-pointer border rounded-lg p-4 
 							transition-all duration-300 bg-background hover:bg-muted flex-1 shadow-md intersect:motion-preset-slide-up motion-delay-0"
-						style={{ animationDelay: `${index * 100}ms` }}>
+						style={{ animationDelay: `${index * 50}ms` }}>
 						<Link href={`/companies/${company}/${topic.slug}/LEETCODE`}>
 							<div className="flex flex-col gap-2">
 								<div className="flex items-center justify-between">

@@ -25,7 +25,7 @@ const HoverProblem = ({
         <div
           className="flex w-full rounded-md items-center border p-2"
           key={problem.slug}
-          style={{ animationDelay: `${index * 100}ms` }}
+          style={{ animationDelay: `${index * 50}ms` }}
         >
           {userId && (
             <UserProblemForm

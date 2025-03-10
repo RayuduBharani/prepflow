@@ -41,7 +41,7 @@ async function CompanyPage({
   return (
     <Tabs
       defaultValue="LEETCODE"
-      className="w-full h-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5"
+      className="w-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5"
     >
       <CompaniesBreadcrumb companyName={company} />
       <div className="flex max-sm:flex-col items-center border p-4 rounded-lg mb-3 gap-4 justify-between">
@@ -62,7 +62,7 @@ async function CompanyPage({
           </div>
           <div className="flex-1 max-w-[60%] max-sm:max-w-full">
             <h1 className="text-md font-bold mb-2">
-              Practice Problems for {toTitleCase(company)}
+              {toTitleCase(company)}
             </h1>
             <div className="space-y-2">
               {Img?._count.problems ? (
@@ -72,7 +72,7 @@ async function CompanyPage({
               ) : (
                 <Progress value={0} />
               )}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Overall Progress: {userProgress.length}/ {Img?._count.problems} {"  "}questions solved
               </p>
             </div>
