@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
+import Footer from "@/components/Footer";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -71,6 +72,7 @@ export default function RootLayout({
           <ThemeDataProvider>
             <Navbar />
             <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Footer />
             <Toaster />
           </ThemeDataProvider>
         </ThemeProvider>

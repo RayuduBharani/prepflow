@@ -8,6 +8,7 @@ import { CircleCheck } from "lucide-react";
 import HoverProblem from "@/components/HoverProblem";
 import type { Metadata } from "next";
 import { toTitleCase } from "@/lib/utils";
+import LoginAlert from "@/components/LoginAlert";
 
 type Props = {
   params: Promise<{ carouselCategory: string[] }>;
@@ -43,6 +44,7 @@ const CarouselCategoryPage = async ({
   return (
     <div className="pt-[5rem] max-sm:px-3 px-6">
       <div className="mx-auto max-w-[40rem] max-md:w-full">
+        <LoginAlert userId={userId} />
         <DSABreadCrumb
           carouselCategory={carouselCategory}
           sheetName={data.sheet.name}

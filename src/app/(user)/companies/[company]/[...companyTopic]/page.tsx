@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
 import FiltersPanel from "./FiltersPanel";
 import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
+import LoginAlert from "@/components/LoginAlert";
 
 const CarouselCategoryPage = async ({
   params,
@@ -26,6 +27,7 @@ const CarouselCategoryPage = async ({
   }
   return (
     <div className="pt-[5rem] max-sm:px-3 px-6 mx-auto max-w-[40rem]">
+      <LoginAlert />
       <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
       <div className="mx-auto max-sm:w-full max-w-[40rem]">
         <FiltersPanel

@@ -12,15 +12,15 @@ const DSABreadCrumb = ({carouselCategory, sheetName, categoryName} : {carouselCa
   return (
     <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
+          <BreadcrumbItem className='text-xs'>
             <BreadcrumbLink href="/dsa-sheets">DSA Sheets</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
+          <BreadcrumbItem className='text-xs'>
             <BreadcrumbLink href={`/dsa-sheets#${carouselCategory[0]}`}>{sheetName}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
+          <BreadcrumbItem className='text-xs'>
             <BreadcrumbPage>{categoryName}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>

@@ -15,16 +15,16 @@ export default function CompaniesBreadcrumb({companyName , topic} : {companyName
     return (
         <Breadcrumb className='mb-3'>
             <BreadcrumbList>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/companies">Companies page</BreadcrumbLink>
+                <BreadcrumbItem className='text-xs'>
+                    <BreadcrumbLink href="/companies">Companies</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                    <BreadcrumbLink href={`/companies/${companyName}`}>{companyName} Topics</BreadcrumbLink>
+                <BreadcrumbItem className='text-xs'>
+                    <BreadcrumbLink href={`/companies/${companyName}`}>{toTitleCase(companyName)}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                    <BreadcrumbPage>{topic ? toTitleCase(topic) : "questions" }</BreadcrumbPage>
+                <BreadcrumbItem className='text-xs'>
+                    <BreadcrumbPage>{topic ? toTitleCase(topic) : "Problems" }</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
