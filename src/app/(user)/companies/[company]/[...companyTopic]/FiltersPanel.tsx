@@ -19,29 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Share from "@/components/Share";
 
-interface DifficultyLevel {
-  label: string;
-  value: string;
-  color: string;
-}
-
-const difficultyLevels: DifficultyLevel[] = [
-  { label: "School", value: "SCHOOL", color: "green-500" },
-  { label: "Basic", value: "BASIC", color: "green-500" },
-  { label: "Easy", value: "EASY", color: "green-500" },
-  { label: "Medium", value: "MEDIUM", color: "yellow-500" },
-  { label: "Hard", value: "HARD", color: "red-500" },
-];
-
-interface FiltersPanelProps {
-  solvedProblems: number;
-  userId?: string;
-  problems: Problem[];
-  totalProblems: number;
-  companyTopic: string;
-  difficultyCount: Record<string, { solved: number; unsolved: number }>;
-}
-
 const updateQueryParam = (
   param: string,
   value: string | null,
@@ -52,6 +29,12 @@ const updateQueryParam = (
   value ? params.set(param, value) : params.delete(param);
   router.replace(`?${params.toString()}`, { scroll: false });
 };
+
+ const difficultyLevels = [
+  { label: "Easy", value: "EASY", color: "green" },
+  { label: "Medium", value: "MEDIUM", color: "yellow" },
+  { label: "Hard", value: "HARD", color: "red" },
+];
 
 const DifficultyFilter: React.FC<{
   selectedDifficulty: string | null;

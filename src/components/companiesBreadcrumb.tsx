@@ -13,7 +13,7 @@ import { toTitleCase } from '@/lib/utils'
 
 export default function CompaniesBreadcrumb({companyName , topic} : {companyName: string , topic ?: string}) {
     return (
-        <Breadcrumb className='mb-3'>
+        <Breadcrumb className='mb-5'>
             <BreadcrumbList>
                 <BreadcrumbItem className='text-xs'>
                     <BreadcrumbLink href="/companies">Companies</BreadcrumbLink>

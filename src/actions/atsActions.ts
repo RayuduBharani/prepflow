@@ -122,6 +122,7 @@ export async function analyzeResume(
     try {
       validationResult = await model.generateContent([validationPrompt]);
     } catch (aiError) {
+      console.log(aiError)
       return {
         error: "AI validation failed",
         details: (aiError as Error).message,

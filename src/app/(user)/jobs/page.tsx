@@ -4,18 +4,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react'
 import type { Metadata } from "next";
 
-export const metadata : Metadata = {
-    title : 'PrepFlow - Find Jobs and Internships'
-  }
+export const metadata: Metadata = {
+    title: 'PrepFlow - Find Jobs and Internships'
+}
 
-const JobsPage = async ({searchParams} : {searchParams : IsearchParams}) => {
+const JobsPage = async ({ searchParams }: { searchParams: IsearchParams }) => {
     const searchParam = await searchParams;
     return (
-        <Tabs className="w-full h-full pt-[4rem] overflow-hidden sm:px-4" defaultValue="jobs">
-            <div className="w-full animate-fade-up h-full flex flex-col overflow-y-scroll scrollbar-hide" style={{
+        <Tabs className="w-full h-full pt-[4rem] sm:px-2" defaultValue="jobs">
+            <div className="w-full animate-fade-up h-full flex flex-col" style={{
                 animationFillMode: "forwards",
             }}>
-                <div className="w-full h-fit mt-7 flex sm:justify-between sm:px-5 items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">
+                <div className="w-full h-fit mt-7 flex sm:justify-between sm:px-2 items-center max-sm:flex-col max-sm:justify-start max-sm:mt-4">
                     <div className="w-auto h-auto max-sm:w-full">
                         <h1 className="text-lg font-bold text-primary sm:px-2 max-sm:px-4">
                             Jobs & Internships
@@ -32,10 +32,10 @@ const JobsPage = async ({searchParams} : {searchParams : IsearchParams}) => {
                     </div>
                 </div>
                 <TabsContent value="jobs" className="motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
-                    <JobContent experenceParams={searchParam}/>
+                    <JobContent experenceParams={searchParam} />
                 </TabsContent>
                 <TabsContent value="internships" className="motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
-                    <InternContent experenceParams={searchParam}/>
+                    <InternContent experenceParams={searchParam} />
                 </TabsContent>
             </div>
         </Tabs>

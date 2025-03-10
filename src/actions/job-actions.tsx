@@ -4,8 +4,19 @@ import { prisma } from "@/prisma";
 import { JobType } from "@prisma/client";
 import { cache } from "react";
 
+export const getJobsCount = cache(async () => {
+    const count = await prisma.jobs.count();
+    return count;
+});
 
-export const getJobs = cache(async (searchParams: IsearchParams, searchValue?: string) => {
+export const getInternshipsCount = cache(async () => {
+    const count = await prisma.internships.count();
+    return count;
+})
+
+const ITEMS_PER_PAGE = 10;
+
+export const getJobs = cache(async (searchParams: IsearchParams, currentPage: number, searchValue?: string) => {
     const params = await searchParams;
     const experienceArray = params.experience ? (Array.isArray(params.experience) ? params.experience : [params.experience]) : [];
     const jobTypeArray = params.jobType ? (Array.isArray(params.jobType) ? params.jobType : [params.jobType]) : [];
@@ -15,7 +26,8 @@ export const getJobs = cache(async (searchParams: IsearchParams, searchValue?: s
     if (searchValue) {
         where.OR = [
             { title: { contains: searchValue, mode: 'insensitive' } },
-            { company: { contains: searchValue, mode: 'insensitive' } }
+            { company: { contains: searchValue, mode: 'insensitive' } },
+
         ];
     }
     if (jobTypeArray.length > 0) {
@@ -31,7 +43,12 @@ export const getJobs = cache(async (searchParams: IsearchParams, searchValue?: s
     }
 
     const allJobs = await prisma.jobs.findMany({
-        where: where
+        where: where,
+        take: ITEMS_PER_PAGE,
+        skip: (currentPage - 1) * ITEMS_PER_PAGE,
+        orderBy: {
+            createdAt: 'desc'
+        }
     });
 
     let filteredJobs = allJobs;
@@ -133,15 +150,15 @@ export const getInternships = cache(async (searchParams: IsearchParams, searchVa
     if (!searchParams) {
         return [];
     }
-    
-    const workTypeArray = searchParams.workType 
-        ? (Array.isArray(searchParams.workType) ? searchParams.workType : [searchParams.workType]) 
+
+    const workTypeArray = searchParams.workType
+        ? (Array.isArray(searchParams.workType) ? searchParams.workType : [searchParams.workType])
         : [];
-    const stipendArray = searchParams.stipend 
-        ? (Array.isArray(searchParams.stipend) ? searchParams.stipend : [searchParams.stipend]) 
+    const stipendArray = searchParams.stipend
+        ? (Array.isArray(searchParams.stipend) ? searchParams.stipend : [searchParams.stipend])
         : [];
-    const durationArray = searchParams.duration 
-        ? (Array.isArray(searchParams.duration) ? searchParams.duration : [searchParams.duration]) 
+    const durationArray = searchParams.duration
+        ? (Array.isArray(searchParams.duration) ? searchParams.duration : [searchParams.duration])
         : [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,7 +179,7 @@ export const getInternships = cache(async (searchParams: IsearchParams, searchVa
 
     // Filter by workType
     if (workTypeArray.length > 0) {
-        filteredInternships = filteredInternships.filter((internship) => 
+        filteredInternships = filteredInternships.filter((internship) =>
             workTypeArray.some(type => internship.internType.toLowerCase() === type.toLowerCase())
         );
     }

@@ -86,7 +86,7 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
           aria-expanded={isOpen}
           className="justify-between w-full hover:bg-background relative h-full min-h-10"
         >
-          <div className="flex w-full items-center overflow-x-auto scrollbar-hide">
+          <div className="flex w-full items-center">
             {selectedSlugs.length === 0 ? (
               <span className="text-muted-foreground">{placeholder}</span>
             ) : (

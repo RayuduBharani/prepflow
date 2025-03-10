@@ -4,18 +4,17 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Params } from 'next/dist/server/request/params'
 import Link from 'next/link'
-import ShareButton from '@/components/snippets/ShareButton'
 import { getSingleJob } from '@/actions/job-actions'
 import Image from 'next/image'
+import Share from '@/components/Share'
 
 export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params
   const jobData = await getSingleJob(jobview as string)
   return (
-    <div className='w-full h-full overflow-hidden pt-[4rem] sm:px-10'>
-      <div className='w-full h-full px-4 py-6 overflow-y-auto scrollbar-hide'>
-        {/* Header Section */}
-        <div className="space-y-4 md:space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
+    <div className='max-w-[50rem] mx-auto h-full pt-[4rem] sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm'>
+      <div className='w-full h-fit px-4 py-6 motion-preset-fade motion-duration-2000'>
+        <div className="space-y-4 mb-6">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-lg text-primary sm:text-xl font-bold">{jobData?.title}</h1>
@@ -23,9 +22,11 @@ export default async function JobView({ params }: { params: Params }) {
             </div>
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
               <Image
+              width={100}
+              height={100}
                 src={jobData?.logo as string} 
                 alt={jobData?.company || 'company logo'}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-fill rounded-md"
               />
             </div>
           </div>
@@ -42,10 +43,9 @@ export default async function JobView({ params }: { params: Params }) {
           })}</p>
         </div>
 
-        <Separator className="my-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md" />
+        <Separator className="my-6" />
 
-        {/* Details Section */}
-        <div className="space-y-6 motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
+        <div className="space-y-6">
           <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">About the Role</h2>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -53,7 +53,7 @@ export default async function JobView({ params }: { params: Params }) {
             </p>
           </div>
 
-          <div className="space-y-3">
+          {jobData?.responsibilities && jobData?.responsibilities.length > 0 ? <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Responsibilities</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {
@@ -64,9 +64,9 @@ export default async function JobView({ params }: { params: Params }) {
                 })
               }
             </ul>
-          </div>
+          </div> : null}
 
-          <div className="space-y-3">
+          {jobData?.requirements && jobData?.requirements.length > 0 ? <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Requirements</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {
@@ -77,7 +77,7 @@ export default async function JobView({ params }: { params: Params }) {
                 })
               }
             </ul>
-          </div>
+          </div> : null}
 
           <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Required Skills</h2>
@@ -90,7 +90,7 @@ export default async function JobView({ params }: { params: Params }) {
             </div>
           </div>
 
-          <div className="space-y-3">
+          {jobData?.benefits && jobData.benefits.length > 1 ? <div className="space-y-3">
             <h2 className="text-base sm:text-lg font-semibold">Benefits</h2>
             <ul className="list-disc list-inside space-y-2 text-sm sm:text-base text-muted-foreground">
               {jobData?.benefits.map((item, index) => (
@@ -99,10 +99,9 @@ export default async function JobView({ params }: { params: Params }) {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> : null}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-8">
           <Button 
             asChild
@@ -110,7 +109,7 @@ export default async function JobView({ params }: { params: Params }) {
           >
             <Link href={jobData?.url || '#'} target='_blank'>Apply Now</Link>
           </Button>
-          <ShareButton />
+          <Share />
         </div>
       </div>
     </div>

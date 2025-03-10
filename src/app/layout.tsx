@@ -8,7 +8,6 @@ import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
 import Footer from "@/components/Footer";
-
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -60,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.className} antialiased bg-background w-screen h-lvh`}
+        className={`${poppins.className} no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
         <ThemeProvider
           attribute="class"

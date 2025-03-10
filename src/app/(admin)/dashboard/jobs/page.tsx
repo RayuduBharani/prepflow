@@ -11,13 +11,13 @@ const AdminJobs = () => {
         <TabsTrigger value="post-internship">Post Internships</TabsTrigger>
       </TabsList>
       <TabsContent
-        className="overflow-y-auto h-[calc(100vh-8rem)] scrollbar-hide"
+        className="h-[calc(100vh-8rem)]"
         value="post-job"
       >
         <PostJob />
       </TabsContent>
       <TabsContent
-        className="overflow-y-auto h-[calc(100vh-8rem)] scrollbar-hide"
+        className=" h-[calc(100vh-8rem)]"
         value="post-internship"
       >
         <PostInternship />

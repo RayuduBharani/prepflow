@@ -40,7 +40,7 @@ export function ThemeColorToggle() {
           <Palette className="text-primary" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-h-48 overflow-y-auto scrollbar-hide">
+      <DropdownMenuContent className="max-h-48">
         <DropdownMenuLabel className="text-xs font-normal">
           Choose Color Theme
         </DropdownMenuLabel>

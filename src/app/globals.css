@@ -264,3 +264,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style:   none !important;
+  scrollbar-width: 0 !important;
+}
