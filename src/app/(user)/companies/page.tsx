@@ -26,7 +26,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
   const companies = await getCompanies(currentPage, searchValue);
   const totalPages = searchValue ? 1 : 16;
   return (
-    <div className="w-full h-full pt-[5rem] max-sm:px-2 sm:px-6 ">
+    <div className="w-full min-h-full pt-[5rem] max-sm:px-2 sm:px-6 ">
       <div className=" w-full flex flex-wrap items-center justify-between gap-4">
         <div className="w-full md:w-auto ">
           <h1 className="text-lg font-bold text-primary">
@@ -73,7 +73,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
                       width={76}
                       src={company.image as string}
                       alt={company.name}
-                      className="h-12 w-12 bg-background dark:bg-white rounded-lg object-contain border p-1"
+                      className="h-12 w-12 bg-background dark:bg-white rounded-sm object-contain border p-1"
                     />
                   ) : (
                     <div className="h-12 w-12 rounded-lg border flex items-center justify-center bg-muted">
@@ -82,7 +82,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
                   )}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold truncate">{company.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {company._count.problems} Questions
                     </p>
                   </div>
@@ -91,7 +91,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
                   size={"sm"}
                   asChild
                   variant="secondary"
-                  className="w-full mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                  className="w-full text-xs mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                 >
                   <Link href={`/companies/${company.slug}`}>Practice Now</Link>
                 </Button>

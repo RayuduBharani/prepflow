@@ -24,17 +24,12 @@ export const getTwoAlphabets = (name: string): string => {
 };
 
 
-export  const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty.toLowerCase()) {
-      case 'easy':
-          return 'text-green-500 font-medium';
-      case 'medium':
-          return 'text-yellow-500 font-medium';
-      case 'hard':
-          return 'text-red-500 font-medium';
-      default:
-          return 'text-gray-500';
-  }
+export const getDifficultyColor = (difficulty: Difficulty): string => {
+  const normalized = (difficulty ?? '').toLowerCase();
+  if (normalized === 'easy') return 'text-green-500 font-medium';
+  if (normalized === 'medium') return 'text-yellow-500 font-medium';
+  if (normalized === 'hard') return 'text-red-500 font-medium';
+  return 'text-gray-500';
 };
 
 export function toSlug(str: string): string {

@@ -12,7 +12,7 @@ const DSAPage = async () => {
   const session = await auth()
   const carouselData = await getCarouselsData(session?.user.id)
   return (
-    <div className="w-full h-full pt-[4rem] px-6 max-sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
+    <div className="w-full min-h-full pt-[4rem] px-6 max-sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
       {carouselData.map((carousel) => (
       <DSASheet key={carousel.id} carousel = {carousel} />
       ))}

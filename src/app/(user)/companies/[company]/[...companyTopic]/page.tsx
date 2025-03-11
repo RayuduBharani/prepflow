@@ -28,7 +28,7 @@ const CarouselCategoryPage = async ({
   }
   return (
     <div className="pt-[5rem] max-sm:px-3 px-6 mx-auto max-w-[40rem]">
-      <LoginAlert />
+      <LoginAlert userId={userId} />
       <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
         <FiltersPanel
           difficultyCount={difficultyCount}

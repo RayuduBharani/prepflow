@@ -76,7 +76,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t max-sm:px-3 px-6 py-16 bg-background text-foreground">
+    <footer className="w-full mt-20 border-t max-sm:px-3 px-6 py-16 bg-background text-foreground">
       <div className="container mx-auto flex flex-wrap justify-between gap-8">
         {/* Brand & Description */}
         <section className="max-w-xs">

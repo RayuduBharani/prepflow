@@ -4,7 +4,6 @@ import { prisma } from "@/prisma";
 import { cache } from "react";
 import { InternType, JobType } from "@prisma/client";
 
-
 export async function changeToAdmin(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string;
 

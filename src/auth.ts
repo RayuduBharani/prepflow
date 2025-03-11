@@ -57,10 +57,7 @@ export const {signIn, signOut, auth, handlers} = NextAuth({
       session.user.id = user.id;
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Allow relative URLs or full URLs that start with the baseUrl
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (url.startsWith(baseUrl)) return url;
+    async redirect({ baseUrl }) {
       return baseUrl; // Default to baseUrl if no valid redirect is provided
     },
   },

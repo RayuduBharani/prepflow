@@ -7,7 +7,9 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import('@/components/Footer'))
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -69,9 +71,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ThemeDataProvider>
+            <Suspense fallback={<Loading />}>
             <Navbar />
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+            {children}
             <Footer />
+            </Suspense>
             <Toaster />
           </ThemeDataProvider>
         </ThemeProvider>
