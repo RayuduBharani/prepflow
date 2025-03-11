@@ -1,49 +1,59 @@
-'use client'
-import React, { useActionState, useEffect, useState } from "react";
+"use client";
+import React, { useActionState, useState } from "react";
 import Form from "next/form";
 import { submitUserProblem } from "@/actions/actions";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { usePathname } from "next/navigation";
+
+interface UserProgress {
+  isCompleted?: boolean;
+  userId?: string;
+}
 
 interface UserProblemFormProps {
   slug: string;
   userId: string;
-  UserProgress: {
-    isCompleted?: boolean;
-    userId?: string;
-  };
+  UserProgress: UserProgress;
 }
 
-const UserProblemForm : React.FC<UserProblemFormProps> = ({slug, userId, UserProgress}) => {
-  const {toast} = useToast()
-  const path = usePathname()
-  const [state, formAction, isPending] = useActionState(submitUserProblem, {isCompleted : (UserProgress && UserProgress.isCompleted), status : '', message :'', path : path})
+const UserProblemForm: React.FC<UserProblemFormProps> = ({
+  slug,
+  userId,
+  UserProgress,
+}) => {
+  const path = usePathname();
+  const [state, formAction, isPending] = useActionState(submitUserProblem, {
+    isCompleted: UserProgress?.isCompleted ?? false,
+    status: "",
+    message: "",
+    path: path,
+  });
   const [message, setMessage] = useState("");
 
-useEffect(() => {
+  // Handle toast notification when state changes
   if (state?.message && state.message !== message) {
     setMessage(state.message);
-    toast({
-      title : state.status,
-      description : state.message,
-      variant : state.status === 'Success' ? 'default' : 'destructive',
-      className : state.status === 'Success' ? 'dark:bg-green-900 bg-green-600' : ''
-    })
+    toast(state.status, {
+      description: state.message,
+      className:
+        state.status === "Success"
+          ? `dark:bg-green-900 bg-green-600`
+          : undefined,
+    });
   }
-}, [state, message, toast]);
+
   return (
-    <Form
-      action={formAction} className="grid place-content-center"
-    >
-      <input hidden name="problemslug" defaultValue={slug} />
-      <input hidden name="userid" defaultValue={userId} />
+    <Form action={formAction} className="grid place-content-center">
+      <input type="hidden" name="problemslug" defaultValue={slug} />
+      <input type="hidden" name="userid" defaultValue={userId} />
       <Checkbox
         type="submit"
         aria-label="Progress Checkbox"
         className="mx-2"
-        disabled = {isPending}
-        checked={UserProgress ? UserProgress.isCompleted : false}
+        disabled={isPending}
+        defaultChecked={UserProgress?.isCompleted ?? false}
+        name="isCompleted"
       />
     </Form>
   );

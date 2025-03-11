@@ -162,14 +162,14 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
           </Popover>
           <Share/>
         </div>
-        <div className="flex items-center w-full">
+        <div className="flex relative isolate -z-10 items-center w-full">
           <CircleCheck size={20} strokeWidth={1} className="mr-1" />
           <p className="text-xs text-nowrap mr-4">
             {`${solvedProblems}/${totalProblems}`} solved
           </p>
           <Progress value={(solvedProblems / totalProblems) * 100} />
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="flex relative isolate -z-10 justify-end gap-2">
           <Progress
             value={
               (difficultyCount["EASY"].solved /

@@ -12,7 +12,6 @@ import Leetcode from "@/components/icons/Leetcode";
 import Link from "next/link";
 import { Link2Icon } from "lucide-react";
 import UserProblemForm from "./UserProblemForm";
-import { FixedSizeList, ListChildComponentProps } from "react-window";
 
 const HoverProblem = ({
   problems,
@@ -21,11 +20,9 @@ const HoverProblem = ({
   userId?: string;
   problems: Problem[];
 }) => {
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const problem = problems[index];
+  const Row = ({problem}:{problem:Problem}) => {
     return (
       <div
-      style={style}
         className="flex w-full rounded-md items-center border p-2"
         key={problem.slug}
       >
@@ -93,14 +90,9 @@ const HoverProblem = ({
 
   return (
     <div className="flex max-sm:pb-4 pb-4 flex-col mt-4 gap-2">
-      <FixedSizeList
-        height={420}
-        itemSize={55}
-        width="100%"
-        itemCount={problems.length}
-      >
-        {Row}
-      </FixedSizeList>
+      {problems.map((problem,idx) => (
+        <Row problem={problem} key={idx} />
+      ))}
     </div>
   );
 };

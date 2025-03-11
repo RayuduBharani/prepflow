@@ -75,8 +75,8 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
-            </Suspense>
             <Toaster />
+            </Suspense>
           </ThemeDataProvider>
         </ThemeProvider>
       </body>

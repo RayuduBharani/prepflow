@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import {toast} from 'sonner'
 import { SquareChartGantt } from "lucide-react";
 import { analyzeResume, ActionState, ApiResponse } from "@/actions/atsActions";
 import DisplayResults from "./DisplayResults";
@@ -17,7 +17,6 @@ const Upload = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   const handleFileChange = useCallback((file: File | null) => {
     setResume(file);
@@ -32,11 +31,7 @@ const Upload = () => {
       e.preventDefault();
 
       if (!resume || !jobDescription) {
-        toast({
-          title: "Resume or Description Empty",
-          description: "Please upload a resume and enter a job description",
-          variant: "destructive",
-        });
+        toast.warning('Resume or Description Empty', {description : 'Please upload a resume and enter a job description'})
         return;
       }
 
@@ -54,40 +49,24 @@ const Upload = () => {
 
         if (data.error) {
           setError(data.error);
-          toast({
-            title: "Error",
-            description: data.error || "Failed to process request",
-            variant: "destructive",
-          });
+          toast.warning('Error', {description : data.error || 'Failed to process request.'})
         } else if (data.structuredData) {
           console.log(data.structuredData)
           setResult(data.structuredData);
-          toast({
-            title: "Success",
-            description: "ATS analysis completed",
-            variant: "default",
-          });
+          toast('Success', {description : 'ATS analysis completed.'})
         } else {
           setError("No analysis data received");
-          toast({
-            title: "Error",
-            description: "No analysis data received",
-            variant: "destructive",
-          });
+          toast.warning('Error', {description : 'No analysis data received.'})
         }
       } catch (error: any) {
         const errorMessage = error.message || "An unexpected error occurred";
         setError(errorMessage);
-        toast({
-          title: "Error",
-          description: errorMessage,
-          variant: "destructive",
-        });
+        toast.warning('Error', {description : errorMessage})
       } finally {
         setLoading(false);
       }
     },
-    [resume, jobDescription, toast]
+    [resume, jobDescription]
   );
 
   return (
