@@ -1,4 +1,4 @@
-"use client"; // Required for react-window (client-side rendering)
+"use client";
 
 import React from "react";
 import {
@@ -21,12 +21,11 @@ const HoverProblem = ({
   userId?: string;
   problems: Problem[];
 }) => {
-  // Row renderer for each item in the virtualized list
   const Row = ({ index, style }: ListChildComponentProps) => {
     const problem = problems[index];
     return (
       <div
-        style={style} // Required for react-window positioning
+      style={style}
         className="flex w-full rounded-md items-center border p-2"
         key={problem.slug}
       >
@@ -95,10 +94,10 @@ const HoverProblem = ({
   return (
     <div className="flex max-sm:pb-4 pb-4 flex-col mt-4 gap-2">
       <FixedSizeList
-        height={500} // Adjust height based on your needs
-        width="100%" // Full width of the container
-        itemCount={problems.length} // Total number of problems
-        itemSize={60} // Fixed height of each row (adjust based on your design)
+        height={420}
+        itemSize={55}
+        width="100%"
+        itemCount={problems.length}
       >
         {Row}
       </FixedSizeList>
