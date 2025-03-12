@@ -93,7 +93,7 @@ const CompaniesPage = async ({ searchParams }: SearchParams) => {
                   variant="secondary"
                   className="w-full text-xs mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                 >
-                  <Link href={`/companies/${company.slug}`}>Practice Now</Link>
+                  <Link href={`/companies/${company.slug}`} passHref>Practice Now</Link>
                 </Button>
               </div>
             </div>

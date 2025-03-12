@@ -53,14 +53,14 @@ async function CompanyPage({ params }: {
     <Tabs defaultValue="LEETCODE" className={styles.container}>
       <CompaniesBreadcrumb companyName={company} />
       <div className={styles.card}>
-        <div className="w-full flex items-center gap-4">
-          <div className={styles.logo}>
+        <div className="w-full flex items-center gap-4 ">
+          <div className={`${styles.logo} rounded-md dark:bg-foreground`}>
             {imgData?.image && imgData.image !== "None" ? (
               <Image
                 src={imgData.image}
                 alt="Company Logo"
                 fill
-                className="object-contain rounded-md"
+                className="object-contain rounded-md "
               />
             ) : (
               <div className={styles.placeholder}>

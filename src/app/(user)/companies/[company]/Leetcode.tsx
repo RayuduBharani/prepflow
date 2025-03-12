@@ -8,8 +8,8 @@ import React from 'react'
 
 async function LeetcodeQuestions({ company }: { company: string }) {
   const [data, session] = await Promise.all([companyTopics(company), auth()])
-  const progress = session?.user 
-    ? await getCompanyTopicProgress(session.user.id, company, "LEETCODE") 
+  const progress = session?.user
+    ? await getCompanyTopicProgress(session.user.id, company, "LEETCODE")
     : []
 
   if (!data.length) {
@@ -31,20 +31,20 @@ async function LeetcodeQuestions({ company }: { company: string }) {
   return (
     <div className="flex flex-wrap gap-4">
       {data.map((topic, index) => {
-        const topicProgress = progress.filter(p => 
+        const topicProgress = progress.filter(p =>
           topic.problems.some(prob => prob.id === p.problemId)
         ).length
-        const progressPercentage = topic._count.problems 
-          ? (topicProgress / topic._count.problems) * 100 
+        const progressPercentage = topic._count.problems
+          ? (topicProgress / topic._count.problems) * 100
           : 0
 
         return (
-          <div 
-            key={topic.slug} 
-            className={cardStyles.container}
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <Link href={`/companies/${company}/${topic.slug}/LEETCODE`}>
+            
+          <Link key={topic.slug} href={`/companies/${company}/${topic.slug}/LEETCODE`} passHref>
+            <div
+              className={cardStyles.container}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <h2 className={cardStyles.text}>{toTitleCase(topic.slug)}</h2>
@@ -57,8 +57,8 @@ async function LeetcodeQuestions({ company }: { company: string }) {
                   <ChevronsRight className={cardStyles.icon} />
                 </div>
               </div>
-            </Link>
-          </div>
+            </div>
+          </Link>
         )
       })}
     </div>

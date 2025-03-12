@@ -121,7 +121,9 @@ export const getCompanyTopicWiseProblems = cache(
     companySlug: string,
     topicSlug: string,
     platform: Platform,
-    userId?: string
+    offset: number,
+    pageSize: number,
+    userId?: string,
   ) => {
     const results = await prisma.problem.findMany({
       where: {
@@ -141,6 +143,17 @@ export const getCompanyTopicWiseProblems = cache(
         },
         difficulty: true,
         url: true,
+      },
+      take: pageSize,
+      skip: offset, // Use the offset directly for pagination
+      orderBy: { title: 'asc' }, // Add ordering to ensure consistent pagination
+    });
+
+    const total = await prisma.problem.count({
+      where: {
+        companyTags: { some: { slug: companySlug } },
+        topicSlugs: { some: { slug: topicSlug } },
+        platform,
       },
     });
 
@@ -182,7 +195,12 @@ export const getCompanyTopicWiseProblems = cache(
         HARD: { solved: 0, unsolved: 0 },
       }
     );
-
-    return { totalProblems, solvedProblems, problems, difficultyCount };
+    return { 
+      totalProblems: total, 
+      solvedProblems, 
+      problems, 
+      difficultyCount,
+      hasMore: offset + pageSize < total
+    };
   }
 );
