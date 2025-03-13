@@ -19,7 +19,7 @@ declare module "next-auth" {
   }
 }
 
-export const {signIn, signOut, auth, handlers} = NextAuth({
+export const { signIn, signOut, auth, handlers } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
@@ -53,31 +53,34 @@ export const {signIn, signOut, auth, handlers} = NextAuth({
     async session({ session, user }) {
       // Attach `role` and `id` to the session object
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.role = (user as any).role ?? UserRole.USER;
+      session.user.role = (user as any).role ?? UserRole.USER; // No need for type assertion if Prisma schema is correct
       session.user.id = user.id;
       return session;
     },
-    async redirect({ baseUrl }) {
-      return baseUrl; // Default to baseUrl if no valid redirect is provided
+    async redirect({ url, baseUrl }) {
+      // Ensure redirect URL is valid; fallback to baseUrl if not
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
   session: {
     strategy: "database",
-
   },
-  cookies : {
-    sessionToken : {
-      name : "__Secure-authjs.session-token",
-      options : {
-        httpOnly : true,
-        secure : process.env.NODE_ENV === 'production',
-        sameSite : 'lax',
-        path : '/',
-        domain : process.env.NODE_ENV === 'production' ? 'prepflow.vercel.app' : undefined,
-      }
-    }
+  cookies: {
+    sessionToken: {
+      name: "__Secure-authjs.session-token",
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        // Only set domain if you're sure it matches your production domain
+        domain: process.env.NODE_ENV === "production" ? ".prepflow.vercel.app" : undefined,
+      },
+    },
   },
-  secret : process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   pages: {
     signIn: "/signin",
   },
