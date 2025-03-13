@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     title: 'PrepFlow - Find Jobs and Internships'
 }
 
-const JobsPage = async ({ searchParams }: { searchParams: IsearchParams }) => {
+const JobsPage = async ({ searchParams }: { searchParams: Promise<IsearchParams> }) => {
     const searchParam = await searchParams;
     return (
         <Tabs className="w-full h-fit pt-[4rem] sm:px-2" defaultValue="jobs">

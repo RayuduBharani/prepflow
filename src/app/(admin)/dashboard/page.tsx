@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { actions } from "@/lib/utils";
 import { ChevronsRight } from "lucide-react";
 import Link from "next/link";
+import SeedButton from "./SeedButton";
 
 export default function AdminDashboard() {
   return (
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
+      <SeedButton />
     </div>
   );
 }

@@ -4,7 +4,8 @@ import { auth } from "@/auth";
 import type { Metadata } from "next";
 
 export const metadata : Metadata = {
-  title : 'PrepFlow - DSA Sheets'
+  title : 'PrepFlow - DSA Sheets',
+  description : "Explore the Curated DSA Sheets"
 }
 
 

@@ -17,13 +17,6 @@ interface UserProblemFormProps {
   UserProgress: UserProgress;
 }
 
-interface FormState {
-  isCompleted: boolean;
-  status: string;
-  message: string;
-  path: string;
-}
-
 // Utility to determine toast styles
 const getToastClassName = (status: string) =>
   status === "Success"

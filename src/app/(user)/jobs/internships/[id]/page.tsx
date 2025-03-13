@@ -8,7 +8,7 @@ import { getSingleIntern } from '@/actions/job-actions';
 import Image from 'next/image';
 import Share from '@/components/Share';
 
-export default async function InternshipView({ params }: { params: Params }) {
+export default async function InternshipView({ params }: { params: Promise<Params> }) {
   const { id } = await params
   const internshipData = await getSingleIntern(id as string)
   return (

@@ -1,15 +1,13 @@
 'use client'
 import { useFormStatus } from 'react-dom'
 import { Button } from '../ui/button'
-import { toast } from '@/hooks/use-toast'
+import {toast} from 'sonner'
 
 export default function FormButton({ formtype } : {formtype : string}) {
     const status = useFormStatus()
     const handleSubmit = () => {
         if (status.pending == false) {
-            toast({
-                title: "Success! 👍"
-            })
+            toast.success('Success! 👍')
         }
     }
     return (

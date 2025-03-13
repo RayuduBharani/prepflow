@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   title: "PrepFlow - Company Wise Questions",
 };
 
-const CompaniesPage = async ({ searchParams }: SearchParams) => {
-  const { page } = await searchParams;
+const CompaniesPage = async ({searchParams} : {searchParams : SearchParams}) => {
+  const { page } = (await searchParams).searchParams;
   const currentPage = page ? parseInt(page) : 1;
   const getCookie = await cookies();
   const searchValue = getCookie.get("searchValue")?.value;

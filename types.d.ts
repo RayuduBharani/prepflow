@@ -139,12 +139,12 @@ interface Session {
   updatedAt: string;
 }
 
-type SearchParams = {
+type SearchParams = Promise<{
   searchParams: {
     page?: string;
     search?: string;
   };
-};
+}>
 
 interface Topic {
   slug: string
@@ -160,14 +160,6 @@ interface DifficultyLevel {
   value: string;
   color: string;
 }
-
-const difficultyLevels: DifficultyLevel[] = [
-  { label: "School", value: "SCHOOL", color: "green-500" },
-  { label: "Basic", value: "BASIC", color: "green-500" },
-  { label: "Easy", value: "EASY", color: "green-500" },
-  { label: "Medium", value: "MEDIUM", color: "yellow-500" },
-  { label: "Hard", value: "HARD", color: "red-500" },
-];
 
 interface FiltersPanelProps {
   solvedProblems: number;

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link";
 import { Badge } from "../ui/badge";
-import { Calendar, DollarSign, IndianRupee, MapPin } from "lucide-react";
+import { Calendar, IndianRupee, MapPin } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Experience from "./Experience";
 import Jobtype from "./Jobtype";

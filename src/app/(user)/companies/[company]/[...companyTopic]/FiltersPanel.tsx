@@ -173,7 +173,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage]);
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <>

@@ -1,12 +1,16 @@
 "use server";
 import { prisma } from "@/prisma";
-import problems from "../../platform_data";
+import { readFileSync } from "fs";
 import { revalidatePath } from "next/cache";  
 import companiesData from "../../companies";
 import { sheetsData } from "../../sheets";
 import { toSlug } from "@/lib/utils";
+import { join } from "path";
 
 export async function seedData() {
+  const filePath = join(__dirname, 'platform_data.json')
+  const jsonData = readFileSync(filePath, 'utf-8')
+  const problems : IProblem[] = JSON.parse(jsonData)
   if (!problems || problems.length === 0) {
     return { message: "No problems to seed.", processed: 0, total: 0 };
   }
@@ -118,6 +122,72 @@ export async function seedData() {
   return { message: "Database seeded successfully!", processed: processedProblems, total: totalProblems };
 }
 
+
+export async function seedCompaniesImages() {
+  try {
+    // Prepare update operations for each company
+    const updateOperations = companiesData.map((company) =>
+      prisma.problemCompany.update({
+        data: { image: company.image },
+        where: { name: company.name },
+      })
+    );
+    
+    // Execute the update operations in a single transaction
+    await prisma.$transaction(updateOperations);
+    console.log("Companies images updated successfully.");
+  } catch (error) {
+    console.error("Error seeding companies images:", error);
+  } finally {
+    await prisma.$disconnect(); // Disconnect Prisma client
+    revalidatePath("/admin/companies");
+  }
+}
+
+export async function seedDSASheets() {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      // Step 1: Fetch all existing problem slugs from the database
+      const existingProblems = await prisma.problem.findMany({
+        select: { slug: true },
+      });
+      const existingSlugs = new Set(existingProblems.map((problem) => problem.slug));
+      console.log(`Found ${existingSlugs.size} existing problems in the database.`);
+      
+      // Step 2: Seed sheets with categories, filtering out non-existent problems
+      for (const sheetData of sheetsData) {
+        const sheet = await prisma.sheets.create({
+          data: {
+            name: sheetData.name,
+            slug: sheetData.slug,
+            categories: {
+              create: sheetData.categories.map(({ name, problems, slug }) => {
+                // Filter problems to only include those that exist in the database
+                const validProblems = problems.filter((problem) =>
+                  existingSlugs.has(problem.slug)
+              );
+              
+              return {
+                name,
+                slug,
+                problems: {
+                  connect: validProblems.map((problem) => ({ slug: problem.slug })),
+                },
+              };
+            }),
+          },
+        },
+      });
+      console.log(`Sheet and categories added: ${sheet.name}`, sheet);
+    }
+  });
+} catch (err) {
+  console.dir(err, { depth: 3 });
+} finally {
+  await prisma.$disconnect();
+}
+}
+
 export async function dropTables(): Promise<void> {
   console.log(`[${new Date().toISOString()}] Starting drop tables process...`);
 
@@ -171,70 +241,5 @@ export async function dropTables(): Promise<void> {
   } finally {
     await prisma.$disconnect();
     console.log(`[${new Date().toISOString()}] Database connection closed.`);
-  }
-}
-
-export async function seedCompaniesImages() {
-  try {
-    // Prepare update operations for each company
-    const updateOperations = companiesData.map((company) =>
-      prisma.problemCompany.update({
-        data: { image: company.image },
-        where: { name: company.name },
-      })
-    );
-
-    // Execute the update operations in a single transaction
-    await prisma.$transaction(updateOperations);
-    console.log("Companies images updated successfully.");
-  } catch (error) {
-    console.error("Error seeding companies images:", error);
-  } finally {
-    await prisma.$disconnect(); // Disconnect Prisma client
-    revalidatePath("/admin/companies");
-  }
-}
-
-export async function seedDSASheets() {
-  try {
-    await prisma.$transaction(async (prisma) => {
-      // Step 1: Fetch all existing problem slugs from the database
-      const existingProblems = await prisma.problem.findMany({
-        select: { slug: true },
-      });
-      const existingSlugs = new Set(existingProblems.map((problem) => problem.slug));
-      console.log(`Found ${existingSlugs.size} existing problems in the database.`);
-
-      // Step 2: Seed sheets with categories, filtering out non-existent problems
-      for (const sheetData of sheetsData) {
-        const sheet = await prisma.sheets.create({
-          data: {
-            name: sheetData.name,
-            slug: sheetData.slug,
-            categories: {
-              create: sheetData.categories.map(({ name, problems, slug }) => {
-                // Filter problems to only include those that exist in the database
-                const validProblems = problems.filter((problem) =>
-                  existingSlugs.has(problem.slug)
-                );
-
-                return {
-                  name,
-                  slug,
-                  problems: {
-                    connect: validProblems.map((problem) => ({ slug: problem.slug })),
-                  },
-                };
-              }),
-            },
-          },
-        });
-        console.log(`Sheet and categories added: ${sheet.name}`, sheet);
-      }
-    });
-  } catch (err) {
-    console.dir(err, { depth: 3 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

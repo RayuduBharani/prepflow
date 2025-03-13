@@ -8,7 +8,7 @@ import { getSingleJob } from '@/actions/job-actions'
 import Image from 'next/image'
 import Share from '@/components/Share'
 
-export default async function JobView({ params }: { params: Params }) {
+export default async function JobView({ params }: {params : Promise<Params>}) {
   const { jobview } = await params
   const jobData = await getSingleJob(jobview as string)
   return (

@@ -4,18 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "seed": "prisma db seed",
-    "build": "prisma migrate deploy && prisma db seed && next build",
+    "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate && prisma migrate deploy && prisma db push",
     "lint": "next lint"
   },
-  "overrides": {
-    "react-js": "^19.0.0-rc-69d4b800-20241021"
+  "engines": {
+    "node": "20.x"
   },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
-  },
-  "engines": {"node": "22.x"},
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@google/generative-ai": "^0.23.0",

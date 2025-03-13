@@ -162,7 +162,6 @@ export const getCompanyTopicWiseProblems = cache(
       UserProgress: problem.UserProgress[0] || null,
     }));
 
-    const totalProblems = results.length;
 
     const solvedProblems = userId
       ? await prisma.userProgress.count({

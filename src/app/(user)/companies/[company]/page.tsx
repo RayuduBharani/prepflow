@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function CompanyPage({ params }: { 
-  params: { company: string }; 
-  searchParams: { difficulty?: string };
+  params: Promise<{ company: string }>; 
+  searchParams: Promise<{ difficulty?: string }>;
 }) {
   const { company } = await params;
   const [imgData, session] = await Promise.all([
