@@ -135,7 +135,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
           <Popover>
             <PopoverTrigger className="ml-auto" asChild>
 
-              <Button size="sm" variant="outline">
+              <Button size="icon" variant="outline">
                 <Filter />
               </Button>
             </PopoverTrigger>

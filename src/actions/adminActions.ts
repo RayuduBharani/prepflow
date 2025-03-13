@@ -86,15 +86,26 @@ export const updateCompanyImage = async (formData: FormData) => {
 };
 
 export const searchProblems = async (query: string) => {
+  if (!query.trim()) return [];
+
   try {
+    const normalizedQuery = query
+      .toLowerCase()
+      .replace(/-/g, " ") // Convert slugs to normal words
+      .replace(/\s+/g, " ") // Remove extra spaces
+      .trim();
+
     const problems = await prisma.problem.findMany({
       where: {
         OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { slug: { contains: query, mode: "insensitive" } },
+          { title: { contains: normalizedQuery, mode: "insensitive" } },
+          { slug: { contains: query.replace(/\s+/g, "-"), mode: "insensitive" } }, // Handle direct slug matches
         ],
       },
-      take: 50,
+      take: 50, // Limit results for efficiency
+      orderBy: {
+        title: "asc", // Prioritize alphabetical order (or use ranking)
+      },
       select: {
         title: true,
         slug: true,
@@ -102,9 +113,11 @@ export const searchProblems = async (query: string) => {
         platform: true,
       },
     });
+
     return problems;
   } catch (err) {
     console.error("Error searching problems:", err);
+    return [];
   }
 };
 

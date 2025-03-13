@@ -62,6 +62,7 @@
     "react-dom": "18.2",
     "react-dropzone": "^14.3.8",
     "react-multi-select-component": "^4.3.4",
+    "react-share": "^5.2.2",
     "react-window": "^1.8.11",
     "recharts": "^2.15.1",
     "sonner": "^1.7.4",

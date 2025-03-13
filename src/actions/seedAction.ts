@@ -3,7 +3,7 @@ import { prisma } from "@/prisma";
 import problems from "../../platform_data";
 import { revalidatePath } from "next/cache";  
 import companiesData from "../../companies";
-import sheetsData from "../../sheetsData";
+import { sheetsData } from "../../sheets";
 import { toSlug } from "@/lib/utils";
 
 export async function seedData() {
@@ -198,22 +198,39 @@ export async function seedCompaniesImages() {
 export async function seedDSASheets() {
   try {
     await prisma.$transaction(async (prisma) => {
-      const sheet = await prisma.sheets.create({
-        data: {
-          name: sheetsData.name,
-          slug: sheetsData.slug,
-          categories: {
-            create: sheetsData.categories.map(({ name, problems, slug }) => ({
-              name: name,
-              problems: {
-                connect: problems.map((problem) => ({ slug: problem.slug })),
-              },
-              slug: slug,
-            })),
-          },
-        },
+      // Step 1: Fetch all existing problem slugs from the database
+      const existingProblems = await prisma.problem.findMany({
+        select: { slug: true },
       });
-      console.log("Sheet and categories added:", sheet);
+      const existingSlugs = new Set(existingProblems.map((problem) => problem.slug));
+      console.log(`Found ${existingSlugs.size} existing problems in the database.`);
+
+      // Step 2: Seed sheets with categories, filtering out non-existent problems
+      for (const sheetData of sheetsData) {
+        const sheet = await prisma.sheets.create({
+          data: {
+            name: sheetData.name,
+            slug: sheetData.slug,
+            categories: {
+              create: sheetData.categories.map(({ name, problems, slug }) => {
+                // Filter problems to only include those that exist in the database
+                const validProblems = problems.filter((problem) =>
+                  existingSlugs.has(problem.slug)
+                );
+
+                return {
+                  name,
+                  slug,
+                  problems: {
+                    connect: validProblems.map((problem) => ({ slug: problem.slug })),
+                  },
+                };
+              }),
+            },
+          },
+        });
+        console.log(`Sheet and categories added: ${sheet.name}`, sheet);
+      }
     });
   } catch (err) {
     console.dir(err, { depth: 3 });

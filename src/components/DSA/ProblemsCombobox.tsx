@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { cn } from "@/lib/utils";
@@ -45,37 +45,39 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
+  // Fetch problems based on search input
   const { data: options = [], isFetching } = useQuery({
     queryKey: ["problems", debouncedSearch],
-    queryFn: async () => {
-      if (debouncedSearch.length > 2) {
-        return searchProblems(debouncedSearch);
-      }
-      return searchProblems("");
-    },
-    staleTime: 1000 * 60 * 5,
+    queryFn: async () => (debouncedSearch.length > 2 ? searchProblems(debouncedSearch) : []),
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const handleSelect = (item: Option): void => {
-    const isSelected = selectedSlugs.includes(item.slug);
-    const updated = isSelected
-      ? selectedSlugs.filter((slug) => slug !== item.slug)
-      : [...selectedSlugs, item.slug];
-    setSelectedSlugs(updated);
-    onChange?.(updated);
-    if (searchInputRef.current) {
-      searchInputRef.current.focus()
-    }
-  };
+  // Handle selection of problems
+  const handleSelect = useCallback(
+    (item: Option) => {
+      setSelectedSlugs((prev) =>
+        prev.includes(item.slug)
+          ? prev.filter((slug) => slug !== item.slug)
+          : [...prev, item.slug]
+      );
+      onChange?.(selectedSlugs);
+      searchInputRef.current?.focus();
+    },
+    [onChange, selectedSlugs]
+  );
 
-  const handleRemove = (slugToRemove: string): void => {
-    const updated = selectedSlugs.filter((slug) => slug !== slugToRemove);
-    setSelectedSlugs(updated);
-    onChange?.(updated);
-  };
+  // Handle removing selected problems
+  const handleRemove = useCallback(
+    (slugToRemove: string) => {
+      const updated = selectedSlugs.filter((slug) => slug !== slugToRemove);
+      setSelectedSlugs(updated);
+      onChange?.(updated);
+    },
+    [onChange, selectedSlugs]
+  );
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -90,9 +92,9 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
             {selectedSlugs.length === 0 ? (
               <span className="text-muted-foreground">{placeholder}</span>
             ) : (
-              <div className="flex gap-1 flex-nowrap">
+              <div className="flex gap-1 flex-nowrap overflow-auto no-scrollbar">
                 {selectedSlugs.map((slug) => {
-                  const item = options.find((option) => option.slug === slug);
+                  const item = options.find((opt) => opt.slug === slug);
                   return (
                     <Badge
                       key={slug}
@@ -105,14 +107,9 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
                         role="button"
                         tabIndex={0}
                         className="ml-1 cursor-pointer rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
-                        onMouseDown={(e: React.MouseEvent): void => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onClick={(): void =>
-                          handleRemove(slug)
-                        }
-                        onKeyDown={(e: React.KeyboardEvent): void => {
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handleRemove(slug)}
+                        onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             handleRemove(slug);
                           }
@@ -134,35 +131,17 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
           <CommandInput
             placeholder="Search problems..."
             value={searchTerm}
-            ref = {searchInputRef}
+            ref={searchInputRef}
             onValueChange={setSearchTerm}
           />
-          <CommandEmpty>
-            {isFetching ? "Loading..." : "No problems found."}
-          </CommandEmpty>
-          <div
-            className="max-h-[var(--cmd-height)] overflow-y-auto"
-            style={{ "--cmd-height": maxHeight } as React.CSSProperties}
-          >
+          <CommandEmpty>{isFetching ? "Loading..." : "No problems found."}</CommandEmpty>
+          <div className="max-h-[var(--cmd-height)] overflow-y-auto" style={{ "--cmd-height": maxHeight } as React.CSSProperties}>
             <CommandGroup className="max-w-xs">
               {options.map((option) => (
-                <CommandItem
-                  key={option.slug}
-                  value={option.slug}
-                  onSelect={() => handleSelect(option)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedSlugs.includes(option.slug)
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
+                <CommandItem key={option.slug} value={option.slug} onSelect={() => handleSelect(option)}>
+                  <Check className={cn("mr-2 h-4 w-4", selectedSlugs.includes(option.slug) ? "opacity-100" : "opacity-0")} />
                   {option.title}
-                  <div className="ml-auto">
-                    {option.platform === "GFG" ? <GFGIcon /> : <Leetcode />}
-                  </div>
+                  <div className="ml-auto">{option.platform === "GFG" ? <GFGIcon /> : <Leetcode />}</div>
                 </CommandItem>
               ))}
             </CommandGroup>

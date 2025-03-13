@@ -42,7 +42,7 @@ const CarouselCategoryPage = async ({
     notFound();
   }
   return (
-      <div className="pt-[5rem] max-sm:px-3 px-6 max-w-2xl mx-auto w-full">
+      <div className="pt-[5rem] max-sm:px-3 min-h-screen px-6 max-w-2xl mx-auto w-full">
         <LoginAlert userId={userId} />
         <DSABreadCrumb
           carouselCategory={carouselCategory}

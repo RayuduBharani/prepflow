@@ -231,7 +231,7 @@ export const submitUserProblem = async (prevState: { isCompleted?: boolean, path
       path : prevState.path,
       message: updatedIsCompleted
         ? `Yay! You've completed ${problem.title}.`
-        : `You've unmarked ${problem.title} as completed.`,
+        : `You've unmarked ${problem.title}.`,
     };
   } catch (err) {
     console.error(err);
