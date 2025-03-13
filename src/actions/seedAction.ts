@@ -1,16 +1,12 @@
 "use server";
 import { prisma } from "@/prisma";
-import { readFileSync } from "fs";
 import { revalidatePath } from "next/cache";  
 import companiesData from "../../companies";
 import { sheetsData } from "../../sheets";
+import { problems } from "../../platform_data";
 import { toSlug } from "@/lib/utils";
-import { join } from "path";
 
 export async function seedData() {
-  const filePath = join(__dirname, 'platform_data.json')
-  const jsonData = readFileSync(filePath, 'utf-8')
-  const problems : IProblem[] = JSON.parse(jsonData)
   if (!problems || problems.length === 0) {
     return { message: "No problems to seed.", processed: 0, total: 0 };
   }

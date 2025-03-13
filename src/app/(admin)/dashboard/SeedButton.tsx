@@ -11,7 +11,7 @@ const SeedButton = () => {
   const [state, formAction, isPending] = useActionState(allSeed, {message : ''})
   toast(state.message)
   return (
-    <Form action={formAction}>
+    <Form className="mt-2" action={formAction}>
       <Button variant={'outline'} disabled = {isPending} icon={CloudUpload} iconPlacement="left" effect={'expandIcon'} type="submit">Seed</Button>
     </Form>
   )
