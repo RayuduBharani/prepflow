@@ -51,66 +51,6 @@ const Footer: React.FC = () => (
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">Developed and Maintained By</h2>
         <div className="flex flex-col gap-4">
-          <div className="flex justify-between flex-wrap items-center rounded-xl">
-            <h3 className="text-sm font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
-              Cygnuxxs
-            </h3>
-            <div className="flex gap-2">
-              <Link
-                href={"https://linkedin.com/in/cygnuxxs"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className={`transition-all hover:bg-[#0077B5] hover:text-white`}
-                >
-                  <LinkedIn />
-                </Button>
-              </Link>
-              <Link
-                href={"https://github.com/cygnuxxs"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className={`transition-all hover:bg-foreground hover:text-background`}
-                >
-                  <Github />
-                </Button>
-              </Link>
-              <Link
-                href={"mailto:ashok7075657409@gmail.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className={`transition-all`}
-                >
-                  <Mail />
-                </Button>
-              </Link>
-              <Link
-                href={"https://instagram.com/cygnuxxs"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group"
-              >
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className={`transition-all hover:bg-gradient-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
-                >
-                  <Instagram />
-                </Button>
-              </Link>
-            </div>
-          </div>
           <div className="flex gap-4 justify-between flex-wrap items-center rounded-xl">
             <h3 className="text-sm font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
               Rayudu Bharani
@@ -171,11 +111,80 @@ const Footer: React.FC = () => (
               </Link>
             </div>
           </div>
+          <div className="flex justify-between flex-wrap items-center rounded-xl">
+            <h3 className="text-sm font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+              Cygnuxxs
+            </h3>
+            <div className="flex gap-2">
+              <Link
+                href={"https://linkedin.com/in/cygnuxxs"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={`transition-all hover:bg-[#0077B5] hover:text-white`}
+                >
+                  <LinkedIn />
+                </Button>
+              </Link>
+              <Link
+                href={"https://github.com/cygnuxxs"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={`transition-all hover:bg-foreground hover:text-background`}
+                >
+                  <Github />
+                </Button>
+              </Link>
+              <Link
+                href={"mailto:ashok7075657409@gmail.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={`transition-all`}
+                >
+                  <Mail />
+                </Button>
+              </Link>
+              <Link
+                href={"https://instagram.com/cygnuxxs"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group"
+              >
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className={`transition-all hover:bg-gradient-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
+                >
+                  <Instagram />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
     <p className="mt-12 text-center text-xs text-muted-foreground">
       &copy; {new Date().getFullYear()} PrepFlow. All rights reserved.
+    </p>
+    <p className="mt-2 text-center text-xs text-muted-foreground">
+      <Link href={"/privacy-policy"} className="hover:text-primary/60">
+        Privacy Policy
+      </Link>{" "}
+      |{" "}
+      <Link href={"/terms-of-service"} className="hover:text-primary/60">
+        Terms of Service
+      </Link>
     </p>
   </footer>
 );
