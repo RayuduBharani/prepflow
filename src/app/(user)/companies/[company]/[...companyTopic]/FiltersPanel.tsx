@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SheetIcon from "@/components/SheetIcon";
 import { toTitleCase } from "@/lib/utils";
@@ -18,7 +18,9 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import Share from "@/components/Share";
-
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
+import { useInView } from "react-intersection-observer";
 const updateQueryParam = (
   param: string,
   value: string | null,
@@ -101,17 +103,59 @@ const SolvedFilter: React.FC<{
 const FiltersPanel: React.FC<FiltersPanelProps> = ({
   solvedProblems,
   userId,
-  problems,
+  problems: initialProblems,
   totalProblems,
   companyTopic,
   difficultyCount,
+  company,
+  platform,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDifficulty = searchParams.get("difficulty");
   const solvedFilter = searchParams.get("solved") || "all";
 
-  const filteredProblems = problems.filter((problem) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["problems", company, companyTopic, platform, selectedDifficulty, solvedFilter],
+    queryFn: async ({ pageParam = 0 }) => {
+      return getCompanyTopicWiseProblems(
+        company,
+        companyTopic,
+        platform as Platform,
+        pageParam,
+        10,
+        userId
+      );
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const current= allPages.length * 10;
+      return current < lastPage.totalProblems ? current : undefined;
+    },
+    initialData: {
+      pages: [{
+        totalProblems,
+        solvedProblems,
+        problems: initialProblems,
+        difficultyCount,
+        hasMore: initialProblems.length < totalProblems
+      }],
+      pageParams: [0]
+    }
+  });
+
+  const allProblems = React.useMemo(() => {
+    const seenSlugs = new Set<string>();
+    return data?.pages
+      .flatMap(page => page.problems)
+      .filter(problem => {
+        if (seenSlugs.has(problem.slug)) return false;
+        seenSlugs.add(problem.slug);
+        return true;
+      }) ?? [];
+  }, [data?.pages]);
+
+  const filteredProblems = allProblems.filter((problem) => {
     const matchesDifficulty = selectedDifficulty
       ? problem.difficulty === selectedDifficulty
       : true;
@@ -123,6 +167,13 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
           : !problem.UserProgress?.isCompleted;
     return matchesDifficulty && matchesSolvedFilter;
   });
+
+  const { ref, inView } = useInView();
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage]);
 
   return (
     <>
@@ -199,6 +250,15 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
         </div>
       </div>
       <HoverProblem userId={userId} problems={filteredProblems} />
+      {hasNextPage && (
+        <Button 
+          onClick={() => fetchNextPage()} 
+          className="mt-4 w-full"
+          ref={ref}
+        >
+          {isFetchingNextPage ? 'Loading...' : 'Load More'}
+        </Button>
+      )}
     </>
   );
 };

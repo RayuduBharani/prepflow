@@ -20,6 +20,8 @@ const CarouselCategoryPage = async ({
       company,
       companyTopic[0],
       companyTopic[1] as Platform,
+      0,
+      10,
       userId
     );
   // console.log(problems);
@@ -37,6 +39,8 @@ const CarouselCategoryPage = async ({
           userId={userId}
           solvedProblems={solvedProblems}
           totalProblems={totalProblems}
+          company={company}
+          platform={companyTopic[1] as Platform}
         />
     </div>
   );

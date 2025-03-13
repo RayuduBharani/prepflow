@@ -12,7 +12,7 @@ export default async function JobView({ params }: { params: Params }) {
   const { jobview } = await params
   const jobData = await getSingleJob(jobview as string)
   return (
-    <div className='max-w-[50rem] mx-auto h-full pt-[4rem] sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm'>
+    <div className='max-w-[50rem] mx-auto h-fit pt-[4rem] sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm'>
       <div className='w-full h-fit px-4 py-6 motion-preset-fade motion-duration-2000'>
         <div className="space-y-4 mb-6">
           <div className="flex items-start justify-between gap-4">

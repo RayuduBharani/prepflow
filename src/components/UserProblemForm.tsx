@@ -37,7 +37,7 @@ const UserProblemForm: React.FC<UserProblemFormProps> = ({
 }) => {
   const path = usePathname();
   const [isLoading, setIsLoading] = useState(false);
-  const [state, setState] = useState<FormState>({
+  const [state, setState] = useState({
     isCompleted: UserProgress?.isCompleted ?? false,
     status: "",
     message: "",

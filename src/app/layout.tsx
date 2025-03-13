@@ -8,6 +8,7 @@ import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
 import dynamic from "next/dynamic";
+import ReactQuery from "./ReactQuery";
 
 const Footer = dynamic(() => import('@/components/Footer'))
 const poppins = Poppins({
@@ -68,11 +69,11 @@ export const metadata: Metadata = {
       url: "https://www.linkedin.com/in/ashok-atragadda/",
     },
   ],
-  creator : 'R.B.S.S Durga Prasad (Bharani)',
-  publisher : 'Ashok Atragadda (Cygnuxxs)',
-  formatDetection : {
-    address : false,
-    telephone :false,
+  creator: 'R.B.S.S Durga Prasad (Bharani)',
+  publisher: 'Ashok Atragadda (Cygnuxxs)',
+  formatDetection: {
+    address: false,
+    telephone: false,
   },
 
   openGraph: {
@@ -81,7 +82,7 @@ export const metadata: Metadata = {
   },
 };
 export const viewport: Viewport = {
-  colorScheme : 'dark'
+  colorScheme: 'dark'
 };
 
 export default function RootLayout({
@@ -94,22 +95,24 @@ export default function RootLayout({
       <body
         className={`${poppins.className} no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          enableColorScheme
-          disableTransitionOnChange
-        >
-          <ThemeDataProvider>
-            <Suspense fallback={<Loading />}>
-            <Navbar />
-            {children}
-            <Footer />
-            <Toaster />
-            </Suspense>
-          </ThemeDataProvider>
-        </ThemeProvider>
+        <ReactQuery>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            enableColorScheme
+            disableTransitionOnChange
+          >
+            <ThemeDataProvider>
+              <Suspense fallback={<Loading />}>
+                <Navbar />
+                {children}
+                <Footer />
+                <Toaster />
+              </Suspense>
+            </ThemeDataProvider>
+          </ThemeProvider>
+        </ReactQuery>
       </body>
     </html>
   );
