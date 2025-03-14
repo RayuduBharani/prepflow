@@ -1,13 +1,13 @@
 import React, { memo } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import Logo from "@/components/icons/Logo";
 import { navItems } from "@/lib/utils";
 import LinkedIn from "./icons/LinkedIn";
 import Github from "./icons/Github";
 import { Mail } from "lucide-react";
 import Instagram from "./icons/Instagram";
+import RazorpayButton from "./Razorpay";
 
 const Footer: React.FC = () => (
   <footer className="w-full mt-20 border-t px-3 sm:px-6 py-16 bg-background text-foreground">
@@ -20,18 +20,7 @@ const Footer: React.FC = () => (
           Streamline your DSA prep with structured sheets and company-wise
           problems.
         </p>
-        <Link
-          href="https://www.buymeacoffee.com/ashok70756x"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            alt="Buy Me a Coffee"
-            width={180}
-            height={50}
-            src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=ashok70756x&button_colour=FFDD00&font_colour=000000"
-          />
-        </Link>
+        <RazorpayButton />
       </section>
       <nav>
         <h2 className="text-lg font-semibold mb-3">Quick Links</h2>
