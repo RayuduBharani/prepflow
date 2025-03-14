@@ -104,6 +104,7 @@ body {
 
 @keyframes spin {
   0% {
+
     rotate: 0deg;
   }
 
@@ -111,7 +112,6 @@ body {
     rotate: 360deg;
   }
 }
-
 .active {
   stroke: var(--active);
   stroke-linecap: round;
@@ -271,4 +271,15 @@ body {
 .no-scrollbar {
   -ms-overflow-style:   none !important;
   scrollbar-width: 0 !important;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientAnimation 3s ease infinite;
 }
