@@ -1,17 +1,15 @@
-import { GFGcompanyTopics, getCompanyTopicProgress } from "@/actions/company-actions"
-import { auth } from "@/auth"
+import { getCompanyPlatformProblems } from "@/actions/company-actions"
 import { Progress } from "@/components/ui/progress"
 import { toTitleCase } from "@/lib/utils"
 import { ChevronsRight } from "lucide-react"
+import { Session } from "next-auth";
 import Link from "next/link"
 
-export default async function GFGQuestions({ company }: { company: string }) {
-  const data = await GFGcompanyTopics(company)
-  const session = await auth()
-  const progress = session?.user ? await getCompanyTopicProgress(session.user.id, company, "GFG") : null;
+export default async function ProblemsTab({ company, platform, session }: { company: string, platform : Platform, session : Session | null }) {
+  const {result,progress} = await getCompanyPlatformProblems(company, platform, session?.user.id)
   return (
     <div className="flex flex-wrap gap-4">
-      {data.length > 0 ? data.map((topic, index) => {
+      {result.length > 0 ? result.map((topic, index) => {
         const topicProgress = progress?.filter(p =>
           topic.problems.some(prob => prob.id === p.problemId)
         )?.length ?? 0;

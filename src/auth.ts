@@ -65,7 +65,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
     },
   },
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   cookies: {
     sessionToken: {
@@ -76,7 +76,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         sameSite: "lax",
         path: "/",
         // Only set domain if you're sure it matches your production domain
-        domain: process.env.NODE_ENV === "production" ? ".prepflow.vercel.app" : undefined,
+        domain: process.env.NODE_ENV === "production" ? "prepflow.vercel.app" : undefined,
       },
     },
   },

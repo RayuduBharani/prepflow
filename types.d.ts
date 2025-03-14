@@ -3,63 +3,71 @@ declare module "*.svg" {
   import React from "react";
   const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
   export default ReactComponent;
-  
 }
 
-type ThemeColors = "Zinc" | "Slate" | "Neutral" | "Gray" | "Stone" | "Red" | "Rose" | "Orange" | "Green" | "Blue" | "Yellow" | "Violet"
+type ThemeColors =
+  | "Zinc"
+  | "Slate"
+  | "Neutral"
+  | "Gray"
+  | "Stone"
+  | "Red"
+  | "Rose"
+  | "Orange"
+  | "Green"
+  | "Blue"
+  | "Yellow"
+  | "Violet";
 interface ThemeColorStateParams {
-    themeColor : ThemeColors
-    setThemeColor : React.Dispatch<React.SetStateAction<ThemeColors>>
+  themeColor: ThemeColors;
+  setThemeColor: React.Dispatch<React.SetStateAction<ThemeColors>>;
 }
 
 type Difficulty = "EASY" | "MEDIUM" | "HARD" | "BASIC" | "SCHOOL";
 
-
 type Company = {
-  id: number
-  image: string | null
-  name: string
-  
-}
+  id: number;
+  image: string | null;
+  name: string;
+};
 type Platform = "LEETCODE" | "GFG";
 
 type IsearchParams = {
-    workType: string;
-    stipend: string;
-    duration: string;
-    salaryRange: string;
-    jobType: string;
-    experience: string;
-    slugs : string[] | string | undefined;
-}
-
+  workType: string;
+  stipend: string;
+  duration: string;
+  salaryRange: string;
+  jobType: string;
+  experience: string;
+  slugs: string[] | string | undefined;
+};
 
 interface ICarousel {
+  name: string;
+  _count: {
+    [key: string]: number;
+  };
+  categories: {
     name: string;
     _count: {
-      [key: string]: number;
+      problems: number;
+      solved: number;
     };
-    categories: {
-      name: string;
-      _count: {
-        problems: number;
-        solved : number;
-      };
-      problems: {
-        title: string;
-        slug: string;
-        difficulty: string;
-        isCompleted?: boolean;
-        UserProgress?: Array<{ isCompleted: boolean }>;
-      }[];
+    problems: {
+      title: string;
+      slug: string;
+      difficulty: string;
+      isCompleted?: boolean;
+      UserProgress?: Array<{ isCompleted: boolean }>;
     }[];
-  };
+  }[];
+}
 
 interface ISimilarQuestion {
   id?: number;
   slug: string;
   title: string;
-  difficulty: Difficulty;// Updated difficulty levels
+  difficulty: Difficulty; // Updated difficulty levels
 }
 
 interface IProblem {
@@ -69,7 +77,7 @@ interface IProblem {
   isPremium?: boolean;
   dislikes?: number | null;
   likes?: number;
-  difficulty: Difficulty, // Updated difficulty levels
+  difficulty: Difficulty; // Updated difficulty levels
   similarQuestions: ISimilarQuestion[];
   topicTags: string[];
   accepted?: number;
@@ -84,8 +92,8 @@ interface IProblem {
 
 interface Problem {
   UserProgress: {
-      userId: string;
-      isCompleted: boolean;
+    userId: string;
+    isCompleted: boolean;
   };
   title: string;
   slug: string;
@@ -93,7 +101,7 @@ interface Problem {
   url: string;
   platform: $Enums.Platform;
   companyTags: {
-      name: string;
+    name: string;
   }[];
 }
 
@@ -139,21 +147,17 @@ interface Session {
   updatedAt: string;
 }
 
-type SearchParams = Promise<{
-  searchParams: {
-    page?: string;
-    search?: string;
-  };
-}>
+type SearchParams = {
+  page?: string;
+  search?: string;
+};
 
 interface Topic {
-  slug: string
+  slug: string;
   _count: {
-      problems: number
-  }
+    problems: number;
+  };
 }
-
-
 
 interface DifficultyLevel {
   label: string;

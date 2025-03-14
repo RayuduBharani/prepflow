@@ -10,8 +10,7 @@ import type { Metadata } from "next";
 import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
 import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
-import LeetcodeQuestions from "./Leetcode";
-import GFGQuestions from "./GFG";
+import ProblemsTab from "./ProblemsTab";
 
 type Props = {
   params: Promise<{ company: string }>;
@@ -85,10 +84,11 @@ async function CompanyPage({ params }: {
       </div>
 
       <TabsContent className="pb-8" value="LEETCODE">
-        <LeetcodeQuestions company={company} />
+        {/* <LeetcodeQuestions company={company} /> */}
+        <ProblemsTab company={company} platform='LEETCODE' session={session} />
       </TabsContent>
       <TabsContent className="pb-8" value="GFG">
-        <GFGQuestions company={company} />
+      <ProblemsTab company={company} platform='GFG' session={session} />
       </TabsContent>
     </Tabs>
   );

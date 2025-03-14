@@ -37,7 +37,7 @@ export const getCompanies = cache(
   }
 );
 
-export const companyTopics = cache(async (slug: string) => {
+export const getCompanyPlatformProblems = cache(async (slug: string, platform : Platform, userId? : string) => {
   const result = await prisma.problemTopicSlug.findMany({
     where: {
       problems: {
@@ -45,7 +45,7 @@ export const companyTopics = cache(async (slug: string) => {
           companyTags: {
             some: { slug }
           },
-          platform: "LEETCODE",
+          platform,
         },
       },
     },
@@ -53,52 +53,23 @@ export const companyTopics = cache(async (slug: string) => {
       problems: {
         where: {
           companyTags: { some: { slug } },
-          platform: "LEETCODE"
+          platform
         },
         select: { id: true }
       },
       _count: {
         select: {
           problems: {
-            where: { companyTags: { some: { slug } }, platform: "LEETCODE" },
+            where: { companyTags: { some: { slug } }, platform },
           },
         },
       },
     },
   });
-  return result;
-}); // leetcode company topics
-
-export const GFGcompanyTopics = cache(async (slug: string) => {
-  const result = await prisma.problemTopicSlug.findMany({
-    where: {
-      problems: {
-        some: {
-          companyTags: {
-            some: { slug }
-          },
-          platform: "GFG",
-        },
-      },
-    },
-    include: {
-      problems: {
-        where: {
-          companyTags: { some: { slug } },
-          platform: "GFG"
-        },
-        select: { id: true }
-      },
-      _count: {
-        select: {
-          problems: {
-            where: { companyTags: { some: { slug } }, platform: "GFG" },
-          },
-        },
-      },
-    },
-  });
-  return result;
+  const progress = await prisma.userProgress.findMany({
+    where : {userId, problem : {companyTags : {some : {slug, }}, platform}}
+  })
+  return {result, progress};
 }); // gfg company topics
 
 
