@@ -29,7 +29,7 @@ const CarouselCategoryPage = async ({
     notFound();
   }
   return (
-    <div className="pt-[5rem] min-h-screen max-sm:px-3 px-6 mx-auto max-w-[40rem]">
+    <div className="pt-[5rem] min-h-screen max-md:px-3 px-6 mx-auto max-w-[40rem]">
       <LoginAlert userId={userId} />
       <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
         <FiltersPanel
