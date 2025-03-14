@@ -67,19 +67,19 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
   session: {
     strategy: "database",
   },
-  cookies: {
-    sessionToken: {
-      name: "__Secure-authjs.session-token",
-      options: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        // Only set domain if you're sure it matches your production domain
-        domain: process.env.NODE_ENV === "production" ? ".prepflow.vercel.app" : undefined,
-      },
-    },
-  },
+  // cookies: {
+  //   sessionToken: {
+  //     name: "__Secure-authjs.session-token",
+  //     options: {
+  //       httpOnly: true,
+  //       secure: process.env.NODE_ENV === "production",
+  //       sameSite: "lax",
+  //       path: "/",
+  //       // Only set domain if you're sure it matches your production domain
+  //       domain: process.env.NODE_ENV === "production" ? ".prepflow.vercel.app" : undefined,
+  //     },
+  //   },
+  // },
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: "/signin",

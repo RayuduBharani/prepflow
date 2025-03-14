@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "postinstall": "prisma generate && prisma migrate deploy && prisma db push",
+    "postinstall": "prisma generate && prisma migrate deploy && prisma db push && ts-node src/actions/allSeed.ts",
     "lint": "next lint"
   },
   "engines": {
