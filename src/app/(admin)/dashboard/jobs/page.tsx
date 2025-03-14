@@ -11,13 +11,13 @@ const AdminJobs = () => {
         <TabsTrigger value="post-internship">Post Internships</TabsTrigger>
       </TabsList>
       <TabsContent
-        className="h-[calc(100vh-8rem)]"
+        className="h-fit"
         value="post-job"
       >
         <PostJob />
       </TabsContent>
       <TabsContent
-        className=" h-[calc(100vh-8rem)]"
+        className=" h-fit"
         value="post-internship"
       >
         <PostInternship />
