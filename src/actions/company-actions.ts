@@ -81,7 +81,7 @@ export const getCompanyPlatformProblems = cache(
                   some: {
                     companyTags: { some: { slug } },
                     platform,
-                    UserProgress: { some: { userId } },
+                    UserProgress: { some: { userId, isCompleted : true } },
                   },
                 },
               },
@@ -93,7 +93,7 @@ export const getCompanyPlatformProblems = cache(
                       where: {
                         companyTags: { some: { slug } },
                         platform,
-                        UserProgress: { some: { userId } },
+                        UserProgress: { some: { userId, isCompleted : true } },
                       },
                     },
                   },
