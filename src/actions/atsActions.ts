@@ -2,7 +2,7 @@
 
 import PdfParse from "pdf-parse-new";
 import mammoth from "mammoth";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GenerateContentResult, GoogleGenerativeAI } from "@google/generative-ai";
 
 // Validate environment variable
 const apiKey = process.env.GOOGLE_AI_API_KEY;
@@ -40,199 +40,229 @@ export interface ApiResponse {
   suggestions: string[];
 }
 
-// Define the state type for useActionState
-export interface ActionState {
+export type ActionState = {
   error?: string;
   details?: string;
   structuredData?: ApiResponse;
-}
+};
 
 export async function analyzeResume(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
   try {
-    const resume = formData.get("resume") as File | null;
-    const jobDesc = formData.get("jobdesc") as string | null;
+    const resume = formData.get("resume");
+    const jobDesc = formData.get("jobdesc");
 
-    // Validate inputs
-    if (!resume || !jobDesc) {
+    // Early input validation for type and size
+    if (!(resume instanceof File) || typeof jobDesc !== "string") {
       return {
-        error: "Resume and Job Description are required",
+        error: "Invalid input types",
+        details: "Resume must be a file and job description must be a string",
         structuredData: undefined,
       };
     }
 
-    // Basic Job Description Validation
-    const jobKeywords = ["Responsibilities", "Requirements", "Skills", "Qualifications", "Duties"];
-    const isValidJobDesc = jobKeywords.some((word) => jobDesc.includes(word)) && jobDesc.split(" ").length > 30;
-
-    if (!isValidJobDesc) {
+    if (resume.size > 5 * 1024 * 1024) {
+      // 5MB limit
       return {
-        error: "Invalid job description. Please provide a detailed job description.",
+        error: "Resume file is too large",
+        details: "Please upload a file smaller than 5MB",
         structuredData: undefined,
       };
     }
 
-    let resumeText = "";
-    const buffer = Buffer.from(await resume.arrayBuffer());
+    if (!jobDesc.trim() || jobDesc.length > 10000) {
+      // Check for empty or overly long job description
+      return {
+        error: "Invalid job description length",
+        details:
+          "Job description must not be empty and should be less than 10,000 characters",
+        structuredData: undefined,
+      };
+    }
 
-    // Extract text based on file type
+    // Extract resume text
+    let resumeText;
     try {
-      if (resume.type === "application/pdf") {
-        const pdfData = await PdfParse(buffer);
-        resumeText = pdfData.text;
-      } else if (resume.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        const docData = await mammoth.extractRawText({ buffer });
-        resumeText = docData.value;
-      } else {
-        return {
-          error: "Unsupported file format. Please upload PDF or Word document",
-          structuredData: undefined,
-        };
-      }
-    } catch (fileError) {
-      console.error("File processing error:", fileError);
+      resumeText = await extractResumeText(resume);
+    } catch (error) {
       return {
         error: "Error processing resume file",
-        details: (fileError as Error).message,
-        structuredData: undefined,
-      };
-    }
-
-    // Validate resume content
-    const resumeKeywords = ["Work Experience", "Education", "Skills", "Projects", "Certifications", "Summary"];
-    const containsResumeContent = resumeKeywords.some((keyword) => resumeText.includes(keyword));
-
-    if (!containsResumeContent) {
-      return {
-        error: "Uploaded file does not appear to be a resume",
-        details: "No recognizable resume sections found",
+        details: (error as Error).message,
         structuredData: undefined,
       };
     }
 
     // Initialize AI model
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // AI-Powered Job Description Validation
-    const validationPrompt = `Determine whether the following text is a valid job description. If it is, respond with "valid". If it is not, respond with "invalid".\n\n**Job Description:**\n${jobDesc}`;
-    
-    let validationResult;
+    // AI-powered resume validation
+    const resumeValidationPrompt = `
+      Determine whether the following text is a resume. A resume typically includes sections like work experience, education, skills, and contact information. Respond with a JSON object containing a single key "isResume" with a boolean value.
+      **Text:**
+      ${resumeText}
+    `;
+
+    let resumeValidationResult;
     try {
-      validationResult = await model.generateContent([validationPrompt]);
+      resumeValidationResult = await Promise.race<GenerateContentResult>([
+        model.generateContent([resumeValidationPrompt]),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Resume validation timed out")),
+            30000
+          )
+        ), // 30s timeout
+      ]);
+      const resumeValidationResponse = JSON.parse(
+        resumeValidationResult.response.text().trim().replace(/^```json/, "")
+        .replace(/```$/, "")
+      );
+      if (!resumeValidationResponse.isResume) {
+        return {
+          error: "Uploaded file does not appear to be a resume",
+          structuredData: undefined,
+        };
+      }
     } catch (aiError) {
-      console.log(aiError)
+      console.error("Resume validation failed:", (aiError as Error).message);
       return {
-        error: "AI validation failed",
+        error: "Resume validation failed",
         details: (aiError as Error).message,
         structuredData: undefined,
       };
     }
 
-    const validationResponse = validationResult.response.text().trim();
-    if (validationResponse.toLowerCase() !== "valid") {
+    // AI-powered job description validation
+    const jobDescValidationPrompt = `
+      Determine whether the following text is a valid job description. A job description typically includes details about job responsibilities, requirements, and qualifications. Respond with a JSON object containing a single key "isValid" with a boolean value.
+      **Job Description:**
+      ${jobDesc}
+    `;
+
+    let jobDescValidationResult;
+    try {
+      jobDescValidationResult = await Promise.race<GenerateContentResult>([
+        model.generateContent([jobDescValidationPrompt]),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Job description validation timed out")),
+            30000
+          )
+        ), // 30s timeout
+      ]);
+      const jobDescValidationResponse = JSON.parse(
+        jobDescValidationResult.response.text().trim().replace(/^```json/, "")
+        .replace(/```$/, "")
+      );
+      if (!jobDescValidationResponse.isValid) {
+        return {
+          error: "Invalid job description detected by AI",
+          structuredData: undefined,
+        };
+      }
+    } catch (aiError) {
+      console.error(
+        "Job description validation failed:",
+        (aiError as Error).message
+      );
       return {
-        error: "Invalid job description detected by AI",
+        error: "Job description validation failed",
+        details: (aiError as Error).message,
         structuredData: undefined,
       };
     }
 
     // ATS Analysis
     const atsPrompt = `
-    Analyze the provided resume against the job description for ATS compliance, relevance, and effectiveness. Provide a structured JSON response for visualization.
-    
-    **Evaluation Criteria:**
-    
-    1.  **ATS Score (0-100):**
-        * **Relevance (0-40):** Match between resume content and job requirements.
-        * **Keyword Match (0-30):** Presence of key job-related keywords.
-        * **Formatting/Readability (0-20):** Clear structure, bullet points, headings.
-        * **Contact Completeness (0-10):** Valid email, LinkedIn, GitHub, etc. (10 if all are present).
-    
-    2.  **Missing Sections:**
-        * **Critical:** Work Experience, Education, Skills, Contact Info, Projects.
-        * **Recommended:** Certifications, Achievements, Summary, Technical Stack.
-    
-    3.  **Missing Skills:**
-        * **Must-Have:** Essential skills from the job description.
-        * **Nice-to-Have:** Preferred but optional skills.
-    
-    4.  **Missing Achievements:**
-        * Identify and suggest quantifiable achievements for Work Experience and Projects.
-    
-    5.  **Contact Information Validation:**
-        * Extract and validate email, LinkedIn, GitHub, and portfolio links.
-        * Recommend adding missing links.
-    
-    6.  **AI-Powered Suggestions:**
-        * Provide detailed feedback in Markdown format for resume improvement.
-        * Include specific action points (e.g., "Add bullet points to Experience section").
-    
-    ---
-    **Resume:**
-    ${resumeText}
-    
-    **Job Description:**
-    ${jobDesc}
-    
-    ---
-    **JSON Response Format:**
-    
-    \`\`\`json
-    {
-      "ats_score": {
-        "total": 0,
-        "breakdown": {
-          "relevance": 0,
-          "keyword_match": 0,
-          "formatting": 0,
-          "contact_completeness": 0
-        }
-      },
-      "missing_sections": {
-        "critical": [],
-        "recommended": []
-      },
-      "missing_skills": {
-        "must_have": [],
-        "nice_to_have": []
-      },
-      "missing_achievements": [],
-      "contact_info": {
-        "email": null,
-        "linkedin": null,
-        "github": null,
-        "portfolio": null
-      },
-      "suggestions": []
-    }
-    \`\`\`
+      Analyze the provided resume against the job description for ATS compliance, relevance, and effectiveness. Provide a structured JSON response for visualization.
+      
+      **Evaluation Criteria:**
+      1. ATS Score (0-100): Relevance (0-40), Keyword Match (0-30), Formatting/Readability (0-20), Contact Completeness (0-10).
+      2. Missing Sections: Critical (e.g., Work Experience), Recommended (e.g., Certifications).
+      3. Missing Skills: Must-Have and Nice-to-Have from the job description.
+      4. Missing Achievements: Suggest quantifiable achievements.
+      5. Contact Information Validation: Extract and validate email, LinkedIn, etc.
+      6. AI-Powered Suggestions: Detailed feedback in Markdown.
+
+      **Resume:**
+      ${resumeText}
+      
+      **Job Description:**
+      ${jobDesc}
+      
+      **JSON Response Format:**
+      {
+        "ats_score": { "total": 0, "breakdown": { "relevance": 0, "keyword_match": 0, "formatting": 0, "contact_completeness": 0 } },
+        "missing_sections": { "critical": [], "recommended": [] },
+        "missing_skills": { "must_have": [], "nice_to_have": [] },
+        "missing_achievements": [],
+        "contact_info": { "email": null, "linkedin": null, "github": null, "portfolio": null },
+        "suggestions": []
+      }
     `;
 
-    let result;
+    let atsResult;
     try {
-      result = await model.generateContent([atsPrompt]);
+      atsResult = await Promise.race<GenerateContentResult>([
+        model.generateContent([atsPrompt]),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("ATS analysis timed out")), 60000)
+        ), // 60s timeout
+      ]);
     } catch (aiError) {
+      console.error("ATS analysis failed:", (aiError as Error).message);
       return {
-        error: "AI analysis failed",
+        error: "ATS analysis failed",
         details: (aiError as Error).message,
         structuredData: undefined,
       };
     }
 
-    const analysis = result.response.text().replace(/^```json/, "").replace(/```$/, "").trim();
+    const analysis = atsResult.response
+      .text()
+      .replace(/^```json/, "")
+      .replace(/```$/, "")
+      .trim();
     try {
       const parsedAnalysis: ApiResponse = JSON.parse(analysis);
       return { structuredData: parsedAnalysis };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (parseError) {
+      console.error(
+        "Failed to parse ATS analysis response:",
+        (parseError as Error).message
+      );
       return {
-        error: "Failed to parse AI response",
+        error: "Failed to parse ATS analysis response",
         details: `Raw response: ${analysis}`,
+        structuredData: undefined,
       };
     }
   } catch (error) {
-    return { error: "Processing error", details: (error as Error).message };
+    console.error("Unexpected error:", (error as Error).message);
+    return {
+      error: "An unexpected error occurred",
+      details: (error as Error).message,
+      structuredData: undefined,
+    };
+  }
+}
+
+async function extractResumeText(resume: File): Promise<string> {
+  const buffer = Buffer.from(await resume.arrayBuffer());
+  if (resume.type === "application/pdf") {
+    const pdfData = await PdfParse(buffer);
+    return pdfData.text;
+  } else if (
+    resume.type ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    const docData = await mammoth.extractRawText({ buffer });
+    return docData.value;
+  } else {
+    throw new Error(
+      "Unsupported file format. Please upload PDF or Word document"
+    );
   }
 }

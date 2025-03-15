@@ -92,4 +92,4 @@ const UserProblemForm: React.FC<UserProblemFormProps> = ({
   );
 };
 
-export default UserProblemForm;
+export default React.memo(UserProblemForm);

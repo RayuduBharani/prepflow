@@ -9,7 +9,6 @@ import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
 import dynamic from "next/dynamic";
-import ReactQuery from "./ReactQuery";
 
 const Footer = dynamic(() => import('@/components/Footer'))
 const poppins = Poppins({
@@ -97,7 +96,6 @@ export default function RootLayout({
       <body
         className={`${poppins.className} no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
-        <ReactQuery>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -114,7 +112,6 @@ export default function RootLayout({
               </Suspense>
             </ThemeDataProvider>
           </ThemeProvider>
-        </ReactQuery>
         <Analytics />
       </body>
     </html>

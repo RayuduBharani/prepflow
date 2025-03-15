@@ -81,7 +81,7 @@ const Upload = () => {
           <Textarea
             name="jobdesc"
             id="jobdesc"
-            rows={10}
+            rows = {25}
             className="w-full text-sm"
             value={jobDescription}
             onChange={handleTextareaChange}
@@ -93,8 +93,8 @@ const Upload = () => {
           type="submit"
           className="w-fit text-xs self-end"
           icon={SquareChartGantt}
-          iconPlacement="left"
-          effect="hoverUnderline"
+          iconPlacement="right"
+          effect="expandIcon"
           size="sm"
           variant="secondary"
           disabled={loading}

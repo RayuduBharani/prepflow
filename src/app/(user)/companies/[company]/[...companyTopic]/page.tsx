@@ -20,8 +20,6 @@ const CarouselCategoryPage = async ({
       company,
       companyTopic[0],
       companyTopic[1] as Platform,
-      0,
-      10,
       userId
     );
   // console.log(problems);

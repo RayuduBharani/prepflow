@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
-import React, { useEffect } from "react";
+'use client'
+import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SheetIcon from "@/components/SheetIcon";
 import { toTitleCase } from "@/lib/utils";
@@ -18,9 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import Share from "@/components/Share";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
-import { useInView } from "react-intersection-observer";
+
 const updateQueryParam = (
   param: string,
   value: string | null,
@@ -32,7 +29,7 @@ const updateQueryParam = (
   router.replace(`?${params.toString()}`, { scroll: false });
 };
 
- const difficultyLevels = [
+const difficultyLevels = [
   { label: "Easy", value: "EASY", color: "green" },
   { label: "Medium", value: "MEDIUM", color: "yellow" },
   { label: "Hard", value: "HARD", color: "red" },
@@ -103,59 +100,18 @@ const SolvedFilter: React.FC<{
 const FiltersPanel: React.FC<FiltersPanelProps> = ({
   solvedProblems,
   userId,
-  problems: initialProblems,
+  problems,
   totalProblems,
   companyTopic,
   difficultyCount,
-  company,
-  platform,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDifficulty = searchParams.get("difficulty");
   const solvedFilter = searchParams.get("solved") || "all";
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["problems", company, companyTopic, platform, selectedDifficulty, solvedFilter],
-    queryFn: async ({ pageParam = 0 }) => {
-      return getCompanyTopicWiseProblems(
-        company,
-        companyTopic,
-        platform as Platform,
-        pageParam,
-        10,
-        userId
-      );
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      const current= allPages.length * 10;
-      return current < lastPage.totalProblems ? current : undefined;
-    },
-    initialData: {
-      pages: [{
-        totalProblems,
-        solvedProblems,
-        problems: initialProblems,
-        difficultyCount,
-        hasMore: initialProblems.length < totalProblems
-      }],
-      pageParams: [0]
-    }
-  });
 
-  const allProblems = React.useMemo(() => {
-    const seenSlugs = new Set<string>();
-    return data?.pages
-      .flatMap(page => page.problems)
-      .filter(problem => {
-        if (seenSlugs.has(problem.slug)) return false;
-        seenSlugs.add(problem.slug);
-        return true;
-      }) ?? [];
-  }, [data?.pages]);
-
-  const filteredProblems = allProblems.filter((problem) => {
+  const filteredProblems = problems.filter((problem) => {
     const matchesDifficulty = selectedDifficulty
       ? problem.difficulty === selectedDifficulty
       : true;
@@ -168,13 +124,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     return matchesDifficulty && matchesSolvedFilter;
   });
 
-  const { ref, inView } = useInView();
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
   return (
     <>
       <div className="border flex flex-col gap-2 mt-2 rounded-md p-4">
@@ -185,7 +134,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
           </h1>
           <Popover>
             <PopoverTrigger className="ml-auto" asChild>
-
               <Button size="icon" variant="outline">
                 <Filter />
               </Button>
@@ -211,7 +159,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
               />
             </PopoverContent>
           </Popover>
-          <Share/>
+          <Share />
         </div>
         <div className="flex relative isolate -z-10 items-center w-full">
           <CircleCheck size={20} strokeWidth={1} className="mr-1" />
@@ -236,7 +184,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
               100
             }
             className="bg-yellow-500/20 max-w-[5rem] [&>div]:bg-yellow-500"
-
           />
           <Progress
             value={
@@ -245,20 +192,10 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
               100
             }
             className="bg-red-500/20 max-w-[5rem] [&>div]:bg-red-500"
-
           />
         </div>
       </div>
       <HoverProblem userId={userId} problems={filteredProblems} />
-      {hasNextPage && (
-        <Button 
-          onClick={() => fetchNextPage()} 
-          className="mt-4 w-full"
-          ref={ref}
-        >
-          {isFetchingNextPage ? 'Loading...' : 'Load More'}
-        </Button>
-      )}
     </>
   );
 };
