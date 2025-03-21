@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { submitUserProblem } from "@/actions/actions";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,18 +7,17 @@ import { toast } from "sonner";
 
 // Define types
 interface UserProgress {
-  isCompleted?: boolean;
-  userId?: string;
+  isCompleted: boolean;
 }
 
 interface UserProblemFormProps {
   slug: string;
   userId: string;
-  UserProgress: UserProgress;
+  UserProgress?: UserProgress;
 }
 
-// Utility to determine toast styles
-const getToastClassName = (status: string) =>
+// Utility function for toast styles
+const getToastClassName = (status: "Success" | "Error"): string =>
   status === "Success"
     ? "dark:bg-green-900 bg-green-600"
     : "dark:bg-red-900 bg-red-600";
@@ -28,41 +27,47 @@ const UserProblemForm: React.FC<UserProblemFormProps> = ({
   userId,
   UserProgress,
 }) => {
-  const path = usePathname();
+  const pathRef = useRef(usePathname());
   const [isLoading, setIsLoading] = useState(false);
-  const [state, setState] = useState({
-    isCompleted: UserProgress?.isCompleted ?? false,
-    status: "",
-    message: "",
-    path,
-  });
+  const [isCompleted, setIsCompleted] = useState(
+    UserProgress?.isCompleted ?? false
+  );
+  const [isDisabled, setIsDisabled] = useState(false);
 
-  // Memoize toast notification logic
-  const showToast = useCallback((status: string, message: string) => {
+  // Memoize toast notification
+  const showToast = useCallback((status: "Success" | "Error", message: string) => {
     toast(status, {
       description: message,
       className: getToastClassName(status),
     });
   }, []);
 
-  // Optimize useEffect
-  useEffect(() => {
-    if (state.status && state.message) {
-      showToast(state.status, state.message);
-    }
-  }, [state.status, state.message, showToast]);
-
-  // Memoize handleSubmit
+  // Memoize form submission logic
   const handleSubmit = useCallback(
-    async (formData: FormData) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (isLoading || isDisabled) return;
+
       setIsLoading(true);
+      setIsDisabled(true);
+
       try {
-        const result = await submitUserProblem(state, formData);
-        setState((prev) => ({
-          ...prev,
-          ...result,
-          isCompleted: result.isCompleted ?? false,
-        }));
+        const formData = new FormData();
+        formData.append("problemslug", slug);
+        formData.append("userid", userId);
+        formData.append("isCompleted", String(isCompleted));
+
+        const result = await submitUserProblem(
+          { isCompleted, path: pathRef.current },
+          formData
+        );
+
+        if (result.status === "Success") {
+          setIsCompleted(result.isCompleted ?? isCompleted);
+          showToast("Success", result.message);
+        } else {
+          showToast("Error", result.message);
+        }
       } catch (error) {
         console.error("Submission error:", error);
         showToast("Error", "Something went wrong");
@@ -70,22 +75,34 @@ const UserProblemForm: React.FC<UserProblemFormProps> = ({
         setIsLoading(false);
       }
     },
-    [state, showToast]
+    [isCompleted, isLoading, isDisabled, slug, userId, showToast]
   );
 
+  // Cooldown effect
+  useEffect(() => {
+    if (isDisabled) {
+      const timer = setTimeout(() => setIsDisabled(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDisabled]);
+
   return (
-    <form action={handleSubmit} className="grid place-content-center">
+    <form onSubmit={handleSubmit} className="grid place-content-center">
       <input type="hidden" name="problemslug" value={slug} />
       <input type="hidden" name="userid" value={userId} />
       <Checkbox
-        type="submit"
         aria-label="Progress Checkbox"
         className="mx-2"
-        disabled={isLoading}
-        checked={state.isCompleted}
-        onCheckedChange={(checked) =>
-          setState((prev) => ({ ...prev, isCompleted: !!checked }))
-        }
+        disabled={isLoading || isDisabled}
+        checked={isCompleted}
+        onCheckedChange={(checked: boolean) => {
+          setIsCompleted(checked);
+          // Trigger form submission on change
+          const form = document.querySelector(
+            `form:has([name="problemslug"][value="${slug}"])`
+          ) as HTMLFormElement;
+          if (form) form.requestSubmit();
+        }}
         name="isCompleted"
       />
     </form>

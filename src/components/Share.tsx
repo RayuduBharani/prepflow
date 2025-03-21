@@ -26,7 +26,8 @@ export default function Share() {
   const openLink = (url: string) => window.open(url, "_blank");
 
   const handleWhatsAppShare = () => {
-    openLink(`https://wa.me/?text=${encodeURIComponent(`Check this out! ${currentUrl}`)}`);
+    openLink(`https://wa.me/?text=${encodeURIComponent(`Check this out!
+       ${currentUrl}`)}`);
   };
 
   const handleGmailShare = () => {

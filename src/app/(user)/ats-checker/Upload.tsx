@@ -5,33 +5,47 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {toast} from 'sonner'
+import { toast } from "sonner";
 import { SquareChartGantt } from "lucide-react";
 import { analyzeResume, ActionState, ApiResponse } from "@/actions/atsActions";
 import DisplayResults from "./DisplayResults";
-
+import { Switch } from "@/components/ui/switch";
 
 const Upload = () => {
   const [resume, setResume] = useState<File | null>(null);
-  const [jobDescription, setJobDescription] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [jobDescription, setJobDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isJobDescOptional, setIsJobDescOptional] = useState(true);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = useCallback((file: File | null) => {
     setResume(file);
+    if (file) setError(null);
   }, []);
 
-  const handleTextareaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setJobDescription(e.target.value);
+  const handleTextareaChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setJobDescription(e.target.value);
+      if (e.target.value) setError(null);
+    },
+    []
+  );
+
+  const toggleJobDescOptional = useCallback(() => {
+    setIsJobDescOptional((prev) => {
+      if (!prev) setJobDescription("");
+      return !prev;
+    });
   }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-
-      if (!resume || !jobDescription) {
-        toast.warning('Resume or Description Empty', {description : 'Please upload a resume and enter a job description'})
+      if (!resume) {
+        toast.warning("Resume Missing", {
+          description: "Please upload a resume.",
+        });
         return;
       }
 
@@ -44,24 +58,29 @@ const Upload = () => {
       formData.append("jobdesc", jobDescription);
 
       try {
-        const initialState: ActionState = { error: undefined, details: undefined, structuredData: undefined };
+        const initialState: ActionState = {
+          error: undefined,
+          details: undefined,
+          structuredData: undefined,
+        };
         const data: ActionState = await analyzeResume(initialState, formData);
 
         if (data.error) {
           setError(data.error);
-          toast.warning('Error', {description : data.error || 'Failed to process request.'})
+          toast.warning("Error", {
+            description: data.error || "Failed to process request.",
+          });
         } else if (data.structuredData) {
-          console.log(data.structuredData)
           setResult(data.structuredData);
-          toast('Success', {description : 'ATS analysis completed.'})
+          toast.success("Success", { description: "ATS analysis completed." });
         } else {
           setError("No analysis data received");
-          toast.warning('Error', {description : 'No analysis data received.'})
+          toast.warning("Error", { description: "No analysis data received." });
         }
       } catch (error: any) {
-        const errorMessage = error.message || "An unexpected error occurred";
+        const errorMessage = error.message || "Unexpected error occurred";
         setError(errorMessage);
-        toast.warning('Error', {description : errorMessage})
+        toast.warning("Error", { description: errorMessage });
       } finally {
         setLoading(false);
       }
@@ -70,48 +89,89 @@ const Upload = () => {
   );
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-8 pb-16">
-      <form className="flex flex-col gap-4 w-full max-w-xl" onSubmit={handleSubmit}>
-        <div className="space-y-2">
+    <div className="flex flex-col items-center gap-6 pt-8 pb-16 px-4 min-h-screen">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-6 w-full max-w-xl animate-fade-in"
+      >
+        {/* File Upload Section */}
+        <div className="space-y-3 animate-slide-up">
+          <Label htmlFor="file-upload" className="text-base font-bold">
+            Upload Resume
+          </Label>
           <FileUpload onChange={handleFileChange} />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label className="text-base text-transparent w-fit bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500 font-bold" htmlFor="jobdesc">Job Description</Label>
-          <Textarea
-            name="jobdesc"
-            id="jobdesc"
-            rows = {25}
-            className="w-full text-sm"
-            value={jobDescription}
-            onChange={handleTextareaChange}
-            placeholder="Paste the job description here..."
-          />
+        {/* Job Description Section */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between animate-slide-up">
+            <Label
+              htmlFor="jobdesc"
+              className="text-base font-bold animate-fade-up text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500"
+            >
+              Job Description {' '}
+              {isJobDescOptional && "(Optional)"}
+            </Label>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">
+                {isJobDescOptional ? "Enable" : "Disable"}
+              </span>
+              <Switch
+                id="jobdesc-switch"
+                checked={!isJobDescOptional}
+                onCheckedChange={toggleJobDescOptional}
+                className="transition-transform duration-200 ease-in-out"
+              />
+            </div>
+          </div>
+          {!isJobDescOptional && (
+            <Textarea
+              name="jobdesc"
+              id="jobdesc"
+              rows={10}
+              disabled={isJobDescOptional}
+              className="w-full text-sm rounded-md animate-fade-up"
+              value={jobDescription}
+              onChange={handleTextareaChange}
+              placeholder="Paste the job description here..."
+            />
+          )}
         </div>
 
+        {/* Submit Button */}
         <Button
           type="submit"
+          variant={"secondary"}
           className="w-fit text-xs self-end"
           icon={SquareChartGantt}
           iconPlacement="right"
-          effect="expandIcon"
+          effect={"expandIcon"}
           size="sm"
-          variant="secondary"
           disabled={loading}
         >
-          {loading ? "Processing..." : "Get Results"}
+          {loading ? (
+            <span className="flex items-center gap-2 animate-pulse">
+              Processing...
+            </span>
+          ) : (
+            "Get Results"
+          )}
         </Button>
       </form>
 
-      {/* Display Errors */}
+      {/* Error Display */}
       {error && (
-        <div className="w-full max-w-xl rounded-md bg-destructive p-4 text-destructive-foreground">
+        <div className="w-full max-w-xl rounded-md bg-red-50 p-4 text-red-800 border border-red-200 animate-shake">
           <p className="font-medium">{error}</p>
         </div>
       )}
 
-      {/* Display Results */}
-      {result && <DisplayResults result={result}  />}
+      {/* Results Display */}
+      {result && (
+        <div className="w-full max-w-xl animate-fade-in-up">
+          <DisplayResults result={result} />
+        </div>
+      )}
     </div>
   );
 };
