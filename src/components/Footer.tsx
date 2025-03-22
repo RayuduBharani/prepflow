@@ -46,7 +46,7 @@ const Footer: React.FC = () => (
             </h3>
             <div className="flex gap-2">
               <Link
-                href={"https://linkedin.com/in/rayudu-bharani"}
+                href={"https://www.linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad/"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
