@@ -167,7 +167,7 @@ export async function analyzeResume(
     
     2. **Missing Sections**: List absent sections:
        - **Critical**: Work Experience, Education, Skills.
-       - **Recommended**: Certifications, Projects, Volunteer Work.
+       - **Recommended**: Certifications (optional), Projects, Volunteer Work (like projects).
     
     ${jobDesc ? `3. **Missing Skills**: Compare with job description:
        - **Must-Have**: Essential skills required.
@@ -178,7 +178,7 @@ export async function analyzeResume(
     5. **Contact Information**: Extract and validate:
        - Email, LinkedIn, GitHub, Portfolio, Phone (if present).
     
-    6. **Suggestions**: List up to 5 key actionable tips to improve ATS score. If the resume is near-perfect, suggest minor enhancements or say "Resume is highly optimized."
+    6. **Suggestions**: List up to 5 key actionable tips (like grammar, change sentences,  ) to improve ATS score. If the resume is near-perfect, suggest minor enhancements or say "Resume is highly optimized."
     
     **Input:**
     - Resume: [${resumeText}]
