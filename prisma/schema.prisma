@@ -3,9 +3,9 @@ datasource db {
   // url       = env("RDS_URL")
   // url      = env("DATABASE_URL")
   // directUrl = env("DIRECT_URL")
-  url = env("LOCAL_URI")
-  // url = env("SUPA_URL")
-  // directUrl = env("SUPA_DIRECT")
+  // url = env("LOCAL_URI")
+  url = env("SUPA_URL")
+  directUrl = env("SUPA_DIRECT")
 }
 
 generator client {
