@@ -22,6 +22,7 @@ interface FiltersPanelProps {
   userId: string | undefined;
   totalProblems: number;
   companyTopic: string;
+  problems : Problem[];
   difficultyCount: Record<string, { solved: number; unsolved: number }>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialProblems: any[];

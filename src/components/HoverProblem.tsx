@@ -10,6 +10,9 @@ import Leetcode from "@/components/icons/Leetcode";
 import Link from "next/link";
 import { Link2Icon } from "lucide-react";
 import UserProblemForm from "./UserProblemForm";
+import { toTitleCase } from "@/lib/utils";
+import { Separator } from "./ui/separator";
+
 
 interface HoverProblemProps {
   userId?: string;
@@ -31,8 +34,8 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 
 const ProblemRow = React.memo(({ problem, userId }: ProblemRowProps) => {
   const platformIcon = problem.platform === "GFG" ? <GFGIcon /> : <Leetcode />;
-  const difficultyColor = DIFFICULTY_COLORS[problem.difficulty] || DIFFICULTY_COLORS.DEFAULT;
-
+  const difficultyColor =
+    DIFFICULTY_COLORS[problem.difficulty] || DIFFICULTY_COLORS.DEFAULT;
   return (
     <div className="flex w-full items-center rounded-md border p-2">
       {userId && (
@@ -53,31 +56,39 @@ const ProblemRow = React.memo(({ problem, userId }: ProblemRowProps) => {
             </Button>
           </Link>
         </HoverCardTrigger>
-        <HoverCardContent className="w-80 flex gap-2">
-          <div className="flex max-w-xs flex-col gap-2">{platformIcon}</div>
-          <div className="flex flex-wrap gap-2">
-            {problem.companyTags.slice(0, 4).map((company, idx) => (
-              <p
-                key={company.name + idx}
-                className="flex-1 rounded-sm border bg-secondary px-1 text-xs"
-              >
-                {company.name}
-              </p>
-            ))}
-            {problem.companyTags.length > 4 && (
-              <p className="rounded-sm border bg-secondary px-1 text-xs">
-                +{problem.companyTags.length - 4} more
-              </p>
-            )}
+        <HoverCardContent className="w-80 backdrop-blur-md border-primary/10 bg-transparent flex flex-col gap-2">
+          <div className="flex gap-2">
+            <div className="flex max-w-xs flex-col gap-2">{platformIcon}</div>
+            <div className="flex flex-wrap gap-2">
+              {problem.companyTags.slice(0, 4).map((company, idx) => (
+                <p
+                  key={company.name + idx}
+                  className="flex-1 rounded-sm border bg-secondary px-1 text-xs"
+                >
+                  {company.name}
+                </p>
+              ))}
+              {problem.companyTags.length > 4 && (
+                <p className="rounded-sm border bg-secondary px-1 text-xs">
+                  +{problem.companyTags.length - 4} more
+                </p>
+              )}
+            </div>
+            <Link
+              href={problem.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary"
+            >
+              <Link2Icon strokeWidth={2} size={20} /> Link
+            </Link>
           </div>
-          <Link
-            href={problem.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-primary"
-          >
-            <Link2Icon strokeWidth={2} size={20} /> Link
-          </Link>
+          <Separator />
+          <div className="flex flex-wrap gap-2">
+            {problem.topicSlugs.map(({slug}, idx) => (
+            <p key={idx} className="text-xs bg-muted text-foreground px-2 rounded-md">{toTitleCase(slug)}</p>
+            ))}
+          </div>
         </HoverCardContent>
       </HoverCard>
       <p className={`${difficultyColor} ml-auto text-[0.675rem] font-medium`}>
@@ -87,7 +98,7 @@ const ProblemRow = React.memo(({ problem, userId }: ProblemRowProps) => {
   );
 });
 
-ProblemRow.displayName = 'ProblemRow'
+ProblemRow.displayName = "ProblemRow";
 
 const HoverProblem: React.FC<HoverProblemProps> = ({ problems, userId }) => (
   <div className="mt-4 flex flex-col gap-2 pb-4 max-sm:pb-4">

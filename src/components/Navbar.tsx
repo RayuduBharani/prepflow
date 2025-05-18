@@ -14,9 +14,8 @@ import { ThemeColorToggle } from "./theme-color-toggler";
 
 const Navbar = async () => {
   const session = await auth();
-  return (
-    <div className="py-4 fixed z-10 w-screen justify-center bg-background px-6 max-md:px-3">
-      <NavigationMenu className="gap-2 mx-auto max-w-screen-2xl bg-background text-sm font-medium">
+  return (  
+      <NavigationMenu className="gap-2 fixed mx-auto w-screen p-4 backdrop-blur-md text-sm font-medium">
       <NavigationMenuList className="flex gap-8 items-center max-md:hidden">
         <NavbarItems session={session} />
       </NavigationMenuList>
@@ -37,7 +36,6 @@ const Navbar = async () => {
           <AvatarDropDown session={session}/>
         </div>
     </NavigationMenu>
-    </div>
   );
 };
 

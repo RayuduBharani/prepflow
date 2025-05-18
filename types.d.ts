@@ -103,6 +103,7 @@ interface Problem {
   companyTags: {
     name: string;
   }[];
+  topicSlugs : {slug : string}[]
 }
 
 interface IPrismaDsaSheetData {

@@ -44,7 +44,11 @@ interface ProblemTopicResult {
 }
 
 export const getCompanyPlatformProblems = cache(
-  async (slug: string, platform: Platform, userId?: string): Promise<ProblemTopicResult[]> => {
+  async (
+    slug: string,
+    platform: Platform,
+    userId?: string
+  ): Promise<ProblemTopicResult[]> => {
     try {
       // Execute both queries in parallel
       const [totalResults, solvedResults] = await Promise.all([
@@ -58,7 +62,7 @@ export const getCompanyPlatformProblems = cache(
               },
             },
           },
-          orderBy : {problems : { _count : 'desc'}},
+          orderBy: { problems: { _count: "desc" } },
           select: {
             slug: true,
             _count: {
@@ -81,7 +85,7 @@ export const getCompanyPlatformProblems = cache(
                   some: {
                     companyTags: { some: { slug } },
                     platform,
-                    UserProgress: { some: { userId, isCompleted : true } },
+                    UserProgress: { some: { userId, isCompleted: true } },
                   },
                 },
               },
@@ -93,7 +97,7 @@ export const getCompanyPlatformProblems = cache(
                       where: {
                         companyTags: { some: { slug } },
                         platform,
-                        UserProgress: { some: { userId, isCompleted : true } },
+                        UserProgress: { some: { userId, isCompleted: true } },
                       },
                     },
                   },
@@ -105,7 +109,7 @@ export const getCompanyPlatformProblems = cache(
 
       // Combine results efficiently using a Map
       const resultMap = new Map<string, ProblemTopicResult>();
-      
+
       // Process total counts
       totalResults.forEach(({ slug, _count }) => {
         resultMap.set(slug, {
@@ -133,11 +137,11 @@ export const getCompanyPlatformProblems = cache(
 
       return Array.from(resultMap.values());
     } catch (error) {
-      console.error('Error in getCompanyPlatformProblems:', error);
-      throw new Error('Failed to fetch company platform problems');
+      console.error("Error in getCompanyPlatformProblems:", error);
+      throw new Error("Failed to fetch company platform problems");
     }
   }
-);// gfg company topics
+); // gfg company topics
 
 export async function getCompanyTopicProgress(
   userId: string,
@@ -174,6 +178,7 @@ export const getCompanyTopicWiseProblems = cache(
         title: true,
         slug: true,
         platform: true,
+        topicSlugs : {select : {slug : true}},
         companyTags: { select: { name: true } },
         UserProgress: {
           where: { userId: userId, isCompleted: true },
@@ -181,9 +186,10 @@ export const getCompanyTopicWiseProblems = cache(
           take: 1,
         },
         difficulty: true,
+        mainTopics: { select: { name: true } },
         url: true,
       },
-      orderBy: { likes : 'desc' }, // Add ordering to ensure consistent pagination
+      orderBy: { likes: "desc" }, // Add ordering to ensure consistent pagination
     });
 
     const total = await prisma.problem.count({

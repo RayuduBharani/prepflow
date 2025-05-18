@@ -12,9 +12,9 @@ import dynamic from "next/dynamic";
 
 const Footer = dynamic(() => import('@/components/Footer'))
 const poppins = Poppins({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets : ['latin'],
-});
+  weight : ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+})
 
 export const metadata: Metadata = {
   title: "PrepFlow",

@@ -140,6 +140,7 @@ export const getCarouselCategoryData = cache(
           select: {
             title: true,
             url : true,
+            topicSlugs : {select : {slug : true}},
             slug: true,
             difficulty: true,
             platform: true,
@@ -156,7 +157,6 @@ export const getCarouselCategoryData = cache(
         },
       },
     });
-
     if (!results) {
       return null;
     }

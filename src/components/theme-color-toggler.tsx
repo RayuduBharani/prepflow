@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button"; // Adjusted path
+import { Button } from "@/components/ui/button";
 import { Palette } from "lucide-react";
 
 interface ThemeColor {
