@@ -21,11 +21,11 @@ export function ThemeChanger() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className="hover:text-primary text-muted-foreground hover:border hover:bg-transparent">
+        <Button size={'icon'} variant='ghost' className="hover:text-primary text-muted-foreground hover:border hover:bg-transparent">
           <Palette color="currentColor" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-h-[10rem] w-fit">
+      <DropdownMenuContent className="max-h-[10rem] overflow-auto w-fit">
         <DropdownMenuLabel className="text-xs">Choose your theme</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {baseColorsV4.map((tc) => (

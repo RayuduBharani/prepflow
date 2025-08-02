@@ -2,63 +2,46 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
-import {Analytics} from '@vercel/analytics/next'
+import { Analytics } from "@vercel/analytics/next";
 import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeDataProvider from "@/components/theme-data-provider";
 import dynamic from "next/dynamic";
 
-const Footer = dynamic(() => import('@/components/Footer'))
+const Footer = dynamic(() => import("@/components/Footer"));
+
 const poppins = Poppins({
-  subsets : ['latin'],
-  weight : ['100', '200', '300', '400', '500', '600', '700', '800', '900']
-})
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  display: "swap",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
-  title: "PrepFlow",
-  description: "An Interview Preparation Platform with AI-powered features.",
+  title:
+    "PrepFlow - AI Interview Preparation Platform | DSA, Coding, System Design",
+  description:
+    "PrepFlow is an AI-powered platform for coding interview preparation with curated DSA sheets, system design guides, resume checks, and interactive practice for FAANG and tech interviews.",
   generator: "Next.js",
   applicationName: "PrepFlow",
   referrer: "strict-origin-when-cross-origin",
   keywords: [
-    "PrepFlow",
-    "DSA",
-    "DSA sheet",
-    "DSA sheets",
+    "Prepflow",
     "Interview Preparation",
-    "Data Structures and Algorithms",
-    "Coding Interview",
-    "LeetCode",
-    "Codeforces",
-    "Competitive Programming",
+    "AI Interview Platform",
+    "DSA Sheets",
     "System Design",
-    "Software Engineering Interviews",
-    "AI-powered coding",
-    "Tech Interview Guide",
-    "FAANG Preparation",
-    "Google Interview",
-    "Amazon Interview",
-    "Microsoft Interview",
-    "Meta Interview",
-    "Netflix Interview",
-    "Coding Practice",
-    "Python DSA",
-    "JavaScript DSA",
-    "Java DSA",
-    "C++ DSA",
-    "Cracking the Coding Interview",
-    "Top 100 DSA Problems",
-    "Big Tech Interviews",
+    "FAANG Interviews",
+    "Cygnuxxs",
+    "Ashok Atragadda",
+    "Coding Interview Practice",
+    "Resume Review",
     "Technical Interviews",
-    "AI-based Interview Assistance",
-    "Resume ATS Checker",
-    "DSA Learning Platform",
-    "Software Development Roadmap",
-    "Coding Bootcamp Alternative",
-    "Placement Preparation",
-    "Online Coding Platform",
+    "LeetCode Alternative",
+    "Software Engineer Jobs",
   ],
   authors: [
     {
@@ -70,20 +53,42 @@ export const metadata: Metadata = {
       url: "https://www.linkedin.com/in/ashok-atragadda/",
     },
   ],
-  creator: 'R.B.S.S Durga Prasad (Bharani)',
-  publisher: 'Ashok Atragadda (Cygnuxxs)',
+  creator: "R.B.S.S Durga Prasad (Bharani)",
+  publisher: "Ashok Atragadda (Cygnuxxs)",
   formatDetection: {
     address: false,
     telephone: false,
   },
-
+  alternates: {
+    canonical: "https://prepflow.vercel.app",
+  },
   openGraph: {
-    title: "PrepFlow",
-    description: "An Interview Preparation Platform with AI-powered features.",
+    title: "PrepFlow - AI Interview Preparation",
+    description:
+      "Level up your tech interviews with PrepFlow's DSA sheets, AI mock interviews, and resume feedback.",
+    url: "https://prepflow.vercel.app",
+    siteName: "PrepFlow",
+    images: [
+      {
+        url: "https://prepflow.vercel.app/og-image.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "PrepFlow Interview Platform Banner",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PrepFlow - Ace Your Tech Interviews",
+    description: "Practice DSA, system design, resume review, and more.",
+    images: ["https://prepflow.vercel.app/og-image.jpeg"],
+    creator: "@AshyGany",
   },
 };
 export const viewport: Viewport = {
-  colorScheme: 'dark'
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -93,25 +98,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Head key={1}>
+        <meta
+          name="google-site-verification"
+          content="5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY"
+        />
+      </Head>
       <body
         className={`${poppins.className} selection:bg-primary/30 selection:text-primary-foreground/30 no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            enableColorScheme
-            disableTransitionOnChange
-          >
-            <ThemeDataProvider>
-              <Suspense fallback={<Loading />}>
-                <Navbar />
-                {children}
-                <Footer />
-                <Toaster />
-              </Suspense>
-            </ThemeDataProvider>
-          </ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          enableColorScheme
+        >
+          <ThemeDataProvider>
+            <Suspense fallback={<Loading />}>
+              <Navbar />
+              {children}
+              <Footer />
+              <Toaster />
+            </Suspense>
+          </ThemeDataProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
