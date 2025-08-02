@@ -45,26 +45,26 @@ const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
       </NavigationMenuItem>
       {navItems.map(({ href, label }) => (
         <NavigationMenuItem key={href}>
-          <Link tabIndex={0} href={href} legacyBehavior passHref>
-            <NavigationMenuLink
+            <NavigationMenuLink asChild
               onClick={(e) => handleClick(e, href)}
               className={isActive(href, pathname)}
             >
+          <Link tabIndex={0} href={href}>
               {label}
-            </NavigationMenuLink>
           </Link>
+            </NavigationMenuLink>
         </NavigationMenuItem>
       ))}
       {session?.user.role === "ADMIN" && (
         <NavigationMenuItem>
-          <Link href={"/dashboard"} tabIndex={0} legacyBehavior passHref>
-            <NavigationMenuLink
+            <NavigationMenuLink asChild
               onClick={(e) => handleClick(e, "/dashboard")}
               className={isActive("/dashboard", pathname)}
             >
+          <Link href={"/dashboard"} tabIndex={0}>
               Dashboard
-            </NavigationMenuLink>
           </Link>
+            </NavigationMenuLink>
         </NavigationMenuItem>
       )}
     </>

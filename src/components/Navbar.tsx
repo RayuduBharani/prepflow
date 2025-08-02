@@ -10,7 +10,7 @@ import { ModeToggle } from "./ui/ModeToggler";
 import Navsheet from "./Navsheet";
 import { NavigationMenuItem } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import { ThemeColorToggle } from "./theme-color-toggler";
+import { ThemeChanger } from "./theme-color-toggler";
 
 const Navbar = async () => {
   const session = await auth();
@@ -31,7 +31,7 @@ const Navbar = async () => {
         </NavigationMenuItem>
       </div>
       <div className="flex items-center ml-auto gap-2">
-          <ThemeColorToggle />
+          <ThemeChanger />
           <ModeToggle />
           <AvatarDropDown session={session}/>
         </div>

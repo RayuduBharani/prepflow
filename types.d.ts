@@ -5,6 +5,8 @@ declare module "*.svg" {
   export default ReactComponent;
 }
 
+type ThemeMode = "dark" | "light" | "system";
+
 type ThemeColors =
   | "Zinc"
   | "Slate"

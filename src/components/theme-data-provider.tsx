@@ -1,43 +1,60 @@
 "use client";
 import setGlobalColorTheme from "@/lib/theme-colors";
 import { useTheme } from "next-themes";
-import { ThemeProviderProps } from "next-themes";
-
 import React, { createContext, useContext, useEffect, useState } from "react";
+const THEME_COLORS: ThemeColors[] = [
+  "Blue",
+  "Green",
+  "Gray",
+  "Neutral",
+  "Orange",
+  "Red",
+  "Rose",
+  "Slate",
+  "Stone",
+  "Violet",
+  "Yellow",
+  "Zinc",
+] as const;
+const DEFAULT_THEME_COLOR: ThemeColors = "Green";
 
+// Define the context shape
+interface ThemeColorStateParams {
+  themeColor: ThemeColors;
+  setThemeColor: (color: ThemeColors) => void;
+}
 
+// Define props for the provider
+interface ThemeDataProviderProps {
+  children: React.ReactNode;
+}
+
+// Create the context
 const ThemeContext = createContext<ThemeColorStateParams>(
   {} as ThemeColorStateParams
 );
 
-export default function ThemeDataProvider({ children }: ThemeProviderProps) {
-  const getSavedThemeColor = (): ThemeColors => {
-    if (typeof window !== "undefined") {
-      try {
-        return (localStorage.getItem("themeColor") as ThemeColors) || "Green";
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    return "Green" as ThemeColors; // Default theme if localStorage is not available
-  };
-
-  const [themeColor, setThemeColor] = useState<ThemeColors>(getSavedThemeColor());
-  const [isMounted, setIsMounted] = useState(false);
-  const { theme } = useTheme();
-
-  useEffect(() => {
-    localStorage.setItem("themeColor", themeColor);
-    setGlobalColorTheme(theme as "light" | "dark", themeColor);
-
-    if (!isMounted) {
-      setIsMounted(true);
-    }
-  }, [themeColor, theme, isMounted]);
-
-  if (!isMounted) {
-    return null;
+// Function to get saved theme color with validation
+const getSavedThemeColor = (): ThemeColors => {
+  if (typeof window === "undefined") {
+    return DEFAULT_THEME_COLOR;
   }
+  const savedColor = localStorage.getItem("themeColor");
+  if (savedColor && THEME_COLORS.includes(savedColor as ThemeColors)) {
+    return savedColor as ThemeColors;
+  }
+  return DEFAULT_THEME_COLOR;
+};
+
+export default function ThemeDataProvider({
+  children,
+}: ThemeDataProviderProps) {
+  const [themeColor, setThemeColor] = useState<ThemeColors>(getSavedThemeColor);
+  const { theme } = useTheme();
+  useEffect(() => {
+    setGlobalColorTheme(theme as "light" | "dark", themeColor);
+    localStorage.setItem("themeColor", themeColor);
+  }, [theme, themeColor]);
 
   return (
     <ThemeContext.Provider value={{ themeColor, setThemeColor }}>
@@ -46,6 +63,7 @@ export default function ThemeDataProvider({ children }: ThemeProviderProps) {
   );
 }
 
-export function useThemeContext() {
+// Custom hook to use the theme context
+export function useThemeContext(): ThemeColorStateParams {
   return useContext(ThemeContext);
 }

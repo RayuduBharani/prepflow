@@ -71,27 +71,27 @@ const Navsheet: React.FC<{session: Session | null }> = ({
           <>
               {navItems.map(({ href, label }) => (
                 <NavigationMenuItem key={href}>
-                  <Link tabIndex={0} href={href} legacyBehavior passHref>
-                    <NavigationMenuLink
+                    <NavigationMenuLink asChild
                       onClick={(e) => handleClick(e, href)}
                       className={isActive(href, pathname)}
                     >
-                      {label}
                     </NavigationMenuLink>
+                  <Link tabIndex={0} href={href}>
+                      {label}
                   </Link>
                 </NavigationMenuItem>
               ))}
               {/* Dashboard Link for Admin LOGIN */}
               {session && session.user.role === "ADMIN" && (
                 <NavigationMenuItem >
-                  <Link tabIndex={0} href={"/dashboard"} legacyBehavior passHref>
-                    <NavigationMenuLink
+                    <NavigationMenuLink asChild
                       onClick={(e) => handleClick(e, "/dashboard")}
                       className={isActive("/dashboard", pathname)}
                     >
+                  <Link tabIndex={0} href={"/dashboard"}>
                       Dashboard
-                    </NavigationMenuLink>
                   </Link>
+                    </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
             </>

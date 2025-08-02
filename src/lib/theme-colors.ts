@@ -1,88 +1,72 @@
-import { themeColors } from "@/lib/theme-registry";
+import { baseColorsV4, Theme } from "@/lib/colors-registry";
 
-// Define the type for theme colors
-type ThemeColors = {
-  label: string;
-  cssVars: {
-    light: Record<string, string>;
-    dark: Record<string, string>;
-  };
-};
-
-// Module-level variables to manage media query listeners
 let mediaQueryList: MediaQueryList | null = null;
-let mediaQueryListener: ((this: MediaQueryList, ev: MediaQueryListEvent) => void) | null = null;
+let mediaQueryListener: ((e: MediaQueryListEvent) => void) | null = null;
 
 /**
- * Applies the theme by setting CSS variables on the document root.
- * @param color - The color theme to apply.
- * @param themeMode - The theme mode ("light" or "dark").
+ * Applies CSS variables to the document root based on theme and mode.
  */
-function applyTheme(color: ThemeColors["label"], themeMode: "light" | "dark") {
-  // Find the theme object based on the color label
-  const theme = themeColors.find((t) => t.label === color);
+function applyThemeVars(theme: Theme, mode: "light" | "dark") {
+  const vars = theme[mode];
 
+  if (!vars) {
+    console.warn(`Missing CSS vars for theme mode: "${mode}" in "${theme.label}"`);
+    return;
+  }
+
+  const root = document.documentElement;
+
+  // Add or remove `dark` class for TailwindCSS compatibility
+  root.classList.toggle("dark", mode === "dark");
+
+  for (const [key, value] of Object.entries(vars)) {
+    root.style.setProperty(`--${key}`, value);
+  }
+}
+
+/**
+ * Finds the theme configuration by label.
+ */
+function getThemeByLabel(label: string): Theme | undefined {
+  return baseColorsV4.find((t) => t.label === label);
+}
+
+/**
+ * Applies and manages the global theme color mode.
+ */
+export default function setGlobalColorTheme(themeMode: ThemeMode, label: string) {
+  cleanupGlobalColorTheme();
+
+  const theme = getThemeByLabel(label);
   if (!theme) {
-    console.warn(`Theme "${color}" not found.`);
+    console.warn(`Theme "${label}" not found in theme registry.`);
     return;
   }
 
-  // Safeguard: Ensure cssVars exists for the specified themeMode
-  const cssVars = theme.cssVars[themeMode];
-  if (!cssVars) {
-    console.warn(`CSS variables for theme mode "${themeMode}" not found in theme "${color}".`);
-    return;
-  }
+  const apply = (resolvedMode: "light" | "dark") => applyThemeVars(theme, resolvedMode);
 
-  // Apply each CSS variable to the document root
-  for (const [key, value] of Object.entries(cssVars)) {
-    document.documentElement.style.setProperty(`--${key}`, value);
-  }
-}
-
-/**
- * Sets the global color theme based on the specified mode and color.
- * @param themeMode - The theme mode ("light", "dark", or "system").
- * @param color - The color theme to apply.
- */
-export default function setGlobalColorTheme(
-  themeMode: "light" | "dark" | "system",
-  color: ThemeColors["label"]
-) {
-  // Clean up existing media query listeners to avoid memory leaks
-  if (mediaQueryListener && mediaQueryList) {
-    mediaQueryList.removeListener(mediaQueryListener);
-    mediaQueryList = null;
-    mediaQueryListener = null;
-  }
-
-  let currentThemeMode: "light" | "dark" = themeMode === "system" ? "light" : themeMode;
-
-  // Handle system theme mode
   if (themeMode === "system") {
-    // Check the system preference for dark mode
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
-    currentThemeMode = systemDark.matches ? "dark" : "light";
+    mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+    const systemMode = mediaQueryList.matches ? "dark" : "light";
 
-    // Add a listener for system theme changes
-    mediaQueryList = systemDark;
-    mediaQueryListener = (e: MediaQueryListEvent) => {
-      const newTheme = e.matches ? "dark" : "light";
-      applyTheme(color, newTheme);
+    apply(systemMode); // Initial apply
+
+    mediaQueryListener = (e) => {
+      const newMode = e.matches ? "dark" : "light";
+      apply(newMode);
     };
-    mediaQueryList.addListener(mediaQueryListener);
+    mediaQueryList.addEventListener("change", mediaQueryListener);
+  } else {
+    apply(themeMode); // Directly apply "light" or "dark"
   }
-
-  // Apply the theme
-  applyTheme(color, currentThemeMode);
 }
 
 /**
- * Cleanup function to remove media query listeners when no longer needed.
+ * Removes the media query listener (if any).
  */
 export function cleanupGlobalColorTheme() {
-  if (mediaQueryListener && mediaQueryList) {
-    mediaQueryList.removeListener(mediaQueryListener);
+  if (mediaQueryList && mediaQueryListener) {
+    mediaQueryList.removeEventListener("change", mediaQueryListener);
     mediaQueryList = null;
     mediaQueryListener = null;
   }
