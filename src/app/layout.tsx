@@ -85,8 +85,8 @@ export const metadata: Metadata = {
     images: ["https://prepflow.vercel.app/og-image.jpeg"],
     creator: "@AshyGany",
   },
-  other : {
-    "google-site-verification" : "5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY",
+  verification : {
+    google : '5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY'
   }
 };
 export const viewport: Viewport = {
