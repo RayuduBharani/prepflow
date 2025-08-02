@@ -100,6 +100,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="google-site-verification" content="5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY" />
+      </head>
       <body
         className={`${poppins.className} selection:bg-primary/30 selection:text-primary-foreground/30 no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
