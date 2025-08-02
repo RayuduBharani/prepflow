@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
@@ -86,6 +85,9 @@ export const metadata: Metadata = {
     images: ["https://prepflow.vercel.app/og-image.jpeg"],
     creator: "@AshyGany",
   },
+  other : {
+    "google-site-verification" : "5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY",
+  }
 };
 export const viewport: Viewport = {
   colorScheme: "dark",
@@ -98,12 +100,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head key={1}>
-        <meta
-          name="google-site-verification"
-          content="5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY"
-        />
-      </Head>
       <body
         className={`${poppins.className} selection:bg-primary/30 selection:text-primary-foreground/30 no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
