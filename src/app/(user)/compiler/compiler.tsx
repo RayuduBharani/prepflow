@@ -85,7 +85,7 @@ const PythonCompiler: React.FC = () => {
     
     console.log(code, inputs);
     try {
-      const response = await fetch('http://localhost:8000/run-python', {
+      const response = await fetch('http://13.203.219.13:8000/run-python', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ const PythonCompiler: React.FC = () => {
 
   const testBackendConnection = async () => {
     try {
-      const response = await fetch('http://localhost:8000');
+      const response = await fetch('http://13.203.219.13:8000');
       if (response.ok) {
         setBackendStatus('connected');
         setError('');
