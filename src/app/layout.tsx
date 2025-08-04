@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import Loading from "./loading";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeDataProvider from "@/components/theme-data-provider";
 import dynamic from "next/dynamic";
 
@@ -112,14 +113,16 @@ export default function RootLayout({
           enableSystem
           enableColorScheme
         >
-          <ThemeDataProvider>
-            <Suspense fallback={<Loading />}>
-              <Navbar />
-              {children}
-              <Footer />
-              <Toaster />
-            </Suspense>
-          </ThemeDataProvider>
+          <TooltipProvider>
+            <ThemeDataProvider>
+              <Suspense fallback={<Loading />}>
+                <Navbar />
+                {children}
+                <Footer />
+                <Toaster />
+              </Suspense>
+            </ThemeDataProvider>
+          </TooltipProvider>
         </ThemeProvider>
         <Analytics />
       </body>

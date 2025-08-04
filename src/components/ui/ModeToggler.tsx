@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Button
@@ -28,10 +37,7 @@ export function ModeToggle() {
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          filter:
-            theme === "light"
-              ? "drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))"
-              : "drop-shadow(0 0 8px rgba(0, 0, 0, 0.6))",
+          filter: "drop-shadow(0 0 8px rgba(0, 0, 0, 0.6))"
         }}
       >
         {/* Moon Path */}

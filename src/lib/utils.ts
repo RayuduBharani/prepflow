@@ -10,6 +10,7 @@ export const navItems = [
   {href : '/ats-checker', label : 'ATS Checker'},
   { href: "/companies", label: "Companies" },
   { href: "/dsa-sheets", label: "DSA Sheets" },
+  { href: "/compiler", label: "Compiler" },
 ];
 export const isActive = (href: string, pathname: string) =>
   pathname === href ? "text-primary" : "text-muted-foreground";
