@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#000000",
     theme_color: "#18181b",
-    orientation: "portrait",
+    orientation: "landscape",
     screenshots: [
       ...Array.from({ length: 5 }, (_, i) => ({
         src: `screenshot_${i + 1}.png`,

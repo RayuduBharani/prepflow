@@ -1,25 +1,14 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/Navbar";
-import { Suspense } from "react";
-import { Analytics } from "@vercel/analytics/next";
-import Loading from "./loading";
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import ThemeDataProvider from "@/components/theme-data-provider";
-import dynamic from "next/dynamic";
-
-const Footer = dynamic(() => import("@/components/Footer"));
-
+import AllProviders from "@/components/AllProviders";
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
-
+export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title:
     "PrepFlow - AI Interview Preparation Platform | DSA, Coding, System Design",
@@ -90,9 +79,6 @@ export const metadata: Metadata = {
     google : '5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY'
   }
 };
-export const viewport: Viewport = {
-  colorScheme: "dark",
-};
 
 export default function RootLayout({
   children,
@@ -100,31 +86,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="google-site-verification" content="5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY" />
-      </head>
+    <html lang="en">
       <body
         className={`${poppins.className} selection:bg-primary/30 selection:text-primary-foreground/30 no-scrollbar antialiased bg-background w-screen h-lvh`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          enableColorScheme
-        >
-          <TooltipProvider>
-            <ThemeDataProvider>
-              <Suspense fallback={<Loading />}>
-                <Navbar />
-                {children}
-                <Footer />
-                <Toaster />
-              </Suspense>
-            </ThemeDataProvider>
-          </TooltipProvider>
-        </ThemeProvider>
-        <Analytics />
+        <AllProviders>
+          {children}
+        </AllProviders>
       </body>
     </html>
   );
