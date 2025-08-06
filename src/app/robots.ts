@@ -5,10 +5,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/dashboard/"]
+        allow: ['/', '/jobs', '/dsa-sheets', '/companies', '/compiler'],
+        disallow: ["/api", "/admin", "/private"]
       }
     ],
-    sitemap: "https://acme.com/sitemap.xml"
+    sitemap: "https://prepflow.vercel.app/sitemap.xml",
+    host: "https://prepflow.vercel.app"
   };
 }
