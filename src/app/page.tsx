@@ -12,7 +12,7 @@ const page = async () => {
         Shape Your Future, <br /> Achieve Your Dreams
       </h2>
       <p className="max-w-xl mx-auto text-sm sm:text-lg md:text-lg text-neutral-700 dark:text-neutral-400 text-center motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md">
-        A Journey of Growth – Providing You with Tools, Resources,
+        A Journey of Growth - Providing You with Tools, Resources,
         and Roadmaps to Shape Your Career Excellence .
       </p>
       <Button className='mt-5 cursor-pointer z-50 sm:hidden motion-opacity-in-0 motion-translate-y-in-25 motion-blur-in-md'><Link href="/dsa-sheets">Get started</Link></Button>
