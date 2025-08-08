@@ -22,14 +22,14 @@ const page = async () => {
             <Form
               action={async () => {
                 "use server";
-                await signIn("google");
+                  await signIn("google");
               }}
             >
               <Button
                 className="text-xs"
                 size={"sm"}
                 effect={"expandIcon"}
-                iconPlacement="left"
+                iconPlacement="right"
                 icon={Google}
                 variant={"secondary"}
                 type="submit"
@@ -48,7 +48,7 @@ const page = async () => {
                 size={"sm"}
                 variant={"default"}
                 effect={"expandIcon"}
-                iconPlacement="left"
+                iconPlacement="right"
                 icon={Github}
                 type="submit"
               >

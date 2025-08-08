@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "PrepFlow - Prepare for your interviews.",
@@ -9,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#000000",
     theme_color: "#18181b",
-    orientation: "portrait",
+    orientation: "portrait-primary",
     screenshots: [
       ...Array.from({ length: 5 }, (_, i) => ({
         src: `screenshot_${i + 1}.png`,
