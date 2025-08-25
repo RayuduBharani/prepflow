@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import AllProviders from "@/components/AllProviders";
+import Script from "next/script";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -9,63 +10,94 @@ const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
+export const metadata = {
+  metadataBase: new URL("https://prepflow.vercel.app"),
+  title: {
+    default: "PrepFlow - AI Interview Preparation Platform",
+    template: "%s | PrepFlow",
+  },
+  description:
+    "PrepFlow is an AI-powered platform for coding interview preparation with curated DSA sheets, system design guides, resume checks, and interactive practice for FAANG and tech interviews.",
+  keywords: [
+    "Prepflow",
+    "Interview Preparation",
+    "AI Interview Platform",
+    "DSA Sheets",
+    "System Design",
+    "FAANG Interviews",
+    "Ashok Atragadda",
+    "Coding Interview Practice",
+    "Resume Review",
+    "LeetCode Alternative",
+    "Software Engineer Jobs",
+  ],
+  applicationName: "PrepFlow",
+  generator: "Next.js",
+  authors: [
+    { name: "R.B.S.S Durga Prasad (Bharani)", url: "https://www.linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad/" },
+    { name: "Ashok Atragadda", url: "https://www.linkedin.com/in/ashok-atragadda/" },
+  ],
+  creator: "R.B.S.S Durga Prasad (Bharani)",
+  publisher: "Ashok Atragadda (Cygnuxxs)",
+  referrer: "strict-origin-when-cross-origin",
+  formatDetection: { email: false, address: false, telephone: false },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://prepflow.vercel.app",
+    siteName: "PrepFlow",
+    title: "PrepFlow - AI Interview Preparation",
+    description:
+      "Level up your tech interviews with PrepFlow's DSA sheets, AI mock interviews, and resume feedback.",
+    images: [
+      {
+        url: "https://prepflow.vercel.app/og-image.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "PrepFlow Interview Platform Banner",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PrepFlow - Ace Your Tech Interviews",
+    description:
+      "Practice DSA, system design, resume review, and more.",
+    creator: "@AshyGany",
+    images: ["https://prepflow.vercel.app/og-image.jpeg"],
+  },
+  alternates: {
+    canonical: "https://prepflow.vercel.app",
+  },
+  verification: {
+    google: "5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY",
+  },
+};
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Basic Meta Tags */}
-        <title>PrepFlow - AI Interview Preparation Platform | DSA, Coding, System Design</title>
-        <meta name="description" content="PrepFlow is an AI-powered platform for coding interview preparation with curated DSA sheets, system design guides, resume checks, and interactive practice for FAANG and tech interviews." />
-        <meta name="generator" content="Next.js" />
-        <meta name="application-name" content="PrepFlow" />
-        <meta name="referrer" content="strict-origin-when-cross-origin" />
-        
-        {/* Keywords */}
-        <meta name="keywords" content="Prepflow, Interview Preparation, AI Interview Platform, DSA Sheets, System Design, FAANG Interviews, Cygnuxxs, Ashok Atragadda, Coding Interview Practice, Resume Review, Technical Interviews, LeetCode Alternative, Software Engineer Jobs" />
-        
-        {/* Author Information */}
-        <meta name="author" content="R.B.S.S Durga Prasad (Bharani)" />
-        <link rel="author" href="https://www.linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad/" />
-        <link rel="author" href="https://www.linkedin.com/in/ashok-atragadda/" />
-        <meta name="creator" content="R.B.S.S Durga Prasad (Bharani)" />
-        <meta name="publisher" content="Ashok Atragadda (Cygnuxxs)" />
-        
-        {/* Format Detection */}
-        <meta name="format-detection" content="address=no, telephone=no" />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href="https://prepflow.vercel.app" />
-        
-        {/* Open Graph Tags */}
-        <meta property="og:title" content="PrepFlow - AI Interview Preparation" />
-        <meta property="og:description" content="Level up your tech interviews with PrepFlow's DSA sheets, AI mock interviews, and resume feedback." />
-        <meta property="og:url" content="https://prepflow.vercel.app" />
-        <meta property="og:site_name" content="PrepFlow" />
-        <meta property="og:image" content="https://prepflow.vercel.app/og-image.jpeg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="PrepFlow Interview Platform Banner" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:type" content="website" />
-        
-        {/* Twitter Cards */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="PrepFlow - Ace Your Tech Interviews" />
-        <meta name="twitter:description" content="Practice DSA, system design, resume review, and more." />
-        <meta name="twitter:image" content="https://prepflow.vercel.app/og-image.jpeg" />
-        <meta name="twitter:creator" content="@AshyGany" />
-        
-        {/* Site Verification */}
-        <meta name="google-site-verification" content="5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY" />
-        
-        {/* PWA/Favicon */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#000000" />
+        <Script id="prepflow"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "PrepFlow",
+              url: "https://prepflow.vercel.app",
+              logo: "https://prepflow.vercel.app/logo.png", // <-- put your real logo URL here
+              sameAs: [
+                "https://www.linkedin.com/in/ashok-atragadda/",
+                "https://x.com/AshyGany",
+              ],
+            }),
+          }}
+        />
       </head>
       <body
         className={`${poppins.className} selection:bg-primary/30 selection:text-primary-foreground/30 no-scrollbar antialiased bg-background w-screen h-lvh`}

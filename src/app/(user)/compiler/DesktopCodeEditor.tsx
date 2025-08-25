@@ -125,6 +125,31 @@ export default function DesktopCodeEditor({
                                 minimap: { enabled: false },
                                 scrollBeyondLastLine: false,
                                 wordWrap: 'on',
+
+                                tabSize: 4,
+                                insertSpaces: true,
+                                parameterHints : {
+                                    enabled: true,
+                                },
+                                autoIndent: 'full',
+                                renderWhitespace: 'boundary',
+                                renderControlCharacters: true,
+                                folding: true,
+                                foldingStrategy: 'auto',
+                                cursorStyle: 'line',
+                                cursorBlinking: 'smooth',
+                                overviewRulerLanes: 3,
+                                overviewRulerBorder: false,
+                                quickSuggestionsDelay: 100,
+                                quickSuggestions: {
+                                    other: true,
+                                    comments: true,
+                                    strings: true,
+                                },
+                                autoClosingBrackets: 'languageDefined',
+                                autoClosingQuotes: 'languageDefined',
+                                autoClosingOvertype: 'auto',
+                                autoSurround: 'languageDefined',
                                 lineNumbers: 'on',
                                 automaticLayout: true,
                                 padding: { top: 16, bottom: 16 },
@@ -135,15 +160,10 @@ export default function DesktopCodeEditor({
                                 copyWithSyntaxHighlighting: true,
                                 formatOnPaste: true,
                                 formatOnType: true,
-                                suggest: {
-                                    showKeywords: true,
-                                    showSnippets: true,
-                                },
-                                quickSuggestions: {
-                                    other: true,
-                                    comments: false,
-                                    strings: false,
-                                },
+                                suggestOnTriggerCharacters: true,
+                                suggestSelection: 'first',
+                                acceptSuggestionOnEnter: 'on',
+                                suggestFontSize: fontSize,
                             }}
                             onChange={(value) => setCode(value || '')}
                         />
