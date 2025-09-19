@@ -16,7 +16,7 @@ import { extractData } from "@/actions/extractData";
 const AdminDSAPage = async () => {
   const data = await getCarouselsData();
   return (
-    <div className="w-full h-full pt-[5rem] px-6">
+    <div className="w-full h-full pt-20 px-6">
       <Tabs defaultValue="view" className="w-full">
         <TabsList className="grid max-w-xs w-full grid-cols-2">
           <TabsTrigger value="view">View Carousels</TabsTrigger>

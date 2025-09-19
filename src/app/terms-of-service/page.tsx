@@ -1,8 +1,33 @@
 import React from "react";
 
+
+import type { Metadata } from "next";
+import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
+
+export const metadata: Metadata = {
+  ...defaultMetadata,
+  title: "Terms of Service | PrepFlow",
+  description:
+    "Review PrepFlow's Terms of Service to understand your rights, responsibilities, and the rules governing the use of our platform.",
+  openGraph: {
+    ...defaultMetadata.openGraph,
+    title: "Terms of Service | PrepFlow",
+    description:
+      "Learn about PrepFlow's Terms of Service, including user responsibilities, intellectual property, and limitation of liability.",
+    url: "https://yourdomain.com/terms-of-service",
+  },
+  alternates: {
+    canonical: "https://yourdomain.com/terms-of-service",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
 export default function TermsOfServices() {
   return (
-    <div className="pt-[5rem] max-w-3xl mx-auto px-6">
+    <div className="pt-20 max-w-3xl mx-auto px-6">
       <h1 className="text-xl font-bold text-center mb-4">Terms of Service</h1>
       <p className="text-muted-foreground text-center mb-8">
         Last Updated: March 2025

@@ -3,7 +3,7 @@ import React from "react";
 
 const PrivacyPolicy = () => {
   return (
-    <div className="w-full min-h-svh flex flex-col gap-4 pt-[5rem] px-6 max-md:px-3">
+    <div className="w-full min-h-svh flex flex-col gap-4 pt-20 px-6 max-md:px-3">
       <p className="text-xs text-muted-foreground">Effective Date: 13/03/25</p>
       <h1 className="text-3xl font-bold text-center">Privacy Policy</h1>
       <ol className="list-decimal flex flex-col gap-16 text-muted-foreground font-bold mx-4 text-xl">

@@ -17,7 +17,7 @@ const CategoryAccordion = ({
   return (
     <Link
       href={`/dsa-sheets/${toSlug(carouselName)}/${toSlug(category.name)}`}
-      className="border shadow-md max-sm:text-xs hover:bg-secondary transition-colors duration-200 ease-in-out flex flex-col gap-2 sm:text-sm basis-56 flex-grow rounded-lg p-4"
+      className="border shadow-md max-sm:text-xs hover:bg-secondary/60 transition-colors duration-200 ease-in-out flex flex-col gap-2 sm:text-sm basis-56 grow rounded-lg p-4"
     >
       <p>{category.name}</p>
       <Progress

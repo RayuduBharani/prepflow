@@ -126,7 +126,7 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 max-h-[15rem]">
+      <PopoverContent className="w-full p-0 max-h-60">
         <Command>
           <CommandInput
             placeholder="Search problems..."
@@ -135,7 +135,7 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
             onValueChange={setSearchTerm}
           />
           <CommandEmpty>{isFetching ? "Loading..." : "No problems found."}</CommandEmpty>
-          <div className="max-h-[var(--cmd-height)] overflow-y-auto" style={{ "--cmd-height": maxHeight } as React.CSSProperties}>
+          <div className="max-h-(--cmd-height) overflow-y-auto" style={{ "--cmd-height": maxHeight } as React.CSSProperties}>
             <CommandGroup className="max-w-xs">
               {options.map((option) => (
                 <CommandItem key={option.slug} value={option.slug} onSelect={() => handleSelect(option)}>

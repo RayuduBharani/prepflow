@@ -1,16 +1,6 @@
-import { Poppins } from "next/font/google";
-import "./globals.css";
-import AllProviders from "@/components/AllProviders";
-import Script from "next/script";
+import { Metadata } from "next";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", '600', '700', '800', '900'],
-  preload : true,
-});
-
-export const metadata = {
+export const metadata : Metadata = {
   metadataBase: new URL("https://prepflow.vercel.app"),
   title: {
     default: "PrepFlow - AI Interview Preparation Platform",
@@ -79,38 +69,3 @@ export const metadata = {
     google: "5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY",
   },
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <Script
-          id="prepflow"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "PrepFlow",
-              url: "https://prepflow.vercel.app",
-              logo: "https://prepflow.vercel.app/logo.png", // <-- put your real logo URL here
-              sameAs: [
-                "https://www.linkedin.com/in/ashok-atragadda/",
-                "https://x.com/AshyGany",
-              ],
-            }),
-          }}
-        />
-      </head>
-      <body
-        className={`${poppins.variable} no-scrollbar antialiased theme-container bg-background w-screen h-lvh`}
-      >
-        <AllProviders>{children}</AllProviders>
-      </body>
-    </html>
-  );
-}

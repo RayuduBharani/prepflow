@@ -175,7 +175,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                 difficultyCount["EASY"].unsolved) *
               100
             }
-            className="bg-green-500/20 max-w-[5rem] [&>div]:bg-green-500"
+            className="bg-green-500/20 max-w-20 [&>div]:bg-green-500"
           />
           <Progress
             value={
@@ -183,7 +183,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                 difficultyCount["MEDIUM"].unsolved) *
               100
             }
-            className="bg-yellow-500/20 max-w-[5rem] [&>div]:bg-yellow-500"
+            className="bg-yellow-500/20 max-w-20 [&>div]:bg-yellow-500"
           />
           <Progress
             value={
@@ -191,7 +191,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                 difficultyCount["HARD"].unsolved) *
               100
             }
-            className="bg-red-500/20 max-w-[5rem] [&>div]:bg-red-500"
+            className="bg-red-500/20 max-w-20 [&>div]:bg-red-500"
           />
         </div>
       </div>

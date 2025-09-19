@@ -11,6 +11,7 @@ import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
 import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
 import ProblemsTab from "./ProblemsTab";
+import {metadata as defaultMetadata} from '@/lib/defaultMetadata'
 
 type Props = {
   params: Promise<{ company: string }>;
@@ -18,7 +19,36 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { company } = await params;
-  return { title: `PrepFlow - ${toTitleCase(company)} Problems` };
+  const companyName = toTitleCase(company);
+
+  return {
+    ...defaultMetadata,
+    title: `${companyName} Problems | PrepFlow`,
+    description: `Practice and track your progress on ${companyName} coding interview problems. Solve questions from LeetCode and GeeksforGeeks curated for top tech companies.`,
+    keywords: [
+      ...(defaultMetadata.keywords || []),
+      `${companyName} interview questions`,
+      `${companyName} DSA problems`,
+      `${companyName} coding challenges`,
+      "LeetCode company-wise problems",
+      "GFG company-wise problems",
+      "PrepFlow DSA sheets",
+    ],
+    openGraph: {
+      ...defaultMetadata.openGraph,
+      title: `${companyName} Problems | PrepFlow`,
+      description: `Sharpen your coding skills with ${companyName} interview preparation problems. Curated DSA practice questions with progress tracking.`,
+      url: `https://prepflow.vercel.app/companies/${company}`,
+    },
+    twitter: {
+      ...defaultMetadata.twitter,
+      title: `${companyName} Problems - PrepFlow`,
+      description: `Solve ${companyName} coding interview questions on PrepFlow. Get curated problems from LeetCode & GFG.`,
+    },
+    alternates: {
+      canonical: `https://prepflow.vercel.app/companies/${company}`,
+    },
+  };
 }
 
 async function CompanyPage({ params }: { 
@@ -36,9 +66,9 @@ async function CompanyPage({ params }: {
   );
 
   const styles = {
-    container: "w-full pt-[5rem] mx-auto max-w-[50rem] pb-2 max-sm:px-2 sm:px-5",
+    container: "w-full pt-20 mx-auto max-w-200 pb-2 max-sm:px-2 sm:px-5",
     card: "flex max-sm:flex-col items-center border p-4 rounded-lg mb-3 gap-4 justify-between",
-    logo: "w-[4rem] relative h-[4rem]",
+    logo: "w-16 relative h-16",
     placeholder: "h-12 w-12 rounded-lg border flex items-center justify-center bg-muted",
     title: "text-md font-bold mb-2",
     text: "text-xs text-muted-foreground"

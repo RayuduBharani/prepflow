@@ -41,7 +41,7 @@ const Footer: React.FC = () => (
         <h2 className="text-lg font-semibold">Developed and Maintained By</h2>
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 justify-between flex-wrap items-center rounded-xl">
-            <h3 className="text-sm font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+            <h3 className="text-sm font-bold bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
               Rayudu Bharani
             </h3>
             <div className="flex gap-2">
@@ -93,7 +93,7 @@ const Footer: React.FC = () => (
                 <Button
                   size="icon"
                   variant="outline"
-                  className={`transition-all hover:bg-gradient-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
+                  className={`transition-all hover:bg-linear-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
                 >
                   <Instagram />
                 </Button>
@@ -101,7 +101,7 @@ const Footer: React.FC = () => (
             </div>
           </div>
           <div className="flex justify-between flex-wrap items-center rounded-xl">
-            <h3 className="text-sm font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+            <h3 className="text-sm font-bold bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
               Cygnuxxs
             </h3>
             <div className="flex gap-2">
@@ -153,7 +153,7 @@ const Footer: React.FC = () => (
                 <Button
                   size="icon"
                   variant="outline"
-                  className={`transition-all hover:bg-gradient-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
+                  className={`transition-all hover:bg-linear-to-r hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600`}
                 >
                   <Instagram />
                 </Button>

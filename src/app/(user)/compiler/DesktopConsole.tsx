@@ -1,9 +1,10 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import DesktopOutput from './DesktopOutput'
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import DesktopOutput from "./DesktopOutput";
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 interface DesktopConsoleProps {
   showInputBox: boolean;
@@ -34,15 +35,50 @@ export default function DesktopConsole({
   setShowInputBox,
   clearOutput,
   error,
-  output
+  output,
 }: DesktopConsoleProps) {
+  const [fontSize, setFontSize] = useState<number>(18);
+  useEffect(() => {
+    const size = localStorage.getItem("consoleFontSize");
+    setFontSize(Number(size) || 18);
+  }, []);
+  const handleFontSize = (increment: boolean) => {
+    let x: number;
+    if (increment) {
+      x = Math.min(28, fontSize + 1);
+      setFontSize(x);
+    } else {
+      x = Math.max(14, fontSize-1);
+      setFontSize(x);
+    }
+    localStorage.setItem("consoleFontSize", x.toString());
+  };
   return (
     <div className="h-full p-4 pl-0">
       <Card className="h-full bg-background shadow-sm rounded-lg">
         <div className="border-b border-muted px-4 py-3 bg-background rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="text-sm font-medium text-foreground">Console</div>
+              <p className="text-sm font-medium text-foreground">Console</p>
+            </div>
+            <div className="flex items-center gap-2 flex-nowrap">
+              <Button
+                size={"icon"}
+                onClick={() => handleFontSize(false)}
+                className="w-6 h-6"
+                variant={"secondary"}
+              >
+                <MinusIcon />
+              </Button>
+              <p className="text-xs">{fontSize}</p>
+              <Button
+                size={"icon"}
+                onClick={() => handleFontSize(true)}
+                variant={"secondary"}
+                className="w-6 h-6"
+              >
+                <PlusIcon />
+              </Button>
             </div>
             <Button onClick={clearOutput} variant="secondary" size="sm">
               Clear
@@ -76,7 +112,7 @@ export default function DesktopConsole({
 
               <Textarea
                 value={inputs}
-                onChange={e => setInputs(e.target.value)}
+                onChange={(e) => setInputs(e.target.value)}
                 className="mb-3 font-mono text-sm"
                 placeholder="Enter inputs (one per line)"
                 rows={3}
@@ -85,12 +121,12 @@ export default function DesktopConsole({
               {!validateInputs() && inputs.trim() && (
                 <Alert variant="destructive" className="mb-3">
                   <AlertDescription className="text-sm">
-                    Expected {inputCallsCount} inputs, got{' '}
+                    Expected {inputCallsCount} inputs, got{" "}
                     {
                       inputs
                         .trim()
-                        .split('\n')
-                        .filter(line => line.trim() !== '').length
+                        .split("\n")
+                        .filter((line) => line.trim() !== "").length
                     }
                   </AlertDescription>
                 </Alert>
@@ -102,7 +138,7 @@ export default function DesktopConsole({
                   disabled={isRunning || !validateInputs()}
                   size="sm"
                 >
-                  {isRunning ? 'Running...' : 'Execute'}
+                  {isRunning ? "Running..." : "Execute"}
                 </Button>
                 <Button
                   onClick={() => setShowInputBox(false)}
@@ -118,15 +154,15 @@ export default function DesktopConsole({
 
           {/* Output/Status/Error Panel - Desktop */}
           <DesktopOutput
+          fontSize = {fontSize}
             error={error}
             output={output}
             isRunning={isRunning}
             showInputBox={showInputBox}
             hasInputCalls={hasInputCalls}
           />
-
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -11,7 +11,7 @@ async function Admin() {
     }
     const usersData = await prisma.user.findMany()
     return (
-        <div className='px-6 pt-[5rem] max-sm:px-3 w-full gap-4 h-full overflow-y-auto flex justify-center items-center flex-col'>
+        <div className='px-6 pt-20 max-sm:px-3 w-full gap-4 h-full overflow-y-auto flex justify-center items-center flex-col'>
             <AdminForm />
             <h1 className='font-bold text-2xl'>Users Data</h1>
             <div className='w-full h-fit flex flex-wrap flex-col gap-3'>

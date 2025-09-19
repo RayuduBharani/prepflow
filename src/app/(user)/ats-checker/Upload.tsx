@@ -107,7 +107,7 @@ const Upload = () => {
           <div className="flex items-center justify-between animate-slide-up">
             <Label
               htmlFor="jobdesc"
-              className="text-base font-bold animate-fade-up text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-500"
+              className="text-base font-bold animate-fade-up text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-pink-500"
             >
               Job Description {' '}
               {isJobDescOptional && "(Optional)"}

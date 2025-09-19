@@ -10,7 +10,7 @@ import { ModeToggle } from "./ui/ModeToggler";
 import Navsheet from "./Navsheet";
 import { NavigationMenuItem } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import { ThemeChanger } from "./theme-color-toggler";
+import ThemeChanger from "./theme-color-toggler";
 
 const Navbar = async () => {
   const session = await auth();

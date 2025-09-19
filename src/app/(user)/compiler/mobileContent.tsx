@@ -5,12 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 interface MobileContentProps {
   activeTab: 'code' | 'console';
   code: string;
   setCode: (value: string) => void;
-  isDarkMode: boolean;
   fontSize: number;
   showInputBox: boolean;
   setShowInputBox: (value: boolean) => void;
@@ -31,7 +31,6 @@ export default function MobileContent({
   activeTab,
   code,
   setCode,
-  isDarkMode,
   fontSize,
   showInputBox,
   setShowInputBox,
@@ -47,6 +46,7 @@ export default function MobileContent({
   error,
   output
 }: MobileContentProps) {
+  const {resolvedTheme} = useTheme()
   return (
     <div className="flex-1 relative">
           {/* Code Tab - Mobile */}
@@ -56,7 +56,7 @@ export default function MobileContent({
                 height="100%"
                 defaultLanguage="python"
                 value={code}
-                theme={isDarkMode ? 'vs-dark' : 'vs'}
+                theme={resolvedTheme === 'dark' ? 'vs-dark' : 'vs'}
                 options={{
                   fontSize: fontSize,
                   minimap: { enabled: false },

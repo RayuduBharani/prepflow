@@ -2,7 +2,7 @@ import React from 'react'
 
 const RoadmapPage = () => {
   return (
-    <div className='pt-[5rem]'>Roadmap Page</div>
+    <div className='pt-20'>Roadmap Page</div>
   )
 }
 

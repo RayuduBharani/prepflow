@@ -28,7 +28,7 @@ export async function JobContent({ experenceParams, searchParams }: { experenceP
         <div className="w-full h-full p-2 sm:p-4 space-y-4">
             <Separator />
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-                <div className=" w-full h-fit lg:w-[300px] flex-shrink-0 space-y-4 sm:space-y-6 bg-background/50 p-3 sm:p-4 rounded-lg border">
+                <div className=" w-full h-fit lg:w-[300px] shrink-0 space-y-4 sm:space-y-6 bg-background/50 p-3 sm:p-4 rounded-lg border">
                     <form action={async (formData: FormData) => {
                         'use server'
                         const searchValue = formData.get('search') as string;
@@ -58,11 +58,11 @@ export async function JobContent({ experenceParams, searchParams }: { experenceP
                         {jobsData.length != 0 ?
                             jobsData.map((job, index) => (
                                 <div key={index} className="group relative bg-background rounded-lg border hover:shadow-md transition-all duration-300">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     <div className="relative p-3 sm:p-4">
                                         {/* Company Logo and Title */}
                                         <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                                            <div className="w-10 dark:bg-foreground h-10 sm:w-12 sm:h-12 rounded-lg border bg-background p-1.5 flex-shrink-0">
+                                            <div className="w-10 dark:bg-foreground h-10 sm:w-12 sm:h-12 rounded-lg border bg-background p-1.5 shrink-0">
                                                 <Image className="w-full h-full object-fill rounded-md"
                                                     width={100}
                                                     height={100} src={job.logo} alt={`${job.company} logo`} />

@@ -181,7 +181,7 @@ export default function DisplayResults({result} : {result : ApiResponse}) {
       )}
       {result.suggestions && (
         <div className="p-2 rounded-xl border dark:border-0">
-          <h2 className="text-lg mb-4 font-bold bg-clip-text bg-gradient-to-r from bg-pink-500 to-violet-500 text-transparent">
+          <h2 className="text-lg mb-4 font-bold bg-clip-text bg-linear-to-r from bg-pink-500 to-violet-500 text-transparent">
             AI Suggestions
           </h2>
           <ul className="flex list-disc pl-3 flex-col text-sm gap-8">

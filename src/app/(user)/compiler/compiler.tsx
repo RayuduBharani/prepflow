@@ -178,7 +178,6 @@ const PythonCompiler: React.FC = () => {
           activeTab={activeTab}
           code={code}
           setCode={setCode}
-          isDarkMode={isDarkMode}
           fontSize={fontSize}
           showInputBox={showInputBox}
           setShowInputBox={setShowInputBox}
@@ -220,7 +219,7 @@ const PythonCompiler: React.FC = () => {
               showInputBox={showInputBox}
               hasInputCalls={hasInputCalls}
               inputCallsCount={inputCallsCount}
-              getInputPrompts={getInputPrompts}
+              getInputPrompts={getInputPrompts} 
               inputs={inputs}
               setInputs={setInputs}
               isRunning={isRunning}

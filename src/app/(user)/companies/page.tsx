@@ -1,48 +1,91 @@
 import { getCompanies } from "@/actions/company-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2 } from "lucide-react";
-import { ArrowRightIcon, SearchIcon } from "lucide-react";
+import { Building2, ArrowRightIcon, SearchIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/pagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
 
 export const metadata: Metadata = {
-  title: "PrepFlow - Company Wise Questions",
+  ...defaultMetadata,
+  title: {
+    default: "Prepflow Company Wise Questions",
+    template: "%s | PrepFlow",
+  },
+  description:
+    "Practice coding interview questions company by company. Explore curated DSA problems from FAANG and top tech firms like Amazon, Google, Microsoft, and more.",
+  openGraph: {
+    ...defaultMetadata.openGraph,
+    title: "Company Wise Interview Questions | PrepFlow",
+    description:
+      "Ace your interviews with company-wise coding questions. Practice Amazon, Google, Microsoft, and other top tech company problems on PrepFlow.",
+    url: "https://prepflow.vercel.app/companies",
+    images: [
+      {
+        url: "https://prepflow.vercel.app/og-companies.png",
+        width: 1200,
+        height: 630,
+        alt: "Company Wise Coding Questions on PrepFlow",
+      },
+    ],
+  },
+  twitter: {
+    ...defaultMetadata.twitter,
+    title: "Company Wise Coding Questions | PrepFlow",
+    description:
+      "Prepare for FAANG and top tech interviews with company-wise curated coding problems. Practice now on PrepFlow.",
+    images: ["https://prepflow.vercel.app/og-companies.png"],
+  },
+  alternates: {
+    canonical: "https://prepflow.vercel.app/companies",
+  },
+  category: "career, education",
 };
 
-const CompaniesPage = async ({searchParams} : {searchParams : Promise<SearchParams>}) => {
-  const { page = '1' } = await searchParams
+const CompaniesPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) => {
+  const { page = "1" } = await searchParams;
   const currentPage = parseInt(page, 10) || 1;
   const getCookie = await cookies();
   const searchValue = getCookie.get("searchValue")?.value;
   const companies = await getCompanies(currentPage, searchValue);
   const totalPages = searchValue ? 1 : 16;
+
   return (
-    <div className="w-full min-h-full pt-[5rem] max-sm:px-2 sm:px-6 ">
+    <div className="w-full min-h-full pt-20 max-sm:px-2 sm:px-6 ">
       <div className=" w-full flex flex-wrap items-center justify-between gap-4">
         <div className="w-full md:w-auto ">
           <h1 className="text-lg font-bold text-primary">
             Company Wise Questions
           </h1>
         </div>
-        <div className="*:not-first:mt-2 w-full md:w-[25rem]">
-          <form className="relative"
+        <div className="*:not-first:mt-2 w-full md:w-100">
+          <form
+            className="relative"
             action={async (formData: FormData) => {
               "use server";
               const searchValue = formData.get("search") as string;
-              console.log(searchValue)
+              console.log(searchValue);
               const getCookies = await cookies();
               getCookies.set("searchValue", searchValue, { maxAge: 5 });
-            }}>
-            <Input name="search" className="peer ps-9 pe-9" placeholder="Search..." type="search" />
+            }}
+          >
+            <Input
+              name="search"
+              className="peer ps-9 pe-9"
+              placeholder="Search..."
+              type="search"
+            />
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <SearchIcon size={16} />
             </div>
@@ -65,7 +108,7 @@ const CompaniesPage = async ({searchParams} : {searchParams : Promise<SearchPara
               className="group relative flex-1 min-w-[280px] intersect:motion-preset-slide-up"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              <div className="relative block overflow-hidden rounded-lg border bg-background p-6 hover:border-primary transition-all duration-200 hover:shadow-lg h-full">
+              <div className="relative block overflow-hidden rounded-lg border bg-card p-6 hover:border-primary transition-all duration-200 hover:shadow-lg h-full">
                 <div className="flex items-center gap-4">
                   {company.image !== "None" ? (
                     <Image
@@ -91,9 +134,11 @@ const CompaniesPage = async ({searchParams} : {searchParams : Promise<SearchPara
                   size={"sm"}
                   asChild
                   variant="secondary"
-                  className="w-full text-xs mt-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                  className="w-full text-xs hover:bg-primary hover:text-primary-foreground mt-4 transition-colors"
                 >
-                  <Link href={`/companies/${company.slug}`} passHref>Practice Now</Link>
+                  <Link href={`/companies/${company.slug}`} passHref>
+                    Practice Now
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -104,7 +149,6 @@ const CompaniesPage = async ({searchParams} : {searchParams : Promise<SearchPara
           </div>
         )}
       </div>
-
 
       <Pagination className="my-8 ">
         <PaginationContent className="w-full justify-between gap-3">
@@ -117,9 +161,7 @@ const CompaniesPage = async ({searchParams} : {searchParams : Promise<SearchPara
               asChild
             >
               <a
-                href={
-                  currentPage === 1 ? undefined : `?page=${currentPage - 1}`
-                }
+                href={currentPage === 1 ? undefined : `?page=${currentPage - 1}`}
               >
                 <ChevronLeft
                   className="-ms-1 me-2 opacity-60"

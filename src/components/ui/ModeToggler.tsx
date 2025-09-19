@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -20,10 +20,10 @@ export function ModeToggle() {
 
   return (
     <Button
-      variant={"outline"}
+      variant={"ghost"}
       size={"icon"}
-      className="[&_svg]:shrink [&_svg]:size-5 hover:bg-opacity-80 transition-all"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="[&_svg]:shrink [&_svg]:size-5 hover:border hover:bg-background transition-all"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Change Light/Dark Mode"
     >
       <motion.svg
@@ -44,7 +44,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ rotate: 0, scale: 1, opacity: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { rotate: 90, scale: 0, opacity: 0, stroke: "#6b7280" } // Gray for dark mode
               : { rotate: 0, scale: 1, opacity: 1, stroke: "#6b7280", fill : '#6b7280' } // Yellow for light mode
           }
@@ -55,7 +55,7 @@ export function ModeToggle() {
         <motion.circle
           initial={{ scale: 0, opacity: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { scale: 1, opacity: 1, stroke: "#f59e0b" } // Yellow for light mode
               : { scale: 0, opacity: 0, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -68,7 +68,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, y: -10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, y: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, y: -10, rotate: -45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -78,7 +78,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, y: 10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, y: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, y: 10, rotate: 45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -88,7 +88,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, x: -10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, x: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, x: -10, rotate: -45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -98,7 +98,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, x: 10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, x: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, x: 10, rotate: 45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -108,7 +108,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, x: -10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, x: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, x: -10, rotate: -45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -118,7 +118,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, x: 10, rotate: 0 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, x: 0, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, x: 10, rotate: 45, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -128,7 +128,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, rotate: -90 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, rotate: -90, stroke: "#6b7280" } // Gray for dark mode
           }
@@ -138,7 +138,7 @@ export function ModeToggle() {
         <motion.path
           initial={{ opacity: 0, rotate: 90 }}
           animate={
-            theme === "light"
+            resolvedTheme === "light"
               ? { opacity: 1, rotate: 0, stroke: "#f59e0b" } // Yellow for light mode
               : { opacity: 0, rotate: 90, stroke: "#6b7280" } // Gray for dark mode
           }

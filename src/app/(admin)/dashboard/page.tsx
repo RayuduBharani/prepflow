@@ -6,7 +6,7 @@ import SeedButton from "./SeedButton";
 
 export default function AdminDashboard() {
   return (
-    <div className="w-full h-full pt-[5rem] max-md:px-3 px-6">
+    <div className="w-full h-full pt-20 max-md:px-3 px-6">
       <h1 className="text-lg font-bold mb-4 text-primary">Admin Dashboard</h1>
       <div className="flex flex-wrap gap-2">
         {actions.map((action, idx) => (

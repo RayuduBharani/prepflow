@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Sun,
-  Moon,
   Minus,
   Plus,
   Terminal,
@@ -11,8 +9,6 @@ import {
 
 export default function MobileHeader({
     hasInputCalls,
-    isDarkMode,
-    setIsDarkMode,
     fontSize,
     setFontSize,
     activeTab,
@@ -49,9 +45,6 @@ export default function MobileHeader({
               )}
             </div>
             <div className="flex items-center space-x-1">
-              <Button variant="ghost" size="sm" onClick={() => setIsDarkMode(!isDarkMode)}>
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
               <div className="flex items-center space-x-1 border rounded">
                 <Button
                   variant="ghost"

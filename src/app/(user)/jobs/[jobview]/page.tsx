@@ -12,7 +12,7 @@ export default async function JobView({ params }: {params : Promise<Params>}) {
   const { jobview } = await params
   const jobData = await getSingleJob(jobview as string)
   return (
-    <div className='max-w-[50rem] mx-auto h-fit pt-[4rem] sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm'>
+    <div className='max-w-200 mx-auto h-fit pt-16 sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm'>
       <div className='w-full h-fit px-4 py-6 motion-preset-fade motion-duration-2000'>
         <div className="space-y-4 mb-6">
           <div className="flex items-start justify-between gap-4">
@@ -20,7 +20,7 @@ export default async function JobView({ params }: {params : Promise<Params>}) {
               <h1 className="text-lg text-primary sm:text-xl font-bold">{jobData?.title}</h1>
               <p className="text-sm sm:text-base text-foreground font-medium">{jobData?.company}</p>
             </div>
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 flex-shrink-0">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border bg-background p-2 shrink-0">
               <Image
               width={100}
               height={100}

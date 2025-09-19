@@ -3,7 +3,7 @@ import RoadmapsBuiler from './RoadmapsBuiler'
 
 const AdminRoadmaps = () => {
   return (
-    <div className='w-full h-full px-6 max-sm:px-3 pt-[5rem]'>
+    <div className='w-full h-full px-6 max-sm:px-3 pt-20'>
       <RoadmapsBuiler />
     </div>
   )

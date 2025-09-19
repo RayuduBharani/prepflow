@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Loading() {
     return (
-        <div className='w-full h-full pt-[4rem] flex justify-center items-center'>
+        <div className='w-full h-full pt-16 flex justify-center items-center'>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 384" className="loader">
                 <circle
                     r="176"
