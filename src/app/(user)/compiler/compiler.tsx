@@ -119,7 +119,7 @@ const PythonCompiler: React.FC = () => {
 
   const testBackendConnection = async () => {
     try {
-      const response = await fetch('https://aws-compiler.onrender.com');
+      const response = await fetch('https://aws-compiler.onrender.com/');
       if (response.ok) {
         setBackendStatus('connected');
         setError('');
