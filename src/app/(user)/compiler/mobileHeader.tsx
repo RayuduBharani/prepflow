@@ -6,6 +6,7 @@ import {
   Terminal,
   Code,
 } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 
 export default function MobileHeader({
     hasInputCalls,
@@ -37,7 +38,7 @@ export default function MobileHeader({
     <div className="bg-background border-b p-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
-              <div className="text-sm font-medium text-muted-foreground">main.py</div>
+              <LanguageSelector />
               {hasInputCalls && (
                 <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
                   Needs Input

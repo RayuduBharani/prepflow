@@ -3,6 +3,7 @@
 import React from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import DisplayLoader from "./DisplayLoader";
 
 interface DesktopOutputProps {
   error: string;
@@ -59,7 +60,7 @@ export default function DesktopOutput({
               Practice your coding skills with PrepFlow
             </p>
             {hasInputCalls && (
-              <p className="text-xs mt-2 text-blue-600">
+              <p className="text-xs mt-2 text-primary">
                 This code requires inputs
               </p>
             )}
@@ -67,9 +68,9 @@ export default function DesktopOutput({
         )}
 
         {isRunning && (
-          <div className="text-blue-600 text-center py-12 flex flex-col items-center">
-            <div className="animate-spin h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full mb-4" />
-            <p className="text-sm">Executing Python code...</p>
+          <div className="text-primary text-center py-12 flex flex-col items-center">
+            <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-4" />
+            <DisplayLoader />
           </div>
         )}
       </div>
