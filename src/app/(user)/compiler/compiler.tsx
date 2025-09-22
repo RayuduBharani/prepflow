@@ -1,38 +1,43 @@
-'use client';
+"use client";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import React, { useState, useMemo, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/resizable";
+import React, { useState, useMemo, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import MobileHeader from "./mobileHeader";
 import MobileContent from "./mobileContent";
 import DesktopCodeEditor from "./DesktopCodeEditor";
 import { Play } from "lucide-react";
 import DesktopConsole from "./DesktopConsole";
+import { useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
+import { codeTemplates } from "@/lib/codeTemplates";
 
 const PythonCompiler: React.FC = () => {
-  const [code, setCode] = useState(`# Write your Python code here\n`);
-  const [inputs, setInputs] = useState('');
-  const [output, setOutput] = useState('');
-  const [error, setError] = useState('');
+  const [inputs, setInputs] = useState("");
+  const [output, setOutput] = useState("");
+  const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [showInputBox, setShowInputBox] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [backendStatus, setBackendStatus] = useState<'unknown' | 'connected' | 'disconnected'>('unknown');
-  const [activeTab, setActiveTab] = useState<'code' | 'console'>('code');
-  const [fontSize, setFontSize] = useState<number>(14);
+  const [activeTab, setActiveTab] = useState<"code" | "console">("code");
+  const { fontSize, setFontSize } = useFontSizeStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { language } = useLanguageStore();
+  const [code, setCode] = useState(codeTemplates[language] || "");
 
   // Load fontSize from localStorage on client-side only
   useEffect(() => {
-    const savedFontSize = localStorage.getItem('fontSize');
+    const savedFontSize = localStorage.getItem("fontSize");
     if (savedFontSize) {
       setFontSize(parseInt(savedFontSize));
     }
-  }, []);
+  }, [setFontSize]);
+
+  useEffect(() => {
+    setCode(codeTemplates[language] || "");
+  }, [language]);
 
   const hasInputCalls = useMemo(() => {
     const inputRegex = /input\s*\(/g;
@@ -56,54 +61,89 @@ const PythonCompiler: React.FC = () => {
 
   const validateInputs = () => {
     if (!hasInputCalls) return true;
-    const inputLines = inputs.trim().split('\n').filter(line => line.trim() !== '');
+    const inputLines = inputs
+      .trim()
+      .split("\n")
+      .filter((line) => line.trim() !== "");
     return inputLines.length >= inputCallsCount;
   };
 
-  const handleRunCode = () => {
-    setOutput('');
-    setError('');
+  const handleRunCode = async () => {
+    setOutput("");
+    setError("");
     if (hasInputCalls) {
       setShowInputBox(true);
-      setActiveTab('console'); 
+      setActiveTab("console");
     } else {
-      sendCodeAndInputs();
+      await sendCodeAndInputs();
     }
   };
 
   const sendCodeAndInputs = async () => {
     if (hasInputCalls && !validateInputs()) {
-      setError(`Input Error: Expected ${inputCallsCount} inputs, but only ${inputs.trim().split('\n').filter(line => line.trim() !== '').length} provided.`);
+      setError(
+        `Input Error: Expected ${inputCallsCount} inputs, but only ${
+          inputs
+            .trim()
+            .split("\n")
+            .filter((line) => line.trim() !== "").length
+        } provided.`
+      );
       return;
     }
 
     setIsRunning(true);
-    setOutput('');
-    setError('');
-    setActiveTab('console');
+    setOutput("");
+    setError("");
+    setActiveTab("console");
 
-    
-    console.log(code, inputs);
     try {
-      const response = await fetch('https://aws-compiler.onrender.com/run-python', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer cygnuxxsrayudu",
-        },
-        body: JSON.stringify({ code : code, inputs: inputs }),
-      });
-      
-      const text = await response.text();
-      try {
-        const data = JSON.parse(text);
-        setOutput(data.output);
-      } catch {
-        setError(text);
+      const url = process.env.NEXT_PUBLIC_COMPILER_URL;
+      console.log(url);
+      if (!url) {
+        const err = "COMPILER_URL is not defined in environment variables.";
+        console.error(err);
+        setError(err);
+        return;
       }
-    } catch (error) {
-      console.error('Error executing code:', error);
-      setError(`Execution Error: ${error}`);
+
+      const res = await fetch(`${url}/execute`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language,
+          code,
+          stdin: inputs,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        setError(
+          errorData.detail || `Server Error: ${res.status} ${res.statusText}`
+        );
+        return;
+      }
+
+      const data = await res.json();
+
+      // Handle backend response
+      if (data.success) {
+        setOutput(data.output || "Code executed successfully (no output).");
+      } else {
+        setError(
+          data.error ||
+            data.compile_error ||
+            "Execution failed. Please check your code."
+        );
+        setOutput(data.output || "");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Error executing code:", error);
+      setError(`Execution Error: ${error.message ?? error}`);
     } finally {
       setIsRunning(false);
       setShowInputBox(false);
@@ -111,48 +151,35 @@ const PythonCompiler: React.FC = () => {
   };
 
   const clearOutput = () => {
-    setOutput('');
-    setError('');
+    setOutput("");
+    setError("");
     setShowInputBox(false);
-    setInputs('');
+    setInputs("");
   };
-
-  const testBackendConnection = async () => {
-    try {
-      const response = await fetch('https://aws-compiler.onrender.com/');
-      if (response.ok) {
-        setBackendStatus('connected');
-        setError('');
-      } else {
-        setBackendStatus('disconnected');
-        setError('Backend server is not responding properly');
-      }
-    } catch (error) {
-      console.log(error);
-      setBackendStatus('disconnected');
-      setError('Cannot connect to backend server. Please ensure it is running.');
-    }
-  };
-
-  React.useEffect(() => {
-    testBackendConnection();
-  }, []);
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isFullscreen) {
+      if (event.key === "Escape" && isFullscreen) {
         setIsFullscreen(false);
       }
     };
-    window.addEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener("keydown", handleEsc);
     };
   }, [isFullscreen]);
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-screen'} bg-background flex flex-col overflow-hidden`}>
-      <div className={`lg:hidden flex-1 flex flex-col ${isFullscreen ? 'hidden' : ''}`}>
+    <div
+      className={`${
+        isFullscreen ? "fixed inset-0 z-50" : "h-screen"
+      } bg-background flex flex-col overflow-hidden`}
+    >
+      <div
+        className={`lg:hidden flex-1 flex flex-col ${
+          isFullscreen ? "hidden" : ""
+        }`}
+      >
         <MobileHeader
           hasInputCalls={hasInputCalls}
           isDarkMode={isDarkMode}
@@ -168,9 +195,14 @@ const PythonCompiler: React.FC = () => {
         />
 
         <div className="bg-background border-b p-2">
-          <Button onClick={handleRunCode} disabled={isRunning} className="w-full" size="sm">
+          <Button
+            onClick={handleRunCode}
+            disabled={isRunning}
+            className="w-full"
+            size="sm"
+          >
             <Play className="h-4 w-4 mr-2" />
-            {isRunning ? 'Running...' : 'Run Code'}
+            {isRunning ? "Running..." : "Run Code"}
           </Button>
         </div>
 
@@ -195,7 +227,11 @@ const PythonCompiler: React.FC = () => {
         />
       </div>
 
-      <div className={`hidden lg:block flex-1 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+      <div
+        className={`hidden lg:block flex-1 ${
+          isFullscreen ? "fixed inset-0 z-50" : ""
+        }`}
+      >
         <ResizablePanelGroup direction="horizontal" className="flex-1 h-full">
           <ResizablePanel defaultSize={68} minSize={32} maxSize={90}>
             <DesktopCodeEditor
@@ -203,8 +239,6 @@ const PythonCompiler: React.FC = () => {
               setCode={setCode}
               isDarkMode={isDarkMode}
               setIsDarkMode={setIsDarkMode}
-              fontSize={fontSize}
-              setFontSize={setFontSize}
               handleRunCode={handleRunCode}
               isRunning={isRunning}
               isFullscreen={isFullscreen}
@@ -219,7 +253,7 @@ const PythonCompiler: React.FC = () => {
               showInputBox={showInputBox}
               hasInputCalls={hasInputCalls}
               inputCallsCount={inputCallsCount}
-              getInputPrompts={getInputPrompts} 
+              getInputPrompts={getInputPrompts}
               inputs={inputs}
               setInputs={setInputs}
               isRunning={isRunning}
@@ -235,6 +269,6 @@ const PythonCompiler: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default PythonCompiler;

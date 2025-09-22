@@ -1,16 +1,13 @@
-datasource db {
-  provider = "postgresql"
-  // url       = env("RDS_URL")
-  // url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
-  // url = env("LOCAL_URI")
-  url = env("SUPA_URL")
-  directUrl = env("SUPA_DIRECT")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("SUPA_URL")
+  directUrl = env("SUPA_DIRECT")
+}
+
 model Account {
   userId            String
   type              String
@@ -23,36 +20,28 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
 
-enum UserRole {
-  USER
-  ADMIN
-}
-
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
+  id                String          @id @default(cuid())
+  name              String?
+  email             String          @unique
+  emailVerified     DateTime?
+  image             String?
+  role              UserRole        @default(USER)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   leetcode_username String?
-  role          UserRole        @default(USER)
-  accounts      Account[]
-  sessions      Session[]
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
-
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  UserProgress UserProgress[]
+  lastLogin         DateTime?       @db.Timestamp(6)
+  accounts          Account[]
+  Authenticator     Authenticator[]
+  sessions          Session[]
+  UserProgress      UserProgress[]
 }
 
 model SimilarProblem {
@@ -93,31 +82,17 @@ model ProblemTopicSlug {
   problems Problem[] @relation("ProblemTopicSlugProblems")
 }
 
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
-  BASIC
-  SCHOOL
-}
-
-enum Platform {
-  LEETCODE
-  GFG
-}
-
 model UserProgress {
   id          Int       @id @default(autoincrement())
   userId      String
   problemId   Int
-  isCompleted Boolean   @default(false) // Tracks if the problem is completed
-  completedAt DateTime? @default(now()) // Timestamp for when the problem was marked as completed
+  isCompleted Boolean   @default(false)
+  completedAt DateTime? @default(now())
   updatedAt   DateTime  @updatedAt
+  problem     Problem   @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, problemId]) // Ensures a user can only have one progress record per problem
+  @@unique([userId, problemId])
   @@index([userId])
   @@index([problemId])
 }
@@ -142,9 +117,9 @@ model ProblemCategory {
   id        Int       @id @default(autoincrement())
   name      String    @unique
   slug      String    @unique
-  problems  Problem[] @relation("ProblemCategoryProblems")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  problems  Problem[] @relation("ProblemCategoryProblems")
 }
 
 model Problem {
@@ -160,31 +135,28 @@ model Problem {
   submissions    Int                @default(0)
   acceptanceRate Float              @default(0)
   platform       Platform
-  sheetCategory  SheetCategory[]    @relation("SheetCategoryProblems")
-  category       ProblemCategory[]  @relation("ProblemCategoryProblems")
-  topicTags      ProblemTopic[]     @relation("ProblemTopicProblems")
-  companyTags    ProblemCompany[]   @relation("ProblemCompanyProblems")
-  mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
-  topicSlugs     ProblemTopicSlug[] @relation("ProblemTopicSlugProblems")
   similarTo      SimilarProblem[]   @relation("ProblemToSimilar")
   similarFrom    SimilarProblem[]   @relation("SimilarToProblem")
   UserProgress   UserProgress[]
+  category       ProblemCategory[]  @relation("ProblemCategoryProblems")
+  companyTags    ProblemCompany[]   @relation("ProblemCompanyProblems")
+  mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
+  topicTags      ProblemTopic[]     @relation("ProblemTopicProblems")
+  topicSlugs     ProblemTopicSlug[] @relation("ProblemTopicSlugProblems")
+  sheetCategory  SheetCategory[]    @relation("SheetCategoryProblems")
 
   @@index([difficulty])
   @@index([difficulty, platform])
 }
 
-
-
 model Session {
-  id Int @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -195,7 +167,6 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-// Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -205,18 +176,9 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
-}
-
-
-enum JobType {
-  Full_time
-  Remote
-  Part_time
-  Contract
 }
 
 model Jobs {
@@ -237,13 +199,6 @@ model Jobs {
   experience       String
 }
 
-enum InternType {
-  Full_time
-  remote
-  Part_time
-  on_site
-}
-
 model internships {
   id           String     @id @default(uuid())
   company      String
@@ -261,22 +216,14 @@ model internships {
   createdAt    DateTime   @default(now())
 }
 
-
-enum NodeType {
-  MAIN
-  SUB
-  END
-  OPTIONAL
-}
-
 model Roadmap {
-  id          String     @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  nodes       Node[]
   edges       Edge[]
+  nodes       Node[]
 }
 
 model Node {
@@ -285,30 +232,67 @@ model Node {
   label       String
   positionX   Float
   positionY   Float
-  data        Json? // Store additional data like color, custom properties
-  roadmap     Roadmap @relation(fields: [roadmapId], references: [id])
+  data        Json?
   roadmapId   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  // For edge connections
-  sourceEdges Edge[] @relation("SourceEdges")
-  targetEdges Edge[] @relation("TargetEdges")
+  sourceEdges Edge[]   @relation("SourceEdges")
+  targetEdges Edge[]   @relation("TargetEdges")
+  roadmap     Roadmap  @relation(fields: [roadmapId], references: [id])
 
   @@index([roadmapId])
 }
 
 model Edge {
-  id          String   @id @default(uuid())
-  source      Node     @relation("SourceEdges", fields: [sourceNodeId], references: [id])
+  id           String   @id @default(uuid())
   sourceNodeId String
-  target      Node     @relation("TargetEdges", fields: [targetNodeId], references: [id])
   targetNodeId String
-  label       String?
-  roadmap     Roadmap @relation(fields: [roadmapId], references: [id])
-  roadmapId   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  label        String?
+  roadmapId    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  roadmap      Roadmap  @relation(fields: [roadmapId], references: [id])
+  source       Node     @relation("SourceEdges", fields: [sourceNodeId], references: [id])
+  target       Node     @relation("TargetEdges", fields: [targetNodeId], references: [id])
 
   @@index([roadmapId])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  BASIC
+  SCHOOL
+}
+
+enum Platform {
+  LEETCODE
+  GFG
+}
+
+enum JobType {
+  Full_time
+  Remote
+  Part_time
+  Contract
+}
+
+enum InternType {
+  Full_time
+  remote
+  Part_time
+  on_site
+}
+
+enum NodeType {
+  MAIN
+  SUB
+  END
+  OPTIONAL
 }

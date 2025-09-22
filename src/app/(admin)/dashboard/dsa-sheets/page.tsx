@@ -1,17 +1,13 @@
 import { getCarouselsData } from "@/actions/adminActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import CarouselForm from "@/components/DSA/CarouselForm";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { seedDSASheets } from "@/actions/seedAction";
-import { Button } from "@/components/ui/button";
-import Form from "next/form";
-import { extractData } from "@/actions/extractData";
+import AddSheetsPage from "./AddSheetsPage";
 
 const AdminDSAPage = async () => {
   const data = await getCarouselsData();
@@ -51,15 +47,7 @@ const AdminDSAPage = async () => {
           )}
         </TabsContent>
         <TabsContent className="max-w-xs flex flex-col gap-2" value="add">
-          <CarouselForm />
-          <div className="flex justify-between">
-          <Form action={seedDSASheets}>
-            <Button size={'sm'} className="text-xs" type="submit">Seed Data</Button>
-          </Form>
-          <Form action={extractData}>
-            <Button size={'sm'} className="text-xs" type="submit">Extract Data</Button>
-          </Form>
-          </div>
+          <AddSheetsPage />
         </TabsContent>
       </Tabs>
     </div>

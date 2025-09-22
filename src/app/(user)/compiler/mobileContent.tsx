@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useFontSizeStore, useLanguageStore } from '@/store/compilerStore';
 
 interface MobileContentProps {
   activeTab: 'code' | 'console';
@@ -31,7 +32,6 @@ export default function MobileContent({
   activeTab,
   code,
   setCode,
-  fontSize,
   showInputBox,
   setShowInputBox,
   hasInputCalls,
@@ -47,6 +47,8 @@ export default function MobileContent({
   output
 }: MobileContentProps) {
   const {resolvedTheme} = useTheme()
+  const {fontSize} = useFontSizeStore()
+  const {language} = useLanguageStore()
   return (
     <div className="flex-1 relative">
           {/* Code Tab - Mobile */}
@@ -55,33 +57,54 @@ export default function MobileContent({
               <Editor
                 height="100%"
                 defaultLanguage="python"
+                language={language}
                 value={code}
                 theme={resolvedTheme === 'dark' ? 'vs-dark' : 'vs'}
                 options={{
-                  fontSize: fontSize,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  wordWrap: 'on',
-                  lineNumbers: 'on',
-                  automaticLayout: true,
-                  padding: { top: 16, bottom: 16 },
-                  fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
-                  renderLineHighlight: 'gutter',
-                  selectionHighlight: true,
-                  contextmenu: true,
-                  copyWithSyntaxHighlighting: true,
-                  formatOnPaste: true,
-                  formatOnType: true,
-                  suggest: {
-                    showKeywords: true,
-                    showSnippets: true,
-                  },
-                  quickSuggestions: {
-                    other: true,
-                    comments: false,
-                    strings: false,
-                  },
-                }}
+                fontSize: fontSize,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                wordWrap: "on",
+                tabSize: 4,
+                insertSpaces: true,
+                parameterHints: {
+                  enabled: true,
+                },
+                autoIndent: "full",
+                renderWhitespace: "boundary",
+                renderControlCharacters: true,
+                folding: true,
+                foldingStrategy: "auto",
+                cursorStyle: "line",
+                cursorBlinking: "smooth",
+                overviewRulerLanes: 3,
+                overviewRulerBorder: false,
+                quickSuggestionsDelay: 100,
+                quickSuggestions: {
+                  other: true,
+                  comments: true,
+                  strings: true,
+                },
+                autoClosingBrackets: "languageDefined",
+                autoClosingQuotes: "languageDefined",
+                autoClosingOvertype: "auto",
+                autoSurround: "languageDefined",
+                lineNumbers: "on",
+                automaticLayout: true,
+                padding: { top: 16, bottom: 16 },
+                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                renderLineHighlight: "gutter",
+                selectionHighlight: true,
+                lineNumbersMinChars : 3,
+                contextmenu: true,
+                copyWithSyntaxHighlighting: true,
+                formatOnPaste: true,
+                formatOnType: true,
+                suggestOnTriggerCharacters: true,
+                suggestSelection: "first",
+                acceptSuggestionOnEnter: "on",
+                suggestFontSize: fontSize,
+              }}
                 onChange={(value) => setCode(value || '')}
               />
             </div>

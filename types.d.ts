@@ -7,6 +7,8 @@ declare module "*.svg" {
 
 type ThemeMode = "dark" | "light" | "system";
 
+type Language = "python" | "cpp" | "c" | "javascript" | 'java';
+
 type ThemeColors =
   | "Zinc"
   | "Slate"
@@ -105,7 +107,7 @@ interface Problem {
   companyTags: {
     name: string;
   }[];
-  topicSlugs : {slug : string}[]
+  topicSlugs: { slug: string }[];
 }
 
 interface IPrismaDsaSheetData {

@@ -8,6 +8,9 @@ import Github from "./icons/Github";
 import { Mail } from "lucide-react";
 import Instagram from "./icons/Instagram";
 import RazorpayButton from "./Razorpay";
+import VisitorsCount from "./VisitorsCount";
+import CompilerBackendStatus from "./CompilerBackendStatus";
+import { Separator } from "./ui/separator";
 
 const Footer: React.FC = () => (
   <footer className="w-full mt-20 border-t px-3 sm:px-6 py-16 bg-background text-foreground">
@@ -159,6 +162,11 @@ const Footer: React.FC = () => (
                 </Button>
               </Link>
             </div>
+          </div>
+          <Separator />
+          <div className="flex gap-2 items-center">
+          <CompilerBackendStatus />
+          <VisitorsCount />
           </div>
         </div>
       </section>

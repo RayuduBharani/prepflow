@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import DesktopOutput from "./DesktopOutput";
 import { MinusIcon, PlusIcon } from "lucide-react";
+import { useConsoleFontSizeStore } from "@/store/compilerStore";
 
 interface DesktopConsoleProps {
   showInputBox: boolean;
@@ -37,19 +38,20 @@ export default function DesktopConsole({
   error,
   output,
 }: DesktopConsoleProps) {
-  const [fontSize, setFontSize] = useState<number>(18);
+  const { consoleFontSize, setConsoleFontSize } = useConsoleFontSizeStore();
   useEffect(() => {
     const size = localStorage.getItem("consoleFontSize");
-    setFontSize(Number(size) || 18);
-  }, []);
+    setConsoleFontSize(parseInt(size as string))
+  }, [setConsoleFontSize]);
+
   const handleFontSize = (increment: boolean) => {
     let x: number;
     if (increment) {
-      x = Math.min(28, fontSize + 1);
-      setFontSize(x);
+      x = Math.min(28, consoleFontSize + 1);
+      setConsoleFontSize(x);
     } else {
-      x = Math.max(14, fontSize-1);
-      setFontSize(x);
+      x = Math.max(14, consoleFontSize - 1);
+      setConsoleFontSize(x);
     }
     localStorage.setItem("consoleFontSize", x.toString());
   };
@@ -70,7 +72,7 @@ export default function DesktopConsole({
               >
                 <MinusIcon />
               </Button>
-              <p className="text-xs">{fontSize}</p>
+              <p className="text-xs">{consoleFontSize}</p>
               <Button
                 size={"icon"}
                 onClick={() => handleFontSize(true)}
@@ -154,7 +156,7 @@ export default function DesktopConsole({
 
           {/* Output/Status/Error Panel - Desktop */}
           <DesktopOutput
-          fontSize = {fontSize}
+            fontSize={consoleFontSize}
             error={error}
             output={output}
             isRunning={isRunning}

@@ -15,7 +15,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: UserRole;
-      leetcode_username : string | null;
+      leetcode_username: string | null;
     } & DefaultSession["user"];
   }
 }
@@ -58,6 +58,13 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
       session.user.id = user.id;
       return session;
     },
+    async signIn({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() },
+      });
+      return true;
+    },
     async redirect({ url, baseUrl }) {
       // Ensure redirect URL is valid; fallback to baseUrl if not
       if (url.startsWith("/")) return `${baseUrl}${url}`;
@@ -72,5 +79,5 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
   pages: {
     signIn: "/signin",
   },
-  trustHost : true,
+  trustHost: true,
 });

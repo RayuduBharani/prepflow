@@ -11,14 +11,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FullScreenButton from "./FullScreenButton";
+import { useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
+import LanguageSelector from "./LanguageSelector";
 
 interface DesktopCodeEditorProps {
   code: string;
   setCode: (code: string) => void;
   isDarkMode: boolean;
   setIsDarkMode: (value: boolean) => void;
-  fontSize: number;
-  setFontSize: (value: number) => void;
   handleRunCode: () => void;
   isRunning: boolean;
   isFullscreen: boolean;
@@ -28,14 +28,14 @@ interface DesktopCodeEditorProps {
 export default function DesktopCodeEditor({
   code,
   setCode,
-  fontSize,
-  setFontSize,
   handleRunCode,
   isRunning,
   isFullscreen,
   onToggleFullscreen,
 }: DesktopCodeEditorProps) {
   const { resolvedTheme } = useTheme();
+  const {fontSize, setFontSize} = useFontSizeStore()
+  const {language} = useLanguageStore()
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -61,7 +61,7 @@ export default function DesktopCodeEditor({
       x = Math.max(14, fontSize - 1);
       setFontSize(x);
     }
-    localStorage.setItem("consoleFontSize", x.toString());
+    localStorage.setItem("fontSize", x.toString());
   };
 
   return (
@@ -79,9 +79,7 @@ export default function DesktopCodeEditor({
               <div className="w-3 h-3 bg-yellow-500 rounded-full" />
               <div className="w-3 h-3 bg-green-500 rounded-full" />
             </div>
-            <div className="ml-4 text-sm font-medium text-muted-foreground">
-              main.py
-            </div>
+            <LanguageSelector />
           </div>
           <div className="flex items-center space-x-2 overflow-hidden">
             <FullScreenButton onToggleFullscreen={onToggleFullscreen} />
@@ -150,6 +148,7 @@ export default function DesktopCodeEditor({
             <Editor
               height="90vh"
               defaultLanguage="python"
+              language={language}
               value={code}
               theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
               options={{

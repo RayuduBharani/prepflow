@@ -15,9 +15,11 @@ export default function AdminDashboard() {
             <h2 className="font-semibold text-foreground">{action.title}</h2>
             <p className="text-xs text-muted-foreground">{action.description}</p>
             </div>
-            <Button asChild className="ml-auto rounded-xl" size={'icon'} icon={ChevronsRight} effect={'shineHover'} iconPlacement="right" variant={'outline'}>
-              <Link href={action.link}></Link>
+              <Link className="ml-auto" href={action.link}>
+            <Button asChild className="rounded-xl p-2" size={'icon'} variant={'outline'}>
+              <ChevronsRight strokeWidth={1} />
             </Button>
+              </Link>
           </div>
         ))}
       </div>
