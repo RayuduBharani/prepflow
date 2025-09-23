@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FullScreenButton from "./FullScreenButton";
-import { useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
+import { ALLOWED_LANGUAGES, useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
 import LanguageSelector from "./LanguageSelector";
 
 interface DesktopCodeEditorProps {
@@ -35,7 +35,9 @@ export default function DesktopCodeEditor({
 }: DesktopCodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const {fontSize, setFontSize} = useFontSizeStore()
-  const {language} = useLanguageStore()
+  const language = useLanguageStore((state) =>
+  ALLOWED_LANGUAGES.includes(state.language) ? state.language : "python"
+);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -61,7 +63,6 @@ export default function DesktopCodeEditor({
       x = Math.max(14, fontSize - 1);
       setFontSize(x);
     }
-    localStorage.setItem("fontSize", x.toString());
   };
 
   return (

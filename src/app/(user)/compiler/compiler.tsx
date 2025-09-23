@@ -11,7 +11,7 @@ import MobileContent from "./mobileContent";
 import DesktopCodeEditor from "./DesktopCodeEditor";
 import { Play } from "lucide-react";
 import DesktopConsole from "./DesktopConsole";
-import { useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
+import { useLanguageStore } from "@/store/compilerStore";
 import { codeTemplates } from "@/lib/codeTemplates";
 
 const PythonCompiler: React.FC = () => {
@@ -22,18 +22,9 @@ const PythonCompiler: React.FC = () => {
   const [showInputBox, setShowInputBox] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [activeTab, setActiveTab] = useState<"code" | "console">("code");
-  const { fontSize, setFontSize } = useFontSizeStore();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { language } = useLanguageStore();
   const [code, setCode] = useState(codeTemplates[language] || "");
-
-  // Load fontSize from localStorage on client-side only
-  useEffect(() => {
-    const savedFontSize = localStorage.getItem("fontSize");
-    if (savedFontSize) {
-      setFontSize(parseInt(savedFontSize));
-    }
-  }, [setFontSize]);
 
   useEffect(() => {
     setCode(codeTemplates[language] || "");
@@ -187,8 +178,6 @@ const PythonCompiler: React.FC = () => {
           activeTab={activeTab}
           setShowInputBox={setShowInputBox}
           showInputBox={showInputBox}
-          fontSize={fontSize}
-          setFontSize={setFontSize}
           output={output}
           error={error}
           setActiveTab={setActiveTab}
@@ -210,7 +199,6 @@ const PythonCompiler: React.FC = () => {
           activeTab={activeTab}
           code={code}
           setCode={setCode}
-          fontSize={fontSize}
           showInputBox={showInputBox}
           setShowInputBox={setShowInputBox}
           hasInputCalls={hasInputCalls}

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -7,11 +8,10 @@ import {
   Code,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
+import { useFontSizeStore } from '@/store/compilerStore';
 
 export default function MobileHeader({
     hasInputCalls,
-    fontSize,
-    setFontSize,
     activeTab,
     setActiveTab,
     output,
@@ -21,8 +21,6 @@ export default function MobileHeader({
     hasInputCalls: boolean,
     isDarkMode: boolean,
     setIsDarkMode: (value: boolean) => void,
-    fontSize: number,
-    setFontSize: (value: number) => void,
     activeTab: 'code' | 'console',
     setActiveTab: (tab: 'code' | 'console') => void,
     output?: string,
@@ -34,6 +32,7 @@ export default function MobileHeader({
     setShowConsole?: (value: boolean) => void,
 }) {
 
+  const {fontSize, setFontSize} = useFontSizeStore()
   return (
     <div className="bg-background border-b p-2">
           <div className="flex items-center justify-between mb-2">
@@ -50,7 +49,7 @@ export default function MobileHeader({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setFontSize(Math.max(10, fontSize - 1))}
+                  onClick={() => setFontSize(Math.max(14, fontSize - 1))}
                   className="h-7 w-7 p-0"
                 >
                   <Minus className="h-3 w-3" />

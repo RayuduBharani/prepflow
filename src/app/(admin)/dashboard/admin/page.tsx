@@ -10,7 +10,7 @@ async function Admin() {
   });
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center py-10 px-2 sm:px-6 bg-background">
+    <div className="min-h-screen w-full flex flex-col items-center pt-[5rem] px-2 sm:px-6 bg-background">
       <AdminForm />
 
       <h1 className="text-2xl font-bold mt-4 mb-2 text-center text-foreground">

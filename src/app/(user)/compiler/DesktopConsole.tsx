@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,10 +39,6 @@ export default function DesktopConsole({
   output,
 }: DesktopConsoleProps) {
   const { consoleFontSize, setConsoleFontSize } = useConsoleFontSizeStore();
-  useEffect(() => {
-    const size = localStorage.getItem("consoleFontSize");
-    setConsoleFontSize(parseInt(size as string))
-  }, [setConsoleFontSize]);
 
   const handleFontSize = (increment: boolean) => {
     let x: number;
@@ -52,8 +48,7 @@ export default function DesktopConsole({
     } else {
       x = Math.max(14, consoleFontSize - 1);
       setConsoleFontSize(x);
-    }
-    localStorage.setItem("consoleFontSize", x.toString());
+    } 
   };
   return (
     <div className="h-full p-4 pl-0">
