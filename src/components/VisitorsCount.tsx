@@ -4,8 +4,7 @@ import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 const VisitorsCount = async () => {
-  // const count = await getVisitorsCount();
-  const count=1
+  const count = await getVisitorsCount();
   return (
     <span className="text-xs px-2 py-1 w-full text-start font-medium text-muted-foreground flex items-center gap-4">
       Visitors
