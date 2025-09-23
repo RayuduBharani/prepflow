@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NextAuth, { DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
@@ -52,18 +53,27 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
   ],
   callbacks: {
     async session({ session, user }) {
-      // Attach `role` and `id` to the session object
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      session.user.role = (user as any).role ?? UserRole.USER; // No need for type assertion if Prisma schema is correct
       session.user.id = user.id;
+      session.user.role = (user as any).role ?? UserRole.USER;
+      session.user.leetcode_username = (user as any).leetcode_username ?? null;
       return session;
     },
     async signIn({ user }) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastLogin: new Date() },
-      });
-      return true;
+      try {
+        const existingUser = await prisma.user.findUnique({
+          where: { id: user.id },
+        });
+        if (existingUser) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLogin: new Date() },
+          });
+        }
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return true;
+      }
     },
     async redirect({ url, baseUrl }) {
       // Ensure redirect URL is valid; fallback to baseUrl if not
