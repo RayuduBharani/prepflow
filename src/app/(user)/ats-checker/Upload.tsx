@@ -161,7 +161,7 @@ const Upload = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="w-full max-w-xl rounded-md bg-red-50 p-4 text-red-800 border border-red-200 animate-shake">
+        <div className="w-full max-w-xl rounded-md p-4 border border-primary text-primary-foreground bg-primary/10">
           <p className="font-medium">{error}</p>
         </div>
       )}
