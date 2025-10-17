@@ -6,6 +6,7 @@ import {
   Plus,
   Terminal,
   Code,
+  RotateCcw,
 } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useFontSizeStore } from '@/store/compilerStore';
@@ -16,7 +17,8 @@ export default function MobileHeader({
     setActiveTab,
     output,
     error,
-    showInputBox
+    showInputBox,
+    resetCode
 }: { 
     hasInputCalls: boolean,
     isDarkMode: boolean,
@@ -30,6 +32,7 @@ export default function MobileHeader({
     setOutput?: (value: string) => void,
     setError?: (value: string) => void,
     setShowConsole?: (value: boolean) => void,
+    resetCode?: () => void,
 }) {
 
   const {fontSize, setFontSize} = useFontSizeStore()
@@ -45,6 +48,15 @@ export default function MobileHeader({
               )}
             </div>
             <div className="flex items-center space-x-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetCode}
+                className="h-7 w-7 p-0"
+                aria-label="Reset code"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </Button>
               <div className="flex items-center space-x-1 border rounded">
                 <Button
                   variant="ghost"

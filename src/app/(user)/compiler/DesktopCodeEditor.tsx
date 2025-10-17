@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Editor } from "@monaco-editor/react";
-import { Minus, Plus, CirclePlay } from "lucide-react";
+import { Minus, Plus, CirclePlay, RotateCcw } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Tooltip,
@@ -23,6 +23,7 @@ interface DesktopCodeEditorProps {
   isRunning: boolean;
   isFullscreen: boolean;
   onToggleFullscreen: () => void;
+  resetCode: () => void;
 }
 
 export default function DesktopCodeEditor({
@@ -32,6 +33,7 @@ export default function DesktopCodeEditor({
   isRunning,
   isFullscreen,
   onToggleFullscreen,
+  resetCode,
 }: DesktopCodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const {fontSize, setFontSize} = useFontSizeStore()
@@ -103,6 +105,26 @@ export default function DesktopCodeEditor({
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={resetCode}
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  aria-label="Reset code"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="center"
+                className="bg-popover text-popover-foreground rounded-md px-3 py-2 shadow-md"
+              >
+                <p className="text-xs">Reset to default code</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <Button
