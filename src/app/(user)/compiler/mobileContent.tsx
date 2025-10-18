@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Editor } from '@monaco-editor/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,8 +6,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useFontSizeStore, useLanguageStore } from '@/store/compilerStore';
+import { useFontSizeStore, useLanguageStore, useEditorFeaturesStore, ALLOWED_LANGUAGES } from '@/store/compilerStore';
 import DisplayLoader from './DisplayLoader';
+import type * as Monaco from "monaco-editor";
+import { setupEditor, registerCompletionProviders } from "./editorConfig";
 
 interface MobileContentProps {
   activeTab: 'code' | 'console';
@@ -48,7 +50,27 @@ export default function MobileContent({
 }: MobileContentProps) {
   const {resolvedTheme} = useTheme()
   const {fontSize} = useFontSizeStore()
-  const {language} = useLanguageStore()
+  const language = useLanguageStore((state) =>
+    ALLOWED_LANGUAGES.includes(state.language) ? state.language : "python"
+  );
+  const { intelliSenseEnabled, snippetsEnabled } = useEditorFeaturesStore();
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<typeof Monaco | null>(null);
+
+  // Setup editor with custom completion providers
+  const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+    setupEditor(editor, monaco, intelliSenseEnabled, snippetsEnabled);
+  };
+
+  // Re-register providers when IntelliSense, Snippets, or Language changes
+  useEffect(() => {
+    if (monacoRef.current) {
+      registerCompletionProviders(monacoRef.current, intelliSenseEnabled, snippetsEnabled);
+    }
+  }, [intelliSenseEnabled, snippetsEnabled, language]);
+
   return (
     <div className="flex-1 relative">
           {/* Code Tab - Mobile */}
@@ -59,7 +81,8 @@ export default function MobileContent({
                 defaultLanguage="python"
                 language={language}
                 value={code}
-                theme={resolvedTheme === 'dark' ? 'vs-dark' : 'vs'}
+                theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
+                onMount={handleEditorDidMount}
                 options={{
                 fontSize: fontSize,
                 minimap: { enabled: false },
@@ -68,7 +91,8 @@ export default function MobileContent({
                 tabSize: 4,
                 insertSpaces: true,
                 parameterHints: {
-                  enabled: true,
+                  enabled: intelliSenseEnabled,
+                  cycle: true,
                 },
                 autoIndent: "full",
                 renderWhitespace: "boundary",
@@ -79,12 +103,12 @@ export default function MobileContent({
                 cursorBlinking: "smooth",
                 overviewRulerLanes: 3,
                 overviewRulerBorder: false,
-                quickSuggestionsDelay: 100,
-                quickSuggestions: {
+                quickSuggestionsDelay: intelliSenseEnabled ? 10 : 100,
+                quickSuggestions: intelliSenseEnabled ? {
                   other: true,
                   comments: true,
                   strings: true,
-                },
+                } : false,
                 autoClosingBrackets: "languageDefined",
                 autoClosingQuotes: "languageDefined",
                 autoClosingOvertype: "auto",
@@ -100,10 +124,42 @@ export default function MobileContent({
                 copyWithSyntaxHighlighting: true,
                 formatOnPaste: true,
                 formatOnType: true,
-                suggestOnTriggerCharacters: true,
-                suggestSelection: "first",
-                acceptSuggestionOnEnter: "on",
+                suggestOnTriggerCharacters: intelliSenseEnabled,
+                suggestSelection: intelliSenseEnabled ? "first" : "recentlyUsed",
+                acceptSuggestionOnEnter: intelliSenseEnabled ? "on" : "off",
                 suggestFontSize: fontSize,
+                snippetSuggestions: snippetsEnabled ? "inline" : "none",
+                tabCompletion: snippetsEnabled ? "on" : "off",
+                wordBasedSuggestions: intelliSenseEnabled ? "currentDocument" : "off",
+                suggest: {
+                  showKeywords: intelliSenseEnabled,
+                  showSnippets: snippetsEnabled,
+                  showWords: false, // Disable word-based suggestions to prevent cross-language pollution
+                  showMethods: intelliSenseEnabled,
+                  showFunctions: intelliSenseEnabled,
+                  showConstructors: intelliSenseEnabled,
+                  showFields: intelliSenseEnabled,
+                  showVariables: intelliSenseEnabled,
+                  showClasses: intelliSenseEnabled,
+                  showStructs: intelliSenseEnabled,
+                  showInterfaces: intelliSenseEnabled,
+                  showModules: intelliSenseEnabled,
+                  showProperties: intelliSenseEnabled,
+                  showEvents: intelliSenseEnabled,
+                  showOperators: intelliSenseEnabled,
+                  showUnits: intelliSenseEnabled,
+                  showValues: intelliSenseEnabled,
+                  showConstants: intelliSenseEnabled,
+                  showEnums: intelliSenseEnabled,
+                  showEnumMembers: intelliSenseEnabled,
+                  showColors: intelliSenseEnabled,
+                  showFiles: false,
+                  showReferences: false,
+                  showFolders: false,
+                  showTypeParameters: intelliSenseEnabled,
+                  filterGraceful: true,
+                  snippetsPreventQuickSuggestions: false,
+                },
               }}
                 onChange={(value) => setCode(value || '')}
               />

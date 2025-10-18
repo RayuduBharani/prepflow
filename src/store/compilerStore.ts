@@ -108,3 +108,27 @@ export const useConsoleFontSizeStore = create<ConsoleFontState>()(
   )
 );
 
+// -----------------------
+// Editor Features Store
+// -----------------------
+type EditorFeaturesState = {
+  intelliSenseEnabled: boolean;
+  snippetsEnabled: boolean;
+  toggleIntelliSense: () => void;
+  toggleSnippets: () => void;
+};
+
+export const useEditorFeaturesStore = create<EditorFeaturesState>()(
+  persist(
+    (set) => ({
+      intelliSenseEnabled: true,
+      snippetsEnabled: true,
+      toggleIntelliSense: () => set((state) => ({ intelliSenseEnabled: !state.intelliSenseEnabled })),
+      toggleSnippets: () => set((state) => ({ snippetsEnabled: !state.snippetsEnabled })),
+    }),
+    {
+      name: "editorFeatures",
+    }
+  )
+);
+
