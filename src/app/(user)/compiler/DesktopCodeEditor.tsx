@@ -89,7 +89,12 @@ export default function DesktopCodeEditor({
 
   // Re-register providers when IntelliSense, Snippets, or Language changes
   useEffect(() => {
-    if (monacoRef.current) {
+    if (monacoRef.current && editorRef.current) {
+      // Force update the model's language to ensure it matches the current language
+      const model = editorRef.current.getModel();
+      if (model) {
+        monacoRef.current.editor.setModelLanguage(model, language);
+      }
       registerCompletionProviders(monacoRef.current, intelliSenseEnabled, snippetsEnabled);
     }
   }, [intelliSenseEnabled, snippetsEnabled, language]);
@@ -249,7 +254,7 @@ export default function DesktopCodeEditor({
           <div className="h-full">
             <Editor
               height="90vh"
-              defaultLanguage="python"
+              defaultLanguage={language}
               language={language}
               value={code}
               theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
