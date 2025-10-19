@@ -47,19 +47,58 @@ export default function DesktopCodeEditor({
 }: DesktopCodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const {fontSize, setFontSize} = useFontSizeStore()
+  
+  // Get language from localStorage directly on initial mount to avoid hydration issues
+  const [initialLanguage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('defaultLanguage');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const lang = parsed.state?.language || 'python';
+          return ALLOWED_LANGUAGES.includes(lang) ? lang : 'python';
+        }
+      } catch (e) {
+        console.error('Error reading language from localStorage:', e);
+      }
+    }
+    return 'python';
+  });
+  
   const language = useLanguageStore((state) =>
-  ALLOWED_LANGUAGES.includes(state.language) ? state.language : "python"
-);
+    ALLOWED_LANGUAGES.includes(state.language) ? state.language : initialLanguage
+  );
   const { intelliSenseEnabled, snippetsEnabled, toggleIntelliSense, toggleSnippets } = useEditorFeaturesStore();
   const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof Monaco | null>(null);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const isFirstMountRef = useRef(true);
+  const [editorLanguage, setEditorLanguage] = useState(initialLanguage);
+
+  // Sync editor language with store language
+  useEffect(() => {
+    setEditorLanguage(language);
+  }, [language]);
 
   // Setup editor with custom completion providers
   const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
+    
+    // CRITICAL: Set the model's language FIRST before registering providers
+    const model = editor.getModel();
+    if (model) {
+      const currentLang = model.getLanguageId();
+      console.log('[Editor Mount] Current model language:', currentLang, 'Target language:', editorLanguage);
+      if (currentLang !== editorLanguage) {
+        console.log('[Editor Mount] Force setting language to:', editorLanguage);
+        monaco.editor.setModelLanguage(model, editorLanguage);
+      }
+    }
+    
+    // Register providers after ensuring language is correct
     setupEditor(editor, monaco, intelliSenseEnabled, snippetsEnabled);
+    isFirstMountRef.current = false;
   };
 
   const handleResetClick = () => {
@@ -93,11 +132,15 @@ export default function DesktopCodeEditor({
       // Force update the model's language to ensure it matches the current language
       const model = editorRef.current.getModel();
       if (model) {
-        monacoRef.current.editor.setModelLanguage(model, language);
+        const currentLang = model.getLanguageId();
+        if (currentLang !== editorLanguage) {
+          console.log('[Language Sync] Updating model language from', currentLang, 'to', editorLanguage);
+          monacoRef.current.editor.setModelLanguage(model, editorLanguage);
+        }
       }
       registerCompletionProviders(monacoRef.current, intelliSenseEnabled, snippetsEnabled);
     }
-  }, [intelliSenseEnabled, snippetsEnabled, language]);
+  }, [intelliSenseEnabled, snippetsEnabled, editorLanguage]);
 
   const handleFontSize = (increment: boolean) => {
     let x: number;
@@ -254,8 +297,9 @@ export default function DesktopCodeEditor({
           <div className="h-full">
             <Editor
               height="90vh"
-              defaultLanguage={language}
-              language={language}
+              defaultLanguage={editorLanguage}
+              language={editorLanguage}
+              path={`main.${editorLanguage === 'cpp' ? 'cpp' : editorLanguage === 'javascript' ? 'js' : editorLanguage}`}
               value={code}
               theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
               onMount={handleEditorDidMount}
@@ -283,7 +327,7 @@ export default function DesktopCodeEditor({
                 quickSuggestions: intelliSenseEnabled ? {
                   other: true,
                   comments: true,
-                  strings: true,
+                  strings: false,
                 } : false,
                 autoClosingBrackets: "languageDefined",
                 autoClosingQuotes: "languageDefined",
