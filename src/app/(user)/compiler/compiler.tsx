@@ -24,31 +24,109 @@ const PythonCompiler: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"code" | "console">("code");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { language } = useLanguageStore();
-  const [code, setCode] = useState(codeTemplates[language] || "");
-
+  const [code, setCode] = useState("");
   useEffect(() => {
-    setCode(codeTemplates[language] || "");
+    const savedCode = localStorage.getItem(`compiler-code-${language}`);
+    if (savedCode) {
+      setCode(savedCode);
+    } else {
+      setCode(codeTemplates[language] || "");
+    }
   }, [language]);
 
+  // Save code to localStorage whenever it changes
+  useEffect(() => {
+    if (code) {
+      localStorage.setItem(`compiler-code-${language}`, code);
+    }
+  }, [code, language]);
+
   const hasInputCalls = useMemo(() => {
-    const inputRegex = /input\s*\(/g;
-    return inputRegex.test(code);
-  }, [code]);
+    // Detect input calls based on language
+    switch (language) {
+      case "python":
+        return /input\s*\(/g.test(code);
+      case "c":
+        return /scanf\s*\(/g.test(code);
+      case "cpp":
+        return /(cin\s*>>|getline\s*\()/g.test(code);
+      case "java":
+        return /(\.nextLine\s*\(|\.nextInt\s*\(|\.nextDouble\s*\(|\.next\s*\(|Scanner\s+)/g.test(code);
+      case "javascript":
+        return /(readline\s*\(|prompt\s*\()/g.test(code);
+      default:
+        return false;
+    }
+  }, [code, language]);
 
   const getInputPrompts = useMemo(() => {
     const prompts: string[] = [];
-    const inputRegex = /input\s*\(\s*["']([^"']*)["']\s*\)/g;
-    let match;
-    while ((match = inputRegex.exec(code)) !== null) {
-      prompts.push(match[1]);
+    
+    switch (language) {
+      case "python": {
+        const inputRegex = /input\s*\(\s*["']([^"']*)["']\s*\)/g;
+        let match;
+        while ((match = inputRegex.exec(code)) !== null) {
+          prompts.push(match[1]);
+        }
+        break;
+      }
+      case "c": {
+        const scanfMatches = code.match(/scanf\s*\(/g);
+        if (scanfMatches) {
+          scanfMatches.forEach(() => prompts.push("Input required"));
+        }
+        break;
+      }
+      case "cpp": {
+        const cinMatches = code.match(/(cin\s*>>|getline\s*\()/g);
+        if (cinMatches) {
+          cinMatches.forEach(() => prompts.push("Input required"));
+        }
+        break;
+      }
+      case "java": {
+        const scannerMatches = code.match(/(\.nextLine\s*\(|\.nextInt\s*\(|\.nextDouble\s*\(|\.next\s*\()/g);
+        if (scannerMatches) {
+          scannerMatches.forEach(() => prompts.push("Input required"));
+        }
+        break;
+      }
+      case "javascript": {
+        const readlineMatches = code.match(/(readline\s*\(|prompt\s*\()/g);
+        if (readlineMatches) {
+          readlineMatches.forEach(() => prompts.push("Input required"));
+        }
+        break;
+      }
     }
+    
     return prompts;
-  }, [code]);
+  }, [code, language]);
 
   const inputCallsCount = useMemo(() => {
-    const matches = code.match(/input\s*\(/g);
+    let matches: RegExpMatchArray | null = null;
+    
+    switch (language) {
+      case "python":
+        matches = code.match(/input\s*\(/g);
+        break;
+      case "c":
+        matches = code.match(/scanf\s*\(/g);
+        break;
+      case "cpp":
+        matches = code.match(/(cin\s*>>|getline\s*\()/g);
+        break;
+      case "java":
+        matches = code.match(/(\.nextLine\s*\(|\.nextInt\s*\(|\.nextDouble\s*\(|\.next\s*\()/g);
+        break;
+      case "javascript":
+        matches = code.match(/(readline\s*\(|prompt\s*\()/g);
+        break;
+    }
+    
     return matches ? matches.length : 0;
-  }, [code]);
+  }, [code, language]);
 
   const validateInputs = () => {
     if (!hasInputCalls) return true;
@@ -148,6 +226,13 @@ const PythonCompiler: React.FC = () => {
     setInputs("");
   };
 
+  const resetCode = () => {
+    const defaultCode = codeTemplates[language] || "";
+    setCode(defaultCode);
+    localStorage.setItem(`compiler-code-${language}`, defaultCode);
+    clearOutput();
+  };
+
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isFullscreen) {
@@ -181,6 +266,7 @@ const PythonCompiler: React.FC = () => {
           output={output}
           error={error}
           setActiveTab={setActiveTab}
+          resetCode={resetCode}
         />
 
         <div className="bg-background border-b p-2">
@@ -231,6 +317,7 @@ const PythonCompiler: React.FC = () => {
               isRunning={isRunning}
               isFullscreen={isFullscreen}
               onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+              resetCode={resetCode}
             />
           </ResizablePanel>
 

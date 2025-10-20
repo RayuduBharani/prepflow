@@ -1,18 +1,28 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Editor } from "@monaco-editor/react";
-import { Minus, Plus, CirclePlay } from "lucide-react";
+import { Minus, Plus, CirclePlay, RotateCcw, Lightbulb, FileCode2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import FullScreenButton from "./FullScreenButton";
-import { ALLOWED_LANGUAGES, useFontSizeStore, useLanguageStore } from "@/store/compilerStore";
+import { ALLOWED_LANGUAGES, useFontSizeStore, useLanguageStore, useEditorFeaturesStore } from "@/store/compilerStore";
 import LanguageSelector from "./LanguageSelector";
+import type * as Monaco from "monaco-editor";
+import { setupEditor, registerCompletionProviders } from "./editorConfig";
 
 interface DesktopCodeEditorProps {
   code: string;
@@ -23,6 +33,7 @@ interface DesktopCodeEditorProps {
   isRunning: boolean;
   isFullscreen: boolean;
   onToggleFullscreen: () => void;
+  resetCode: () => void;
 }
 
 export default function DesktopCodeEditor({
@@ -32,12 +43,72 @@ export default function DesktopCodeEditor({
   isRunning,
   isFullscreen,
   onToggleFullscreen,
+  resetCode,
 }: DesktopCodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const {fontSize, setFontSize} = useFontSizeStore()
+  
+  // Get language from localStorage directly on initial mount to avoid hydration issues
+  const [initialLanguage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('defaultLanguage');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const lang = parsed.state?.language || 'python';
+          return ALLOWED_LANGUAGES.includes(lang) ? lang : 'python';
+        }
+      } catch (e) {
+        console.error('Error reading language from localStorage:', e);
+      }
+    }
+    return 'python';
+  });
+  
   const language = useLanguageStore((state) =>
-  ALLOWED_LANGUAGES.includes(state.language) ? state.language : "python"
-);
+    ALLOWED_LANGUAGES.includes(state.language) ? state.language : initialLanguage
+  );
+  const { intelliSenseEnabled, snippetsEnabled, toggleIntelliSense, toggleSnippets } = useEditorFeaturesStore();
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<typeof Monaco | null>(null);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const isFirstMountRef = useRef(true);
+  const [editorLanguage, setEditorLanguage] = useState(initialLanguage);
+
+  // Sync editor language with store language
+  useEffect(() => {
+    setEditorLanguage(language);
+  }, [language]);
+
+  // Setup editor with custom completion providers
+  const handleEditorDidMount = (editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+    
+    // CRITICAL: Set the model's language FIRST before registering providers
+    const model = editor.getModel();
+    if (model) {
+      const currentLang = model.getLanguageId();
+      console.log('[Editor Mount] Current model language:', currentLang, 'Target language:', editorLanguage);
+      if (currentLang !== editorLanguage) {
+        console.log('[Editor Mount] Force setting language to:', editorLanguage);
+        monaco.editor.setModelLanguage(model, editorLanguage);
+      }
+    }
+    
+    // Register providers after ensuring language is correct
+    setupEditor(editor, monaco, intelliSenseEnabled, snippetsEnabled);
+    isFirstMountRef.current = false;
+  };
+
+  const handleResetClick = () => {
+    setShowResetDialog(true);
+  };
+
+  const handleConfirmReset = () => {
+    resetCode();
+    setShowResetDialog(false);
+  };
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -54,6 +125,23 @@ export default function DesktopCodeEditor({
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [handleRunCode, isRunning]);
+
+  // Re-register providers when IntelliSense, Snippets, or Language changes
+  useEffect(() => {
+    if (monacoRef.current && editorRef.current) {
+      // Force update the model's language to ensure it matches the current language
+      const model = editorRef.current.getModel();
+      if (model) {
+        const currentLang = model.getLanguageId();
+        if (currentLang !== editorLanguage) {
+          console.log('[Language Sync] Updating model language from', currentLang, 'to', editorLanguage);
+          monacoRef.current.editor.setModelLanguage(model, editorLanguage);
+        }
+      }
+      registerCompletionProviders(monacoRef.current, intelliSenseEnabled, snippetsEnabled);
+    }
+  }, [intelliSenseEnabled, snippetsEnabled, editorLanguage]);
+
   const handleFontSize = (increment: boolean) => {
     let x: number;
     if (increment) {
@@ -83,6 +171,47 @@ export default function DesktopCodeEditor({
             <LanguageSelector />
           </div>
           <div className="flex items-center space-x-2 overflow-hidden">
+             <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={toggleIntelliSense}
+                  variant={intelliSenseEnabled ? "default" : "outline"}
+                  size="icon"
+                  className="w-8 h-8 sm:w-9 sm:h-9 transition-all duration-200 hover:scale-105"
+                  aria-label="Toggle IntelliSense"
+                >
+                  <Lightbulb className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${intelliSenseEnabled ? '' : 'opacity-70'}`} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="center"
+                className="bg-popover text-popover-foreground rounded-md px-3 py-2 shadow-md"
+              >
+                <p className="text-xs font-medium">IntelliSense: {intelliSenseEnabled ? "ON" : "OFF"}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={toggleSnippets}
+                  variant={snippetsEnabled ? "default" : "outline"}
+                  size="icon"
+                  className="w-8 h-8 sm:w-9 sm:h-9 transition-all duration-200 hover:scale-105"
+                  aria-label="Toggle Snippets"
+                >
+                  <FileCode2 className={`h-4 w-4 sm:h-4.5 sm:w-4.5 ${snippetsEnabled ? '' : 'opacity-70'}`} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="center"
+                className="bg-popover text-popover-foreground rounded-md px-3 py-2 shadow-md"
+              >
+                <p className="text-xs font-medium">Snippets: {snippetsEnabled ? "ON" : "OFF"}</p>
+              </TooltipContent>
+            </Tooltip>
+            <div className="h-6 w-px bg-border mx-1" /> {/* Separator */}
             <FullScreenButton onToggleFullscreen={onToggleFullscreen} />
             <div className="flex items-center space-x-1">
               <Button
@@ -103,6 +232,26 @@ export default function DesktopCodeEditor({
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleResetClick}
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8"
+                  aria-label="Reset code"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="center"
+                className="bg-popover text-popover-foreground rounded-md px-3 py-2 shadow-md"
+              >
+                <p className="text-xs">Reset to default code</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <Button
@@ -148,10 +297,12 @@ export default function DesktopCodeEditor({
           <div className="h-full">
             <Editor
               height="90vh"
-              defaultLanguage="python"
-              language={language}
+              defaultLanguage={editorLanguage}
+              language={editorLanguage}
+              path={`main.${editorLanguage === 'cpp' ? 'cpp' : editorLanguage === 'javascript' ? 'js' : editorLanguage}`}
               value={code}
               theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
+              onMount={handleEditorDidMount}
               options={{
                 fontSize: fontSize,
                 minimap: { enabled: false },
@@ -160,7 +311,8 @@ export default function DesktopCodeEditor({
                 tabSize: 4,
                 insertSpaces: true,
                 parameterHints: {
-                  enabled: true,
+                  enabled: intelliSenseEnabled,
+                  cycle: true,
                 },
                 autoIndent: "full",
                 renderWhitespace: "boundary",
@@ -171,12 +323,12 @@ export default function DesktopCodeEditor({
                 cursorBlinking: "smooth",
                 overviewRulerLanes: 3,
                 overviewRulerBorder: false,
-                quickSuggestionsDelay: 100,
-                quickSuggestions: {
+                quickSuggestionsDelay: intelliSenseEnabled ? 10 : 100,
+                quickSuggestions: intelliSenseEnabled ? {
                   other: true,
                   comments: true,
-                  strings: true,
-                },
+                  strings: false,
+                } : false,
                 autoClosingBrackets: "languageDefined",
                 autoClosingQuotes: "languageDefined",
                 autoClosingOvertype: "auto",
@@ -192,16 +344,81 @@ export default function DesktopCodeEditor({
                 copyWithSyntaxHighlighting: true,
                 formatOnPaste: true,
                 formatOnType: true,
-                suggestOnTriggerCharacters: true,
-                suggestSelection: "first",
-                acceptSuggestionOnEnter: "on",
+                suggestOnTriggerCharacters: intelliSenseEnabled,
+                suggestSelection: intelliSenseEnabled ? "first" : "recentlyUsed",
+                acceptSuggestionOnEnter: intelliSenseEnabled ? "on" : "off",
                 suggestFontSize: fontSize,
+                snippetSuggestions: snippetsEnabled ? "inline" : "none",
+                tabCompletion: snippetsEnabled ? "on" : "off",
+                wordBasedSuggestions: intelliSenseEnabled ? "currentDocument" : "off",
+                suggest: {
+                  showKeywords: intelliSenseEnabled,
+                  showSnippets: snippetsEnabled,
+                  showWords: false, // Disable word-based suggestions to prevent cross-language pollution
+                  showMethods: intelliSenseEnabled,
+                  showFunctions: intelliSenseEnabled,
+                  showConstructors: intelliSenseEnabled,
+                  showFields: intelliSenseEnabled,
+                  showVariables: intelliSenseEnabled,
+                  showClasses: intelliSenseEnabled,
+                  showStructs: intelliSenseEnabled,
+                  showInterfaces: intelliSenseEnabled,
+                  showModules: intelliSenseEnabled,
+                  showProperties: intelliSenseEnabled,
+                  showEvents: intelliSenseEnabled,
+                  showOperators: intelliSenseEnabled,
+                  showUnits: intelliSenseEnabled,
+                  showValues: intelliSenseEnabled,
+                  showConstants: intelliSenseEnabled,
+                  showEnums: intelliSenseEnabled,
+                  showEnumMembers: intelliSenseEnabled,
+                  showColors: intelliSenseEnabled,
+                  showFiles: false,
+                  showReferences: false,
+                  showFolders: false,
+                  showTypeParameters: intelliSenseEnabled,
+                  filterGraceful: true,
+                  snippetsPreventQuickSuggestions: false,
+                },
               }}
               onChange={(value) => setCode(value || "")}
             />
           </div>
         </CardContent>
       </Card>
+
+      {/* Reset Code Confirmation Dialog */}
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <RotateCcw className="h-5 w-5 text-orange-500" />
+              Reset Code?
+            </DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Are you sure you want to reset the code to default? This action will discard all your current changes and cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowResetDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleConfirmReset}
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset Code
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
