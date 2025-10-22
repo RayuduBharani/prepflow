@@ -2,6 +2,9 @@
 
 export async function getVisitorsCount() {
   try {
+    if (process.env.NODE_ENV === 'development') {
+      return 1
+    }
     // Use server-side environment variable (no NEXT_PUBLIC_ prefix)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const apiUrl = `${baseUrl}/api/visitors`;

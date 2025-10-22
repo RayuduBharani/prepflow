@@ -1,26 +1,37 @@
 import { Metadata } from "next";
 
-export const metadata : Metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL("https://prepflow.vercel.app"),
   title: {
-    default: "PrepFlow - AI Interview Preparation Platform",
+    default: "PrepFlow - AI Interview Preparation Platform | DSA, System Design & More",
     template: "%s | PrepFlow",
   },
   description:
-    "PrepFlow is an AI-powered platform for coding interview preparation with curated DSA sheets, system design guides, resume checks, and interactive practice for FAANG and tech interviews.",
+    "PrepFlow is an AI-powered platform for coding interview preparation with curated DSA sheets, system design guides, online compiler, resume ATS checker, and interactive practice for FAANG and top tech company interviews. Master algorithms, data structures, and ace your next interview.",
   keywords: [
     "Prepflow",
+    "interview preparation",
+    "AI interview platform",
+    "DSA sheets",
+    "data structures and algorithms",
+    "system design",
+    "FAANG interviews",
+    "coding interview practice",
+    "resume ATS checker",
+    "online compiler",
+    "LeetCode alternative",
+    "software engineer jobs",
+    "tech interview prep",
+    "algorithm practice",
+    "coding challenges",
+    "interview questions",
+    "Amazon interview prep",
+    "Google interview prep",
+    "Microsoft interview prep",
+    "Meta interview prep",
+    "Apple interview prep",
     "Ashok Atragadda",
     "Cygnuxxs",
-    "Interview Preparation",
-    "AI Interview Platform",
-    "DSA Sheets",
-    "System Design",
-    "FAANG Interviews",
-    "Coding Interview Practice",
-    "Resume Review",
-    "LeetCode Alternative",
-    "Software Engineer Jobs",
   ],
   applicationName: "PrepFlow",
   generator: "Next.js",
@@ -38,28 +49,31 @@ export const metadata : Metadata = {
   publisher: "Ashok Atragadda (Cygnuxxs)",
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, address: false, telephone: false },
+  category: "Education",
+  classification: "Interview Preparation, Education Technology, Career Development",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://prepflow.vercel.app",
     siteName: "PrepFlow",
-    title: "PrepFlow - AI Interview Preparation",
+    title: "PrepFlow - Master Tech Interviews with AI-Powered Preparation",
     description:
-      "Level up your tech interviews with PrepFlow's DSA sheets, AI mock interviews, and resume feedback.",
+      "Ace your FAANG and tech interviews with PrepFlow's curated DSA sheets, system design guides, online compiler, AI mock interviews, and ATS resume checker. Practice like a pro, get hired faster.",
     images: [
       {
         url: "https://prepflow.vercel.app/og-image.jpeg",
         width: 1200,
         height: 630,
-        alt: "PrepFlow Interview Platform Banner",
+        alt: "PrepFlow - AI-Powered Interview Preparation Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PrepFlow - Ace Your Tech Interviews",
-    description: "Practice DSA, system design, resume review, and more.",
+    title: "PrepFlow - Ace Your Tech Interviews with AI",
+    description: "Master DSA, system design, resume review, and coding challenges. Your path to FAANG starts here.",
     creator: "@AshyGany",
+    site: "@AshyGany",
     images: ["https://prepflow.vercel.app/og-image.jpeg"],
   },
   alternates: {
@@ -67,5 +81,16 @@ export const metadata : Metadata = {
   },
   verification: {
     google: "5t4zBjhovVUsu3rVsR2HSiuUOu6yqVbHSusUkSFdnjY",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };

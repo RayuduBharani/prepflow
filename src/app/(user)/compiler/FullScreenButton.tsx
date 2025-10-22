@@ -54,7 +54,7 @@ export default function FullScreenButton({
   }, []);
 
   return (
-    <Button onClick={toggleFullscreen} className="w-8 h-8" size="icon">
+    <Button variant={'secondary'} onClick={toggleFullscreen} className="w-8 h-8" size="icon">
       {isFull ? (
         <Minimize2 className="w-4 h-4" strokeWidth={1} />
       ) : (

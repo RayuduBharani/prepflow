@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function CompilerPage() {
   return (
-    <div className="h-full w-full min-h-screen pt-16 px-2 sm:px-1">
+    <div className="h-full w-full min-h-screen pt-[5rem] px-2 sm:px-1">
       <Compiler />
     </div>
   );

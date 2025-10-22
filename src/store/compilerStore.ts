@@ -1,90 +1,77 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { codeTemplates } from "@/lib/codeTemplates";
 
 // -----------------------
 // Allowed languages
 // -----------------------
 type Language = "python" | "c" | "cpp" | "java" | "javascript";
 
-export const ALLOWED_LANGUAGES: Language[] = ["python", "c", "cpp", "java", "javascript"];
+export const ALLOWED_LANGUAGES: Language[] = [
+  "python",
+  "c",
+  "cpp",
+  "java",
+  "javascript",
+];
 
-// -----------------------
-// Language Store
-// -----------------------
-type LanguageState = {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+// Utility for creating clamped number stores
+type ClampedNumberState = {
+  value: number;
+  setValue: (n: number) => void;
 };
 
-export const useLanguageStore = create<LanguageState>()(
-  persist(
-    (set) => ({
-      language: "python",
-      setLanguage: (lang: Language) => {
-        if (!ALLOWED_LANGUAGES.includes(lang)) lang = "python";
-        set({ language: lang });
-      },
-    }),
-    {
-      name: "defaultLanguage",
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          if (!ALLOWED_LANGUAGES.includes(state.language)) {
-            state.language = "python";
+export const createClampedNumberStore = (
+  name: string,
+  initialValue: number,
+  minVal: number,
+  maxVal: number
+) => {
+  return create<ClampedNumberState>()(
+    persist(
+      (set) => ({
+        value: initialValue,
+        setValue: (n: number) => {
+          const clamped = Math.min(maxVal, Math.max(minVal, n));
+          set({ value: clamped });
+        },
+      }),
+      {
+        name,
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            const parsed = Number(state.value);
+            state.value = Math.min(
+              maxVal,
+              Math.max(minVal, isNaN(parsed) ? initialValue : parsed)
+            );
+          } else {
+            return { value: initialValue };
           }
-        } else {
-          return { language: "python" };
-        }
-      },
-    }
-  )
-);
-
+        },
+      }
+    )
+  );
+};
 
 // -----------------------
-// Font Size Store
+// Font Store (merged editor and console)
 // -----------------------
 type FontState = {
-  fontSize: number;
-  setFontSize: (n: number) => void;
-};
-
-export const useFontSizeStore = create<FontState>()(
-  persist(
-    (set) => ({
-      fontSize: 14, // default
-      setFontSize: (n: number) => {
-        const x = Math.min(28, Math.max(14, n));
-        set({ fontSize: x });
-      },
-    }),
-    {
-      name: "fontSize",
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          const parsed = Number(state.fontSize);
-          // fallback to 14 if null/undefined/NaN
-          state.fontSize = Math.min(28, Math.max(14, isNaN(parsed) ? 14 : parsed));
-        } else {
-          // state can be null if nothing in Local Storage
-          return { fontSize: 14 };
-        }
-      },
-    }
-  )
-);
-
-// -----------------------
-// Console Font Size Store
-// -----------------------
-type ConsoleFontState = {
+  editorFontSize: number;
+  setEditorFontSize: (n: number) => void;
   consoleFontSize: number;
   setConsoleFontSize: (n: number) => void;
 };
 
-export const useConsoleFontSizeStore = create<ConsoleFontState>()(
+export const useFontStore = create<FontState>()(
   persist(
     (set) => ({
+      editorFontSize: 14,
+      setEditorFontSize: (n: number) => {
+        const x = Math.min(28, Math.max(14, n));
+        set({ editorFontSize: x });
+      },
       consoleFontSize: 18,
       setConsoleFontSize: (n: number) => {
         const x = Math.min(28, Math.max(14, n));
@@ -92,21 +79,39 @@ export const useConsoleFontSizeStore = create<ConsoleFontState>()(
       },
     }),
     {
-      name: "consoleFontSize",
+      name: "font-settings",
       onRehydrateStorage: () => (state) => {
         if (state) {
-          const parsed = Number(state.consoleFontSize);
+          const editorParsed = Number(state.editorFontSize);
+          state.editorFontSize = Math.min(
+            28,
+            Math.max(14, isNaN(editorParsed) ? 14 : editorParsed)
+          );
+
+          const consoleParsed = Number(state.consoleFontSize);
           state.consoleFontSize = Math.min(
             28,
-            Math.max(14, isNaN(parsed) ? 18 : parsed)
+            Math.max(14, isNaN(consoleParsed) ? 18 : consoleParsed)
           );
         } else {
-          return { consoleFontSize: 18 };
+          return { editorFontSize: 14, consoleFontSize: 18 };
         }
       },
     }
   )
 );
+
+// Legacy compatibility (if needed elsewhere)
+export const useFontSizeStore = () => {
+  const { editorFontSize: fontSize, setEditorFontSize: setFontSize } =
+    useFontStore();
+  return { fontSize, setFontSize };
+};
+
+export const useConsoleFontSizeStore = () => {
+  const { consoleFontSize, setConsoleFontSize } = useFontStore();
+  return { consoleFontSize, setConsoleFontSize };
+};
 
 // -----------------------
 // Editor Features Store
@@ -123,8 +128,10 @@ export const useEditorFeaturesStore = create<EditorFeaturesState>()(
     (set) => ({
       intelliSenseEnabled: true,
       snippetsEnabled: true,
-      toggleIntelliSense: () => set((state) => ({ intelliSenseEnabled: !state.intelliSenseEnabled })),
-      toggleSnippets: () => set((state) => ({ snippetsEnabled: !state.snippetsEnabled })),
+      toggleIntelliSense: () =>
+        set((state) => ({ intelliSenseEnabled: !state.intelliSenseEnabled })),
+      toggleSnippets: () =>
+        set((state) => ({ snippetsEnabled: !state.snippetsEnabled })),
     }),
     {
       name: "editorFeatures",
@@ -132,3 +139,79 @@ export const useEditorFeaturesStore = create<EditorFeaturesState>()(
   )
 );
 
+// -----------------------
+// Compiler Store (merged with Language)
+// -----------------------
+type CompilerState = {
+  language: Language;
+  code: string;
+  activeTab: "editor" | "terminal";
+  isDarkMode: boolean;
+  isFullscreen: boolean;
+
+  setLanguage: (lang: Language) => void;
+  setCode: (code: string) => void;
+  setActiveTab: (activeTab: "editor" | "terminal") => void;
+  setIsDarkMode: (isDarkMode: boolean) => void;
+  setIsFullscreen: (isFullscreen: boolean) => void;
+  resetCode: () => void;
+};
+
+export const useCompilerStore = create<CompilerState>()(
+  persist(
+    (set, get) => ({
+      language: "python",
+      code: "",
+      activeTab: "editor",
+      isDarkMode: true,
+      isFullscreen: false,
+
+      setLanguage: (lang: Language) => {
+        if (!ALLOWED_LANGUAGES.includes(lang)) lang = "python";
+        set({ language: lang });
+      },
+
+      setCode: (code: string) => {
+        set({ code });
+        localStorage.setItem(`compiler-code-${get().language}`, code);
+      },
+
+      setActiveTab: (activeTab: "editor" | "terminal") => set({ activeTab }),
+
+      setIsDarkMode: (isDarkMode: boolean) => set({ isDarkMode }),
+
+      setIsFullscreen: (isFullscreen: boolean) => set({ isFullscreen }),
+
+      resetCode: () => {
+        const { language } = get();
+        const defaultCode = codeTemplates[language] || "";
+        set({ code: defaultCode });
+        localStorage.setItem(`compiler-code-${language}`, defaultCode);
+      },   }),
+    {
+      name: "compiler-storage",
+      partialize: (state) => ({
+        code: state.code,
+        activeTab: state.activeTab,
+        isDarkMode: state.isDarkMode,
+        isFullscreen: state.isFullscreen,
+        language: state.language,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          if (!ALLOWED_LANGUAGES.includes(state.language)) {
+            state.language = "python";
+          }
+        } else {
+          return { language: "python" };
+        }
+      },
+    }
+  )
+);
+
+// Legacy compatibility for useLanguageStore
+export const useLanguageStore = () => {
+  const { language, setLanguage } = useCompilerStore();
+  return { language, setLanguage };
+};

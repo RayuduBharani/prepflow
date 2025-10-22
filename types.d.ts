@@ -5,6 +5,49 @@ declare module "*.svg" {
   export default ReactComponent;
 }
 
+// global.d.ts
+declare module "*.css" {
+  const classes: { [key: string]: string };
+  export default classes;
+}
+
+declare module "*.scss" {
+  const classes: { [key: string]: string };
+  export default classes;
+}
+
+interface CompilerState {
+  language: string;
+  code: string;
+  inputs: string;
+  output: string;
+  error: string;
+  isRunning: boolean;
+  showInputBox: boolean;
+  activeTab: "code" | "console";
+  isDarkMode: boolean;
+  isFullscreen: boolean;
+
+  setLanguage: (language: string) => void;
+  setCode: (code: string) => void;
+  setInputs: (inputs: string) => void;
+  setOutput: (output: string) => void;
+  setError: (error: string) => void;
+  setIsRunning: (isRunning: boolean) => void;
+  setShowInputBox: (showInputBox: boolean) => void;
+  setActiveTab: (activeTab: "code" | "console") => void;
+  setIsDarkMode: (isDarkMode: boolean) => void;
+  setIsFullscreen: (isFullscreen: boolean) => void;
+
+  runCode: () => Promise<void>;
+  sendCodeAndInputs: () => Promise<void>;
+  validateInputs: () => boolean;
+  clearOutput: () => void;
+  resetCode: () => void;
+
+  // Computed properties (using selectors would be ideal, but for simplicity, we'll compute in component)
+}
+
 type ThemeMode = "dark" | "light" | "system";
 
 type Language = "python" | "cpp" | "c" | "javascript" | 'java';

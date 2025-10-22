@@ -3,9 +3,41 @@ import { JobContent } from "@/components/snippets/JobContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import React from 'react'
 import type { Metadata } from "next";
+import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
 
 export const metadata: Metadata = {
-    title: 'PrepFlow - Find Jobs and Internships'
+    ...defaultMetadata,
+    title: 'Jobs & Internships for Software Engineers | PrepFlow',
+    description: 'Discover the latest software engineering jobs and internships from top tech companies. Apply to positions at FAANG, startups, and Fortune 500 companies. Updated daily with new opportunities.',
+    keywords: [
+        ...(defaultMetadata.keywords || []),
+        'software engineer jobs',
+        'tech jobs',
+        'developer jobs',
+        'internships',
+        'software engineering internships',
+        'FAANG jobs',
+        'tech internships',
+        'coding jobs',
+        'programming jobs',
+        'full stack developer jobs',
+        'backend engineer jobs',
+        'frontend developer jobs',
+    ],
+    openGraph: {
+        ...defaultMetadata.openGraph,
+        title: 'Software Engineering Jobs & Internships | PrepFlow',
+        description: 'Find your next opportunity. Browse the latest jobs and internships from top tech companies.',
+        url: 'https://prepflow.vercel.app/jobs',
+    },
+    twitter: {
+        ...defaultMetadata.twitter,
+        title: 'Tech Jobs & Internships | PrepFlow',
+        description: 'Discover software engineering opportunities at top companies.',
+    },
+    alternates: {
+        canonical: 'https://prepflow.vercel.app/jobs',
+    },
 }
 
 const JobsPage = async ({ searchParams }: { searchParams: Promise<IsearchParams> }) => {
