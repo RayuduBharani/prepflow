@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 
 const page = async () => {
   return (
-    <main>
+    <main className="min-h-screen w-full overflow-x-hidden">
       <BackgroundLines 
         svgOptions={{ duration: 2 }} 
-        className="flex isolate items-center justify-center w-full flex-col px-4 max-sm:h-full sm:h-full"
+        className="flex isolate items-center justify-center w-full flex-col px-4 min-h-screen"
       >
         <h1 className="bg-clip-text text-transparent text-center bg-linear-to-b from-neutral-900
          to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl max-sm:text-4xl sm:text-5xl md:text-6xl lg:text-7xl 
