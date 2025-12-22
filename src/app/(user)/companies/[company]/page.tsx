@@ -1,5 +1,5 @@
 import { getCompanyImg } from "@/actions/company-actions";
-import { getUserProgressQuuestions } from "@/actions/actions";
+import { getUserProgressQuestions } from "@/actions/actions";
 import { auth } from "@/auth";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,8 +51,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function CompanyPage({ params }: { 
-  params: Promise<{ company: string }>; 
+async function CompanyPage({ params }: {
+  params: Promise<{ company: string }>;
   searchParams: Promise<{ difficulty?: string }>;
 }) {
   const { company } = await params;
@@ -60,7 +60,7 @@ async function CompanyPage({ params }: {
     getCompanyImg(company),
     auth()
   ]);
-  const userProgress = await getUserProgressQuuestions(
+  const userProgress = await getUserProgressQuestions(
     session?.user?.id ?? "",
     company
   );
@@ -74,8 +74,8 @@ async function CompanyPage({ params }: {
     text: "text-xs text-muted-foreground"
   };
 
-  const progressPercentage = imgData?._count.problems 
-    ? (userProgress.length / imgData._count.problems) * 100 
+  const progressPercentage = imgData?._count.problems
+    ? (userProgress.length / imgData._count.problems) * 100
     : 0;
 
   return (

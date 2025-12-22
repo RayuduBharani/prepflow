@@ -40,7 +40,7 @@ const ProblemRow = React.memo(({ problem, userId }: ProblemRowProps) => {
     <div className="flex w-full items-center rounded-md border p-2">
       {userId && (
         <UserProblemForm
-          UserProgress={problem.UserProgress}
+          UserProgress={problem.UserProgress ?? undefined}
           slug={problem.slug}
           userId={userId}
         />

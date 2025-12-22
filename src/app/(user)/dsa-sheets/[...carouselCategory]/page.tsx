@@ -57,11 +57,10 @@ const CarouselCategoryPage = async ({
           <div className="flex items-center w-full">
             <CircleCheck size={20} strokeWidth={1} className="mr-1" />
             <p className="text-xs text-nowrap mr-4">
-              {`${userId != undefined ? data.solvedProblemsCount : 0}/${data.totalProblemsCount}`} solved 
+              {`${userId ? data.solvedProblemsCount : 0}/${data.totalProblemsCount}`} solved
             </p>
             <Progress
-              className=""
-              value={userId != undefined ?(data.solvedProblemsCount / data.totalProblemsCount) * 100 : 0}
+              value={userId ? (data.solvedProblemsCount / data.totalProblemsCount) * 100 : 0}
             />
           </div>
         </div>

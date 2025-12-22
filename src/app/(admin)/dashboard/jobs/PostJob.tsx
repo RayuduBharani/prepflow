@@ -1,3 +1,4 @@
+'use client'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,14 +13,24 @@ import { Separator } from "@/components/ui/separator";
 import Form from "next/form";
 import {jobPosting } from "@/actions/actions";
 import FormButton from "@/components/snippets/FormButton";
-
+import { useActionState } from "react";
+const initialResult = {
+  error: "",
+  success: undefined,
+  issues: undefined,
+} as {
+  error?: string
+  success?: string
+  issues?: any
+}
 async function PostJob() {
+  const [_, formAction] = useActionState(jobPosting, initialResult)
   return (
     <div className="w-full px-2 flex flex-col">
       <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Job</h1>
       <p className="text-muted-foreground mt-1 text-sm">Fill in the details below to create a new job listing.</p>
 
-      <Form action={jobPosting} className="w-full pt-2 space-y-6">
+      <Form action={formAction} className="w-full pt-2 space-y-6">
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-2">

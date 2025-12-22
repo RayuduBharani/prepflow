@@ -1,3 +1,4 @@
+'use client'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,14 +13,39 @@ import { Separator } from "@/components/ui/separator";
 import FormButton from "@/components/snippets/FormButton";
 import Form from "next/form";
 import { internshipPosting } from "@/actions/actions";
+import { useActionState } from "react";
+
+const initialResult = {
+  error: "",
+  success: undefined,
+  issues: undefined,
+} as {
+  error?: string
+  success?: string
+  issues?: any
+}
+
 
 export default function PostInternship() {
+  const [state, formAction] = useActionState(internshipPosting, initialResult)
   return (
       <div className="w-full px-2 flex flex-col">
         <h1 className="text-lg sm:text-lg font-bold tracking-tight text-primary">Post New Internship</h1>
         <p className="text-muted-foreground mt-1">Fill in the details below to create a new internship listing.</p>
 
-        <Form action={internshipPosting} className="w-full h-full mt-4 space-y-6">
+        {state?.error && (
+          <div className="mt-4 p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+            {state.error}
+          </div>
+        )}
+
+        {state?.success && (
+          <div className="mt-4 p-3 rounded-md bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-sm">
+            {state.success}
+          </div>
+        )}
+
+        <Form action={formAction} className="w-full h-full mt-4 space-y-6">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">

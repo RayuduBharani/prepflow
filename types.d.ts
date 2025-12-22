@@ -139,9 +139,8 @@ interface IProblem {
 
 interface Problem {
   UserProgress: {
-    userId: string;
     isCompleted: boolean;
-  };
+  } | null;
   title: string;
   slug: string;
   difficulty: $Enums.Difficulty;
