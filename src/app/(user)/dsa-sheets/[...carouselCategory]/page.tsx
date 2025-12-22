@@ -1,7 +1,7 @@
 import { getCarouselCategoryData } from "@/actions/actions";
 import { notFound, redirect } from "next/navigation";
 import DSABreadCrumb from "./DSABreadCrumb";
-import { auth } from "@/auth";
+import {auth} from '@/auth'
 import { Progress } from "@/components/ui/progress";
 import SheetIcon from "@/components/SheetIcon";
 import { CircleCheck } from "lucide-react";
@@ -9,6 +9,7 @@ import HoverProblem from "@/components/HoverProblem";
 import type { Metadata } from "next";
 import { toTitleCase } from "@/lib/utils";
 import LoginAlert from "@/components/LoginAlert";
+import { getSession } from "@/auth-client";
 
 type Props = {
   params: Promise<{ carouselCategory: string[] }>;
@@ -32,7 +33,7 @@ const CarouselCategoryPage = async ({
   if (carouselCategory.length !== 2) {
     return redirect("/dsa-sheets");
   }
-  const userId = (await auth())?.user.id;
+  const userId = (await getSession())?.userId;
   const data = await getCarouselCategoryData(
     carouselCategory[0],
     carouselCategory[1],

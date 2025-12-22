@@ -1,5 +1,5 @@
 import React from "react";
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
 import AdminForm from "./AdminForm";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";

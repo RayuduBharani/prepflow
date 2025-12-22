@@ -1,5 +1,5 @@
 'use server'
-import { prisma } from "../prisma";
+import prisma from "../prisma";
 import { writeFileSync } from "fs";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

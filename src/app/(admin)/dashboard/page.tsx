@@ -3,8 +3,12 @@ import { actions } from "@/lib/utils";
 import { ChevronsRight } from "lucide-react";
 import Link from "next/link";
 import SeedButton from "./SeedButton";
+import { getSession } from "@/auth-client";
+import { redirect, RedirectType } from "next/navigation";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const user = await getSession()
+  if (!user || user.role !== "ADMIN") return redirect('/', RedirectType.push)
   return (
     <div className="w-full h-full pt-20 max-md:px-3 px-6">
       <h1 className="text-lg font-bold mb-4 text-primary">Admin Dashboard</h1>

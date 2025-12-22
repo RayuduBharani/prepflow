@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
 import { JobType } from "@prisma/client";
 import { cache } from "react";
 

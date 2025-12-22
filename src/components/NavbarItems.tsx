@@ -3,10 +3,15 @@ import React from "react";
 import { NavigationMenuItem, NavigationMenuLink } from "./ui/navigation-menu";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import type { Session } from "next-auth";
+import { Session } from "better-auth";
 import { navItems, isActive } from "@/lib/utils";
+import { UserRole } from "../../generated/prisma/enums";
 
-const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
+interface FullSession extends Session {
+  role : UserRole
+}
+
+const NavbarItems: React.FC<{ session: FullSession | null }> = ({ session }) => {
   const router = useRouter();
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean); // Remove empty segments
@@ -55,7 +60,7 @@ const NavbarItems: React.FC<{ session: Session | null }> = ({ session }) => {
             </NavigationMenuLink>
         </NavigationMenuItem>
       ))}
-      {session?.user.role === "ADMIN" && (
+      {session?.role === "ADMIN" && (
         <NavigationMenuItem>
             <NavigationMenuLink asChild
               onClick={(e) => handleClick(e, "/dashboard")}

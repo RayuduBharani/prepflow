@@ -1,6 +1,6 @@
 "use server";
 import { cache } from "react";
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { toSlug } from "@/lib/utils";

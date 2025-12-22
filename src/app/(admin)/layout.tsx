@@ -1,10 +1,11 @@
-import { auth } from "@/auth";
+import {auth} from '@/auth'
+import { getSession } from '@/auth-client';
 import { redirect } from "next/navigation";
 import React from "react";
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await auth();
-  if (session?.user.role !== "ADMIN") {
+  const session = await getSession();
+  if (session?.userId !== "ADMIN") {
     return redirect("/");
   }
   return (

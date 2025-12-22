@@ -1,5 +1,5 @@
 import React from 'react'
-import {prisma} from '@/prisma'
+import prisma from '@/prisma'
 import { DataTable } from './data-table'
 import {columns} from './columns'
 import { cache } from 'react'

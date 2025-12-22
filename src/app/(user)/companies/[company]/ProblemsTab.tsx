@@ -2,7 +2,7 @@ import { getCompanyPlatformProblems } from "@/actions/company-actions";
 import { Progress } from "@/components/ui/progress";
 import { toTitleCase } from "@/lib/utils";
 import { ChevronsRight } from "lucide-react";
-import { Session } from "next-auth";
+import { Session } from "better-auth";
 import Link from "next/link";
 
 export default async function ProblemsTab({
@@ -17,7 +17,7 @@ export default async function ProblemsTab({
   const result = await getCompanyPlatformProblems(
     company,
     platform,
-    session?.user.id
+    session?.userId
   );
   return (
     <div className="flex flex-wrap gap-4">
@@ -64,7 +64,7 @@ const TopicContainer = ({
 }) => (
   <div
     key={index}
-    className="min-w-52 cursor-pointer border 
+    className="min-w-52 cursor-pointer border
                 rounded-lg p-4 transition-all duration-300 bg-background hover:bg-muted flex-1 shadow-md intersect:motion-preset-slide-up motion-delay-0"
     style={{ animationDelay: `${index * 50}ms` }}
   >

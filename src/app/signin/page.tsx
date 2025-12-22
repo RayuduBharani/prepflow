@@ -1,4 +1,3 @@
-import { auth, signIn } from "@/auth";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import Form from "next/form";
@@ -7,9 +6,10 @@ import Google from "@/components/icons/Google";
 import Github from "@/components/icons/Github";
 import { Separator } from "@/components/ui/separator";
 import { redirect } from "next/navigation";
+import { getSession, signIn } from "@/auth-client";
 
 const page = async () => {
-  if (await auth()) return redirect('/');
+  if (await getSession()) return redirect("/");
   return (
     <>
       <div className="w-full h-full flex items-center justify-center">
@@ -19,12 +19,10 @@ const page = async () => {
           </h1>
           <Separator className="mb-4" />
           <div className="flex gap-2 w-full justify-between">
-            <Form
-              action={async () => {
-                "use server";
-                  await signIn("google");
-              }}
-            >
+            <Form action={async () => {
+              'use server'
+              await signIn('google')
+            }}>
               <Button
                 className="text-xs"
                 size={"sm"}
@@ -37,12 +35,10 @@ const page = async () => {
                 Signin with Google
               </Button>
             </Form>
-            <Form
-              action={async () => {
-                "use server";
-                await signIn("github");
-              }}
-            >
+            <Form action={async () => {
+              'use server'
+              await signIn('github')
+            }}>
               <Button
                 className="text-xs"
                 size={"sm"}

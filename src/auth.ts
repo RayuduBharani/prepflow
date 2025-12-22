@@ -1,34 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import NextAuth, { DefaultSession } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/prisma";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import prisma from "./prisma";
+import { customSession } from "better-auth/plugins";
+import { UserRole } from "../generated/prisma/enums";
+import { nextCookies } from "better-auth/next-js";
 
-export enum UserRole {
-  USER = "USER",
-  ADMIN = "ADMIN",
-}
-
-// Extend NextAuth types
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: UserRole;
-      leetcode_username: string | null;
-    } & DefaultSession["user"];
-  }
-}
-
-export const { signIn, signOut, auth, handlers } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID || "",
-      clientSecret: process.env.AUTH_GOOGLE_SECRET || "",
-      profile(profile) {
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  baseURL: process.env.BETTER_AUTH_URL,
+  socialProviders: {
+    google: {
+      prompt: "select_account",
+      clientId: process.env.AUTH_GOOGLE_ID as string,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
+      mapProfileToUser: (profile) => {
         return {
+          ...profile,
           id: profile.sub,
           name: profile.name,
           email: profile.email,
@@ -36,58 +23,35 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
           role: UserRole.USER,
         };
       },
-    }),
-    GitHubProvider({
-      clientId: process.env.AUTH_GITHUB_ID || "",
-      clientSecret: process.env.AUTH_GITHUB_SECRET || "",
-      profile(profile) {
+    },
+    github: {
+      clientId: process.env.AUTH_GITHUB_ID as string,
+      clientSecret: process.env.AUTH_GITHUB_SECRET as string,
+      mapProfileToUser: (profile) => {
         return {
-          id: String(profile.id),
+          ...profile,
+          id: profile.id,
           name: profile.name || profile.login,
           email: profile.email,
           image: profile.avatar_url,
-          role: UserRole.USER, // Default role for new users
+          role: UserRole.USER,
         };
       },
+    },
+  },
+  secret: process.env.BETTER_AUTH_SECRET as string,
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const userRole = await prisma.user.findFirst({
+        select: { role: true },
+        where: { id: user.id },
+      });
+      return {
+        ...session,
+        role: userRole?.role ?? UserRole.USER,
+      };
     }),
+    nextCookies(),
   ],
-  callbacks: {
-    async session({ session, user }) {
-      session.user.id = user.id;
-      session.user.role = (user as any).role ?? UserRole.USER;
-      session.user.leetcode_username = (user as any).leetcode_username ?? null;
-      return session;
-    },
-    async signIn({ user }) {
-      try {
-        const existingUser = await prisma.user.findUnique({
-          where: { id: user.id },
-        });
-        if (existingUser) {
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { lastLogin: new Date() },
-          });
-        }
-        return true;
-      } catch (error) {
-        console.error("Error in signIn callback:", error);
-        return true;
-      }
-    },
-    async redirect({ url, baseUrl }) {
-      // Ensure redirect URL is valid; fallback to baseUrl if not
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
-  },
-  session: {
-    strategy: "database",
-  },
-  secret: process.env.AUTH_SECRET,
-  pages: {
-    signIn: "/signin",
-  },
-  trustHost: true,
+
 });

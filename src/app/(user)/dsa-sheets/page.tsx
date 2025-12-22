@@ -1,8 +1,9 @@
 import DSASheet from "@/components/DSA/DSASheet";
 import { getCarouselsData } from "@/actions/adminActions";
-import {metadata as defaultMetadata} from '@/lib/defaultMetadata' 
-import { auth } from "@/auth";
+import {metadata as defaultMetadata} from '@/lib/defaultMetadata'
+import {auth} from '@/auth'
 import type { Metadata } from "next";
+import { getSession } from "@/auth-client";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
@@ -40,8 +41,8 @@ export const metadata: Metadata = {
 
 
 const DSAPage = async () => {
-  const session = await auth()
-  const carouselData = await getCarouselsData(session?.user.id)
+  const session = await getSession()
+  const carouselData = await getCarouselsData(session?.userId)
   return (
     <div className="w-full min-h-full pt-16 px-6 max-sm:px-3 motion-opacity-in-0 motion-translate-y-in-[2%] motion-blur-in-sm">
       {carouselData.map((carousel) => (

@@ -1,6 +1,5 @@
 import { getCompanyImg } from "@/actions/company-actions";
 import { getUserProgressQuestions } from "@/actions/actions";
-import { auth } from "@/auth";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2 } from "lucide-react";
@@ -12,6 +11,7 @@ import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
 import ProblemsTab from "./ProblemsTab";
 import {metadata as defaultMetadata} from '@/lib/defaultMetadata'
+import { getSession } from "@/auth-client";
 
 type Props = {
   params: Promise<{ company: string }>;
@@ -58,10 +58,10 @@ async function CompanyPage({ params }: {
   const { company } = await params;
   const [imgData, session] = await Promise.all([
     getCompanyImg(company),
-    auth()
+    getSession()
   ]);
   const userProgress = await getUserProgressQuestions(
-    session?.user?.id ?? "",
+    session?.userId ?? "",
     company
   );
 

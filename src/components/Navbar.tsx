@@ -1,10 +1,8 @@
-import React from "react";
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import NavbarItems from "./NavbarItems";
-import { auth } from "@/auth";
 import AvatarDropDown from "./AvatarDropDown";
 import { ModeToggle } from "./ui/ModeToggler";
 import Navsheet from "./Navsheet";
@@ -12,10 +10,11 @@ import { NavigationMenuItem } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import ThemeChanger from "./theme-color-toggler";
 import { QuickSearch } from "./QuickSearch";
+import { getSession } from "@/auth-client";
 
 const Navbar = async () => {
-  const session = await auth();
-  return (  
+  const session = await getSession();
+  return (
       <NavigationMenu className="gap-2 fixed z-50 mx-auto w-screen p-4 backdrop-blur-md text-sm font-medium">
       <NavigationMenuList className="flex gap-8 items-center max-md:hidden">
         <NavbarItems session={session} />

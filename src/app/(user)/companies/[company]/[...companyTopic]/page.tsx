@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
 import FiltersPanel from "./FiltersPanel";
 import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
@@ -7,6 +6,7 @@ import LoginAlert from "@/components/LoginAlert";
 import { Metadata } from "next";
 import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
 import { toTitleCase } from "@/lib/utils";
+import { getSession } from "@/auth-client";
 
 type Props = {
   params: Promise<{ company: string; companyTopic: string[] }>;
@@ -57,7 +57,7 @@ const CarouselCategoryPage = async ({
   if (!companyTopic) {
     return redirect("/companies");
   }
-  const userId = (await auth())?.user.id;
+  const userId = (await getSession())?.userId;
   const { totalProblems, solvedProblems, problems, difficultyCount } =
     await getCompanyTopicWiseProblems(
       company,

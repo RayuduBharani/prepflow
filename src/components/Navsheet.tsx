@@ -17,16 +17,21 @@ import {
 } from "@/components/ui/drawer";
 import { Menu } from "lucide-react";
 import { navItems, isActive } from "@/lib/utils";
-import type { Session } from "next-auth";
+import { Session } from "better-auth";
 import { Button } from "./ui/button";
+import { UserRole } from "../../generated/prisma/enums";
 
-const Navsheet: React.FC<{session: Session | null }> = ({
+interface FullSession extends Session {
+  role : UserRole
+}
+
+const Navsheet: React.FC<{session: FullSession | null }> = ({
   session,
 }) => {
   const router = useRouter();
   const pathname = usePathname()
   const pathSegments = pathname.split("/").filter(Boolean); // Remove empty segments
-  
+
     // Dynamically determine the base path
     const getBasePath = (href: string) => {
       if (pathSegments[0] === href.replace("/", "")) {
@@ -34,7 +39,7 @@ const Navsheet: React.FC<{session: Session | null }> = ({
       }
       return href; // Default to normal href
     };
-  
+
     const handleClick = (
       e: React.MouseEvent<HTMLAnchorElement>,
       href: string
@@ -82,7 +87,7 @@ const Navsheet: React.FC<{session: Session | null }> = ({
                 </NavigationMenuItem>
               ))}
               {/* Dashboard Link for Admin LOGIN */}
-              {session && session.user.role === "ADMIN" && (
+              {session && session.role === "ADMIN" && (
                 <NavigationMenuItem >
                     <NavigationMenuLink asChild
                       onClick={(e) => handleClick(e, "/dashboard")}

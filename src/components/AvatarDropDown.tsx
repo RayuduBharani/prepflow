@@ -1,5 +1,3 @@
-import React from "react";
-import type { Session } from "next-auth";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { getTwoAlphabets, formatDate } from "@/lib/utils";
@@ -7,12 +5,13 @@ import { LogOutIcon, LogIn } from "lucide-react";
 import Link from "next/link";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import Form from "next/form";
-import { signOut } from "@/auth";
+import { signOut } from "@/auth-client";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
+import { Session } from "better-auth";
 
 const AvatarDropDown = async ({ session }: { session: Session | null }) => {
-  if (!session?.user)
+  if (!session?.userId)
     return (
       <Button
         asChild
@@ -27,8 +26,8 @@ const AvatarDropDown = async ({ session }: { session: Session | null }) => {
     );
 
   const user = await prisma.user.findUnique({
-    where: { id: session?.user.id },
-    select: { name: true, lastLogin: true, email: true },
+    where: { id: session?.userId },
+    select: { name: true, lastLogin: true, email: true, role : true, image : true, },
   });
 
   return (
@@ -36,11 +35,11 @@ const AvatarDropDown = async ({ session }: { session: Session | null }) => {
       <PopoverTrigger asChild>
         <Avatar>
           <AvatarImage
-            src={session.user.image as string}
-            alt={session.user.name as string}
+            src={user?.image as string}
+            alt={user?.name as string}
           />
           <AvatarFallback>
-            {getTwoAlphabets(session.user.name as string)}
+            {getTwoAlphabets(user?.name as string)}
           </AvatarFallback>
           <span className="sr-only">My Account</span>
         </Avatar>

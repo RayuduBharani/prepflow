@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
 import { cache } from "react";
 import { InternType, JobType, UserRole } from "@prisma/client";
 import { z } from "zod";
@@ -181,7 +181,7 @@ export const getCarouselCategoryData = cache(
     // Transformation logic
     let solvedProblemsCount = 0;
 
-    const formattedProblems = results.problems.map((problem) => {
+    const formattedProblems = results.problems.map((problem: typeof results.problems[number]) => {
       // UserProgress will be an array of 0 or 1 items due to `take: 1`
       const isCompleted = problem.UserProgress && problem.UserProgress.length > 0;
 

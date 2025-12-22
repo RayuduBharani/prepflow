@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/prisma";
+import prisma from "@/prisma";
 import { cache } from "react";
 
 export const getCompanyImg = cache(async (name: string) => {
