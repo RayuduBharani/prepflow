@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "postinstall": "prisma generate && prisma migrate deploy && prisma db push",
+    "postinstall": "prisma generate && prisma db push",
     "lint": "next lint",
     "test": "jest",
     "generate-sql": "node scripts/generate-sql-dump.mjs",
