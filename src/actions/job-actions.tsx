@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/prisma";
-import { JobType } from "@prisma/client";
+import { JobType } from "../../generated/prisma/client";
 import { cache } from "react";
 
 export const getJobsCount = cache(async () => {

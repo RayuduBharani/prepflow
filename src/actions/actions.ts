@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/prisma";
 import { cache } from "react";
-import { InternType, JobType, UserRole } from "@prisma/client";
+import { InternType, JobType, UserRole } from "../../generated/prisma/client";
 import { z } from "zod";
 
 // --- Schemas for Validation ---
