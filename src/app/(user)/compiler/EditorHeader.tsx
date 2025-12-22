@@ -7,20 +7,18 @@ import LanguageSelector from "./LanguageSelector";
 import RunButton from "./RunButton";
 
 interface EditorHeaderProps {
-  onToggleFullscreen: () => void;
   onResetClick: () => void;
   onRunCode: () => void;
   isRunning: boolean;
 }
 
 export default function EditorHeader({
-  onToggleFullscreen,
   onResetClick,
   onRunCode,
   isRunning,
 }: EditorHeaderProps) {
   return (
-    <div className="flex items-center dark:bg-gradient-to-t dark:from-primary/10 dark:to-background justify-between px-4 py-2 rounded-t-lg">
+    <div className="flex items-center dark:bg-linear-to-t dark:from-primary/10 dark:to-background justify-between px-4 py-2 rounded-t-lg">
       {/* Left Section: Window Controls + Language Selector */}
       <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-1">
@@ -32,11 +30,10 @@ export default function EditorHeader({
       </div>
 
       {/* Right Section: Editor Controls + Run Button */}
-      <div className="flex items-center space-x-2 overflow-hidden">
+      <div className="flex items-center space-x-2">
         {/* Desktop Controls */}
-        <div className="flex space-x-1 max-sm:hidden items-center">
-          <EditorControls 
-            onToggleFullscreen={onToggleFullscreen} 
+        <div className="hidden sm:flex space-x-1 items-center">
+          <EditorControls
             onResetClick={onResetClick} 
           />
         </div>
@@ -52,7 +49,6 @@ export default function EditorHeader({
             <PopoverContent className="bg-background/20 backdrop-blur-xs">
               <div className="flex space-x-1 flex-wrap gap-2 items-center">
                 <EditorControls 
-                  onToggleFullscreen={onToggleFullscreen} 
                   onResetClick={onResetClick} 
                 />
               </div>

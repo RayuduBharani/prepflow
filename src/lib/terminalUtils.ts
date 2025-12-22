@@ -6,8 +6,8 @@ import type { Terminal } from "xterm";
 export const TERMINAL_CONFIG = {
   cursorBlink: true,
   cursorStyle: "block" as const,
-  fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-  lineHeight: 1.2,
+  fontFamily: 'Montserrat, monospace',
+  lineHeight: 1,
   theme: {
     background: "#0c0c0c",
     foreground: "#cccccc",
@@ -39,16 +39,6 @@ export const TERMINAL_CONFIG = {
  * Display welcome message in terminal
  */
 export function displayWelcomeMessage(terminal: Terminal) {
-  terminal.writeln(
-    "\x1b[1;32m┌─────────────────────────────────────────┐\x1b[0m"
-  );
-  terminal.writeln(
-    "\x1b[1;32m│\x1b[0m     Live Code Execution Terminal      \x1b[1;32m│\x1b[0m"
-  );
-  terminal.writeln(
-    "\x1b[1;32m└─────────────────────────────────────────┘\x1b[0m"
-  );
-  terminal.writeln("");
   terminal.writeln(
     "\x1b[1;36m$\x1b[0m Ready to execute code. Press Run to start."
   );

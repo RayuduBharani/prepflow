@@ -9,7 +9,7 @@ export async function getVisitorsCount() {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const apiUrl = `${baseUrl}/api/visitors`;
 
-    const res = await fetch(apiUrl, {cache : 'no-store'});
+    const res = await fetch(apiUrl);
 
     if (!res.ok) {
       console.error(`Failed to fetch visitors count: ${res.status} ${res.statusText}`);

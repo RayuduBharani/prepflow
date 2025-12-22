@@ -24,20 +24,20 @@ export async function GET() {
 
     // Use pipeline to combine multiple Redis operations
     const pipeline = redis.pipeline();
-    
+
     // Set the IP with TTL
     pipeline.set(key, Date.now(), { ex: TTL });
-    
+
     // Store in active visitors set
     pipeline.sadd("active_visitors", key);
     pipeline.expire("active_visitors", TTL);
-    
+
     // Execute first batch of operations
     await pipeline.exec();
 
     // Get active keys and clean up expired ones
     const activeKeys = (await redis.smembers("active_visitors")) as string[];
-    
+
     // Check existence of each key
     const existsPipeline = redis.pipeline();
     for (const k of activeKeys) {
@@ -45,7 +45,7 @@ export async function GET() {
     }
     const pipelineResults = await existsPipeline.exec();
     const results = pipelineResults.map(result => result === 1);
-    
+
     // Clean up expired keys from the set
     const expiredKeys = activeKeys.filter((_, index: number) => !results[index]);
     if (expiredKeys.length > 0) {
@@ -61,9 +61,6 @@ export async function GET() {
 
     return Response.json(response, {
       status: 200,
-      headers: {
-        'Cache-Control': 'no-store',
-      }
     });
   } catch (error) {
     console.error('Visitor tracking error:', error);

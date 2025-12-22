@@ -12,20 +12,6 @@ const nextConfig: NextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
-  // Compression for better performance
-  compress: true,
-  // Enable SWC minification
-  swcMinify: true,
-  // Generate ETags for caching
-  generateEtags: true,
-  // Trailing slash handling
-  trailingSlash: false,
-  // React strict mode
-  reactStrictMode: true,
-  // Enable experimental features for better SEO
-  experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-  },
   // Headers for SEO and security
   async headers() {
     return [

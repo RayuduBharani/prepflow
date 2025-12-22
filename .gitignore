@@ -41,3 +41,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/generated/prisma
+
+# SQL dump (optional - uncomment if you don't want to commit it)
+# seed-data.sql

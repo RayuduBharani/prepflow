@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Checkbox } from '../ui/checkbox'
 import { ChevronDown } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Duration() {

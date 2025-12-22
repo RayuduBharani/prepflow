@@ -11,11 +11,12 @@ import Navsheet from "./Navsheet";
 import { NavigationMenuItem } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import ThemeChanger from "./theme-color-toggler";
+import { QuickSearch } from "./QuickSearch";
 
 const Navbar = async () => {
   const session = await auth();
   return (  
-      <NavigationMenu className="gap-2 fixed mx-auto w-screen p-4 backdrop-blur-md text-sm font-medium">
+      <NavigationMenu className="gap-2 fixed z-50 mx-auto w-screen p-4 backdrop-blur-md text-sm font-medium">
       <NavigationMenuList className="flex gap-8 items-center max-md:hidden">
         <NavbarItems session={session} />
       </NavigationMenuList>
@@ -31,6 +32,7 @@ const Navbar = async () => {
         </NavigationMenuItem>
       </div>
       <div className="flex items-center ml-auto gap-2">
+          <QuickSearch />
           <ThemeChanger />
           <ModeToggle />
           <AvatarDropDown session={session}/>

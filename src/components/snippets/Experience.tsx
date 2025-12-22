@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Checkbox } from '../ui/checkbox'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronDown } from 'lucide-react'
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 
 export default function Experience() {
     const searchParam = useSearchParams()

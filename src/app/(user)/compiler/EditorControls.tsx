@@ -7,10 +7,8 @@ import { useFontSizeStore, useEditorFeaturesStore } from "@/store/compilerStore"
 import { Separator } from "@/components/ui/separator";
 
 export default function EditorControls({
-  onToggleFullscreen,
   onResetClick,
 }: {
-  onToggleFullscreen: () => void;
   onResetClick: () => void;
 }) {
   const { fontSize, setFontSize } = useFontSizeStore();
@@ -56,7 +54,7 @@ export default function EditorControls({
         </TooltipContent>
       </Tooltip>
       <Separator className="mx-1" orientation="vertical" />
-      <FullScreenButton onToggleFullscreen={onToggleFullscreen} />
+      <FullScreenButton />
       <div className="flex items-center space-x-1">
         <Button variant="secondary" size="icon" className="w-8 h-8" onClick={() => setFontSize(Math.max(14, fontSize - 1))}>
           <Minus className="h-3 w-3" />

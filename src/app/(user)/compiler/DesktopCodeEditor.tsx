@@ -134,7 +134,6 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
     code,
     setCode,
     isFullscreen,
-    setIsFullscreen,
     resetCode,
     language,
   } = useCompilerStore();
@@ -199,10 +198,6 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
     setShowResetDialog(false);
   };
 
-  const handleToggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.altKey && e.key === "Enter") {
@@ -253,7 +248,6 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
       >
         {/* Editor Header */}
         <EditorHeader
-          onToggleFullscreen={handleToggleFullscreen}
           onResetClick={handleResetClick}
           onRunCode={handleRunCode}
           isRunning={status === "running"}

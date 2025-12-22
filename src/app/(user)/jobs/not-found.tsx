@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import {motion} from "motion/react";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -43,7 +43,7 @@ export default function NotFound() {
             The job listing you&apos;re looking for doesn&apos;t exist or has been removed.
             Let&apos;s explore other opportunities!
           </p>
-          
+
           <Link href="/jobs">
             <Button
               size="lg"

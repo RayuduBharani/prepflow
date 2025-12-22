@@ -12,130 +12,190 @@ export async function seedData() {
   }
 
   const totalProblems = problems.length;
-  let processedProblems = 0;
+  console.log(`Starting optimized seeding process for ${totalProblems} problems...`);
 
-  console.log(`Starting seeding process for ${totalProblems} problems...`);
+  // Step 1: Pre-seed ALL tags, companies, topics, and slugs in bulk (MUCH faster)
+  console.log('Step 1/4: Pre-seeding all tags and companies in bulk...');
 
-  for (const problemData of problems) {
-    console.log(`Processing problem: ${problemData.title} (${processedProblems + 1}/${totalProblems})`);
+  const allTopicTags = new Set<string>();
+  const allCompanyNames = new Set<string>();
+  const allMainTopics = new Set<string>();
+  const allTopicSlugs = new Set<string>();
 
-    await prisma.$transaction(
-      async (prisma) => {
-        // 1️⃣ Upsert TopicTags
-        await prisma.problemTopic.createMany({
-          data: problemData.topicTags.map((tag) => ({ name: tag })),
-          skipDuplicates: true,
-        });
+  problems.forEach(p => {
+    p.topicTags.forEach(tag => allTopicTags.add(tag));
+    p.companyTags.forEach(company => allCompanyNames.add(company));
+    p.mainTopics.forEach(topic => allMainTopics.add(topic));
+    p.topicSlugs.forEach(slug => allTopicSlugs.add(slug));
+  });
 
-        // 2️⃣ Upsert CompanyTags
-        const companyTags = await Promise.all(
-          problemData.companyTags.map(async (company) => {
-            let slug = toSlug(company);
-            const existingCompany = await prisma.problemCompany.findUnique({ where: { slug } });
+  // Bulk create all tags/companies/topics at once
+  await Promise.all([
+    prisma.problemTopic.createMany({
+      data: Array.from(allTopicTags).map(name => ({ name })),
+      skipDuplicates: true,
+    }),
+    prisma.problemMainTopic.createMany({
+      data: Array.from(allMainTopics).map(name => ({ name })),
+      skipDuplicates: true,
+    }),
+    prisma.problemTopicSlug.createMany({
+      data: Array.from(allTopicSlugs).map(slug => ({ slug })),
+      skipDuplicates: true,
+    }),
+  ]);
 
-            if (existingCompany) {
-              slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
-            }
+  // Create companies with slugs
+  await Promise.all(
+    Array.from(allCompanyNames).map(async (name) => {
+      const slug = toSlug(name);
+      await prisma.problemCompany.upsert({
+        where: { name },
+        update: {},
+        create: { name, slug },
+      }).catch(() => {}); // Ignore duplicates
+    })
+  );
 
-            return prisma.problemCompany.upsert({
-              where: { name: company },
-              update: {},
-              create: { name: company, slug },
-            });
-          })
-        );
+  // Step 2: Fetch all reference IDs once (no more repeated lookups!)
+  console.log('Step 2/4: Fetching reference data...');
+  const [allCompanies, existingProblems] = await Promise.all([
+    prisma.problemCompany.findMany({ select: { id: true, name: true } }),
+    prisma.problem.findMany({ select: { slug: true } }),
+  ]);
 
-        // 3️⃣ Upsert MainTopics
-        await prisma.problemMainTopic.createMany({
-          data: problemData.mainTopics.map((topic) => ({ name: topic })),
-          skipDuplicates: true,
-        });
+  const companyMap = new Map(allCompanies.map(c => [c.name, c.id]));
+  const existingSlugs = new Set(existingProblems.map(p => p.slug));
 
-        // 4️⃣ Upsert TopicSlugs
-        await prisma.problemTopicSlug.createMany({
-          data: problemData.topicSlugs.map((slug) => ({ slug })),
-          skipDuplicates: true,
-        });
+  // Step 3: Pre-generate unique slugs to avoid race conditions
+  console.log('Step 3/4: Preparing problem data...');
+  const problemsWithSlugs = problems.map(problemData => {
+    let slug = problemData.slug;
+    if (existingSlugs.has(slug)) {
+      slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
+    }
+    existingSlugs.add(slug);
+    return { ...problemData, uniqueSlug: slug };
+  });
 
-        // 5️⃣ Handle Slug Uniqueness
-        let slug = problemData.slug;
-        const existingProblem = await prisma.problem.findUnique({ where: { slug } });
+  // Step 4: Create all problems in parallel batches
+  console.log('Step 4/5: Creating problems in parallel batches...');
+  const BATCH_SIZE = 5; // Process 5 problems at a time
+  const batches = [];
 
-        if (existingProblem) {
-          slug = `${slug}-${Math.random().toString(36).substring(2, 9)}`;
-        }
+  for (let i = 0; i < problemsWithSlugs.length; i += BATCH_SIZE) {
+    const batch = problemsWithSlugs.slice(i, i + BATCH_SIZE);
+    batches.push(
+      Promise.allSettled(
+        batch.map(async (problemData, idx) => {
+          const overallIdx = i + idx;
+          console.log(`Processing: ${problemData.title} (${overallIdx + 1}/${totalProblems})`);
 
-        // 6️⃣ Create Problem
-        const problem = await prisma.problem.create({
-          data: {
-            title: problemData.title,
-            slug,
-            isPremium: problemData.isPremium ?? false,
-            dislikes: problemData.dislikes ?? 0,
-            likes: problemData.likes ?? 0,
-            difficulty: problemData.difficulty,
-            url: problemData.url ?? "",
-            accepted: problemData.accepted ?? 0,
-            submissions: problemData.submissions ?? 0,
-            acceptanceRate: problemData.acceptanceRate ?? 0,
-            platform: problemData.platform,
-            topicTags: {
-              connect: problemData.topicTags.map((tag) => ({ name: tag })),
+          // Create problem with connections
+          return prisma.problem.create({
+            data: {
+              title: problemData.title,
+              slug: problemData.uniqueSlug,
+              isPremium: problemData.isPremium ?? false,
+              dislikes: problemData.dislikes ?? 0,
+              likes: problemData.likes ?? 0,
+              difficulty: problemData.difficulty,
+              url: problemData.url ?? "",
+              accepted: problemData.accepted ?? 0,
+              submissions: problemData.submissions ?? 0,
+              acceptanceRate: problemData.acceptanceRate ?? 0,
+              platform: problemData.platform,
+              topicTags: {
+                connect: problemData.topicTags.map(tag => ({ name: tag })),
+              },
+              companyTags: {
+                connect: problemData.companyTags
+                  .map(company => ({ id: companyMap.get(company) }))
+                  .filter(c => c.id !== undefined),
+              },
+              mainTopics: {
+                connect: problemData.mainTopics.map(topic => ({ name: topic })),
+              },
+              topicSlugs: {
+                connect: problemData.topicSlugs.map(slug => ({ slug })),
+              },
             },
-            companyTags: {
-              connect: companyTags.map((company) => ({ id: company.id })),
-            },
-            mainTopics: {
-              connect: problemData.mainTopics.map((topic) => ({ name: topic })),
-            },
-            topicSlugs: {
-              connect: problemData.topicSlugs.map((slug) => ({ slug })),
-            },
-          },
-        });
-
-        // 7️⃣ Create SimilarProblems
-        await prisma.similarProblem.createMany({
-          data: await Promise.all(
-            problemData.similarQuestions.map(async (similarQuestion) => {
-              const similarProblem = await prisma.problem.findUnique({
-                where: { slug: similarQuestion.slug },
-              });
-
-              return similarProblem
-                ? { problemId: problem.id, similarId: similarProblem.id }
-                : null;
-            })
-          ).then((results) => results.filter((x) => x !== null)),
-          skipDuplicates: true,
-        });
-
-        processedProblems++;
-        console.log(`Completed problem: ${problemData.title} (${processedProblems}/${totalProblems})`);
-      },
-      { timeout: 15000 } // Set timeout to 15 seconds
+          });
+        })
+      )
     );
   }
 
+  const results = await Promise.all(batches);
+  const createdProblems = results
+    .flat()
+    .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof prisma.problem.create>>> =>
+      r.status === 'fulfilled' && r.value != null
+    )
+    .map(r => r.value);
+
+  console.log(`Step 5/5: Linking similar problems... (${createdProblems.length} problems created)`);
+
+  // Step 5: Create similar problem relationships in bulk
+  const problemSlugToId = new Map<string, number>();
+  for (const problem of createdProblems) {
+    if (problem.slug && problem.id) {
+      problemSlugToId.set(problem.slug, problem.id);
+    }
+  }
+
+  const similarLinks: Array<{ problemId: number; similarId: number }> = [];
+  for (const problemData of problemsWithSlugs) {
+    const problemId = problemSlugToId.get(problemData.uniqueSlug);
+    if (!problemId || !problemData.similarQuestions) continue;
+
+    for (const similar of problemData.similarQuestions) {
+      const similarId = problemSlugToId.get(similar.slug);
+      if (similarId && problemId !== similarId) {
+        similarLinks.push({ problemId, similarId });
+      }
+    }
+  }
+
+  if (similarLinks.length > 0) {
+    await prisma.similarProblem.createMany({
+      data: similarLinks,
+      skipDuplicates: true,
+    });
+  }
+
   console.log("Database seeded successfully!");
-  return { message: "Database seeded successfully!", processed: processedProblems, total: totalProblems };
+  return { message: "Database seeded successfully!", processed: createdProblems.length, total: totalProblems };
 }
 
 export async function seedCompaniesImages() {
   try {
-    // Prepare update operations for each company
-    const updateOperations = companiesData.map((company) =>
-      prisma.problemCompany.update({
-        data: { image: company.image },
-        where: { name: company.name },
-      })
-    );
+    // Execute updates in parallel batches for better performance
+    const batchSize = 10; // Update 10 companies at a time
+    const batches = [];
 
-    // Execute the update operations in a single transaction with timeout
-    await prisma.$transaction(updateOperations);
+    for (let i = 0; i < companiesData.length; i += batchSize) {
+      const batch = companiesData.slice(i, i + batchSize);
+      batches.push(
+        Promise.allSettled(
+          batch.map((company) =>
+            prisma.problemCompany.update({
+              data: { image: company.image },
+              where: { name: company.name },
+            }).catch((err) => {
+              console.warn(`Failed to update company ${company.name}:`, err.message);
+              return null;
+            })
+          )
+        )
+      );
+    }
+
+    await Promise.all(batches);
     console.log("Companies images updated successfully.");
   } catch (error) {
     console.error("Error seeding companies images:", error);
+    throw error;
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma client
     revalidatePath("/admin/companies");

@@ -5,7 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DesktopCodeEditor from "./DesktopCodeEditor";
 import { useCompilerStore } from "@/store/compilerStore";
 import { codeTemplates } from "@/lib/codeTemplates";
@@ -22,12 +22,18 @@ const CompilerPage: React.FC = () => {
     setIsFullscreen,
   } = useCompilerStore();
   const terminalRef = useRef<LiveTerminalRef>(null);
+  const [terminalKey, setTerminalKey] = useState(0);
 
   // Load default or saved code
   useEffect(() => {
     const savedCode = localStorage.getItem(`compiler-code-${language}`);
     setCode(savedCode ?? codeTemplates[language] ?? "");
   }, [language, setCode]);
+
+  // Remount terminal when language changes
+  useEffect(() => {
+    setTerminalKey(prev => prev + 1);
+  }, [language]);
 
   // Exit fullscreen on Escape
   useEffect(() => {
@@ -72,7 +78,7 @@ const CompilerPage: React.FC = () => {
           <DesktopCodeEditor terminalRef={terminalRef} />
         </div>
         <div className={`flex-1 ${activeTab === "terminal" ? "block" : "hidden"}`}>
-          <LiveTerminal key="mobile-terminal" ref={terminalRef} code={code} language={language} />
+          <LiveTerminal key={`mobile-terminal-${terminalKey}`} ref={terminalRef} code={code} language={language} />
         </div>
       </div>
 
@@ -90,7 +96,7 @@ const CompilerPage: React.FC = () => {
           <ResizableHandle className="mx-1" withHandle />
 
           <ResizablePanel defaultSize={32} minSize={20} maxSize={68}>
-            <LiveTerminal key="desktop-terminal" ref={terminalRef} code={code} language={language} />
+            <LiveTerminal key={`desktop-terminal-${terminalKey}`} ref={terminalRef} code={code} language={language} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
