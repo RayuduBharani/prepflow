@@ -242,9 +242,8 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
   return (
     <div className={`h-full ${isFullscreen ?? "py-0"}`}>
       <Card
-        className={`h-full bg-background ${
-          isFullscreen ? "shadow-none rounded-none" : "shadow-sm rounded-lg"
-        }`}
+        className={`h-full bg-background ${isFullscreen ? "shadow-none rounded-none" : "shadow-sm rounded-lg"
+          }`}
       >
         {/* Editor Header */}
         <EditorHeader

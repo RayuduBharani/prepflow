@@ -7,7 +7,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
   weight: ["100", "200", "300", "400", "500", '600', '700', '800', '900'],
-  preload : true,
+  preload: true,
 });
 
 export const metadata = {
@@ -210,7 +210,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${poppins.variable} no-scrollbar antialiased theme-container bg-background w-screen h-lvh`}
+        className={`${poppins.variable} no-scrollbar antialiased theme-container bg-background w-screen h-dvh`}
       >
         <AllProviders>{children}</AllProviders>
       </body>

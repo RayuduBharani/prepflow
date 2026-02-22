@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Terminal } from "xterm";
+import type { Terminal } from "@xterm/xterm";
 import { useTerminalStore } from "@/store/terminalStore";
 import {
   createInputHandler,
@@ -102,7 +102,7 @@ export function useTerminalIO({ terminal, getTerminal }: UseTerminalIOOptions) {
     clearOutputBuffer();
     term.clear();
     displayWelcomeMessage(term);
-    
+
     startWebSocket(code, language);
     setupInputHandlers(term);
   };

@@ -1,4 +1,4 @@
-import type { Terminal } from "xterm";
+import type { Terminal } from "@xterm/xterm";
 
 /**
  * Terminal configuration and theme
@@ -92,7 +92,7 @@ export function createKeyHandler(
   return ({ domEvent }: { key: string; domEvent: KeyboardEvent }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const hasSelection = (terminal as any)?.hasSelection?.() ?? false;
-    
+
     if (
       domEvent.ctrlKey &&
       (domEvent.key === "c" || domEvent.key === "C") &&

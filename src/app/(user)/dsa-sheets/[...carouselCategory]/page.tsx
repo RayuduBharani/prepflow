@@ -1,15 +1,11 @@
 import { getCarouselCategoryData } from "@/actions/actions";
 import { notFound, redirect } from "next/navigation";
 import DSABreadCrumb from "./DSABreadCrumb";
-import {auth} from '@/auth'
-import { Progress } from "@/components/ui/progress";
-import SheetIcon from "@/components/SheetIcon";
-import { CircleCheck } from "lucide-react";
-import HoverProblem from "@/components/HoverProblem";
 import type { Metadata } from "next";
 import { toTitleCase } from "@/lib/utils";
 import LoginAlert from "@/components/LoginAlert";
 import { getSession } from "@/auth-client";
+import FiltersPanelWrapper from "@/app/(user)/companies/[company]/[...companyTopic]/FiltersPanelWrapper";
 
 type Props = {
   params: Promise<{ carouselCategory: string[] }>;
@@ -42,32 +38,42 @@ const CarouselCategoryPage = async ({
   if (!data) {
     notFound();
   }
+
+  const solvedCount = userId ? data.solvedProblemsCount : 0;
+
+  // Compute difficulty breakdown for the FiltersPanel
+  const difficultyCount = data.problems.reduce(
+    (acc, p) => {
+      const key = p.difficulty as string;
+      if (!acc[key]) acc[key] = { solved: 0, unsolved: 0 };
+      if (p.UserProgress?.isCompleted) acc[key].solved++;
+      else acc[key].unsolved++;
+      return acc;
+    },
+    {} as Record<string, { solved: number; unsolved: number }>
+  );
+
   return (
-      <div className="pt-20 max-sm:px-3 min-h-screen px-6 max-w-2xl mx-auto w-full">
-        <LoginAlert userId={userId} />
-        <DSABreadCrumb
-          carouselCategory={carouselCategory}
-          sheetName={data.sheet.name}
-          categoryName={data.name}
-        />
-        <div className="border flex flex-col gap-2 mt-2 rounded-md p-4">
-          <div className="flex gap-2 items-center">
-            <SheetIcon />
-            <h1 className="text-2xl font-semibold">{data.name}</h1>
-          </div>
-          <div className="flex items-center w-full">
-            <CircleCheck size={20} strokeWidth={1} className="mr-1" />
-            <p className="text-xs text-nowrap mr-4">
-              {`${userId ? data.solvedProblemsCount : 0}/${data.totalProblemsCount}`} solved
-            </p>
-            <Progress
-              value={userId ? (data.solvedProblemsCount / data.totalProblemsCount) * 100 : 0}
-            />
-          </div>
-        </div>
-        <HoverProblem userId={userId} problems={data.problems} />
-      </div>
+    <div className="pt-20 max-sm:px-3 min-h-screen px-6 max-w-2xl mx-auto w-full">
+      <LoginAlert userId={userId} />
+
+      <DSABreadCrumb
+        carouselCategory={carouselCategory}
+        sheetName={data.sheet.name}
+        categoryName={data.name}
+      />
+
+      <FiltersPanelWrapper
+        companyTopic={data.name}
+        problems={data.problems as Problem[]}
+        userId={userId}
+        solvedProblems={solvedCount}
+        totalProblems={data.totalProblemsCount}
+        difficultyCount={difficultyCount}
+      />
+    </div>
   );
 };
 
 export default CarouselCategoryPage;
+

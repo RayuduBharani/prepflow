@@ -42,6 +42,14 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET as string,
   plugins: [
     customSession(async ({ user, session }) => {
+      // Update last login time
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() },
+      }).catch(() => {
+        // Silently fail to not block authentication
+      });
+
       const userRole = await prisma.user.findFirst({
         select: { role: true },
         where: { id: user.id },

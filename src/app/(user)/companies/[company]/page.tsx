@@ -2,7 +2,8 @@ import { getCompanyImg } from "@/actions/company-actions";
 import { getUserProgressQuestions } from "@/actions/actions";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Building2, Trophy, Target, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { toTitleCase } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -10,7 +11,7 @@ import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
 import Leetcode from "@/components/icons/Leetcode";
 import GFGIcon from "@/components/icons/GFG";
 import ProblemsTab from "./ProblemsTab";
-import {metadata as defaultMetadata} from '@/lib/defaultMetadata'
+import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
 import { getSession } from "@/auth-client";
 
 type Props = {
@@ -51,76 +52,177 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function CompanyPage({ params }: {
+async function CompanyPage({
+  params,
+}: {
   params: Promise<{ company: string }>;
   searchParams: Promise<{ difficulty?: string }>;
 }) {
+  const sessionPromise = getSession();
   const { company } = await params;
-  const [imgData, session] = await Promise.all([
+  const [imgData, userProgress, session] = await Promise.all([
     getCompanyImg(company),
-    getSession()
+    sessionPromise.then((s) => getUserProgressQuestions(s?.userId ?? "", company)),
+    sessionPromise,
   ]);
-  const userProgress = await getUserProgressQuestions(
-    session?.userId ?? "",
-    company
-  );
 
-  const styles = {
-    container: "w-full pt-20 mx-auto max-w-200 pb-2 max-sm:px-2 sm:px-5",
-    card: "flex max-sm:flex-col items-center border p-4 rounded-lg mb-3 gap-4 justify-between",
-    logo: "w-16 relative h-16",
-    placeholder: "h-12 w-12 rounded-lg border flex items-center justify-center bg-muted",
-    title: "text-md font-bold mb-2",
-    text: "text-xs text-muted-foreground"
-  };
-
-  const progressPercentage = imgData?._count.problems
-    ? (userProgress.length / imgData._count.problems) * 100
+  const totalProblems = imgData?._count.problems ?? 0;
+  const solvedCount = userProgress.length;
+  const progressPercentage = totalProblems
+    ? Math.round((solvedCount / totalProblems) * 100)
     : 0;
 
+  // Derive a status label from progress
+  const progressLabel =
+    progressPercentage === 0
+      ? "Not started"
+      : progressPercentage < 30
+        ? "Getting started"
+        : progressPercentage < 70
+          ? "In progress"
+          : progressPercentage < 100
+            ? "Almost there!"
+            : "Completed 🎉";
+
+  const progressColor =
+    progressPercentage === 0
+      ? "text-muted-foreground"
+      : progressPercentage < 30
+        ? "text-blue-500"
+        : progressPercentage < 70
+          ? "text-amber-500"
+          : progressPercentage < 100
+            ? "text-orange-500"
+            : "text-green-500";
+
   return (
-    <Tabs defaultValue="LEETCODE" className={styles.container}>
-      <CompaniesBreadcrumb companyName={company} />
-      <div className={styles.card}>
-        <div className="w-full flex items-center gap-4 ">
-          <div className={`${styles.logo} rounded-md dark:bg-foreground`}>
-            {imgData?.image && imgData.image !== "None" ? (
-              <Image
-                src={imgData.image}
-                alt="Company Logo"
-                fill
-                className="object-contain rounded-md "
-              />
-            ) : (
-              <div className={styles.placeholder}>
-                <Building2 className="h-6 w-6 text-muted-foreground" />
+    <div className="w-full pt-20 mx-auto max-w-5xl pb-10 px-4 sm:px-6">
+      {/* Breadcrumb */}
+      <div className="mb-5">
+        <CompaniesBreadcrumb companyName={company} />
+      </div>
+
+      {/* ── Company Header Card ── */}
+      <div className="rounded-2xl border border-border/60 bg-card overflow-hidden mb-6">
+        {/* Subtle top accent strip */}
+        <div className="h-1 w-full bg-gradient-to-r from-primary/60 via-primary to-primary/30" />
+
+        <div className="p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+            {/* Logo */}
+            <div className="relative h-16 w-16 shrink-0 rounded-xl border bg-white dark:bg-white/95 shadow-sm overflow-hidden">
+              {imgData?.image && imgData.image !== "None" ? (
+                <Image
+                  src={imgData.image}
+                  alt={`${toTitleCase(company)} logo`}
+                  fill
+                  sizes="64px"
+                  className="object-contain p-1.5"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                  <Building2 className="h-7 w-7 text-muted-foreground" />
+                </div>
+              )}
+            </div>
+
+            {/* Name + stats */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className="text-2xl font-extrabold tracking-tight leading-tight">
+                  {toTitleCase(company)}
+                </h1>
+                {progressPercentage === 100 && (
+                  <Badge className="gap-1 bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500/20">
+                    <Trophy className="h-3 w-3" />
+                    Completed
+                  </Badge>
+                )}
               </div>
-            )}
-          </div>
-          <div className="flex-1 max-w-[60%] max-sm:max-w-full">
-            <h1 className={styles.title}>{toTitleCase(company)}</h1>
-            <div className="space-y-2">
-              <Progress value={progressPercentage} />
-              <p className={styles.text}>
-                Overall Progress: {userProgress.length}/{imgData?._count.problems || 0} questions solved
+              <p className="text-sm text-muted-foreground">
+                {totalProblems} curated interview questions
               </p>
+            </div>
+
+            {/* Quick stats — desktop */}
+            <div className="hidden sm:flex items-center gap-5 shrink-0">
+              <div className="text-center">
+                <p className="text-2xl font-bold tabular-nums">{solvedCount}</p>
+                <p className="text-xs text-muted-foreground">Solved</p>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-center">
+                <p className="text-2xl font-bold tabular-nums">
+                  {totalProblems - solvedCount}
+                </p>
+                <p className="text-xs text-muted-foreground">Remaining</p>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-center">
+                <p className={`text-2xl font-bold tabular-nums ${progressColor}`}>
+                  {progressPercentage}%
+                </p>
+                <p className="text-xs text-muted-foreground">Done</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress section */}
+          <div className="mt-5 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
+                <TrendingUp className="h-3.5 w-3.5" />
+                Overall Progress
+              </span>
+              <span className={`font-semibold ${progressColor}`}>
+                {progressLabel}
+              </span>
+            </div>
+            <Progress value={progressPercentage} className="h-2 rounded-full" />
+            {/* Mobile quick stats */}
+            <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-border/60">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Target className="h-3.5 w-3.5" />
+                <span>
+                  <span className="font-semibold text-foreground">{solvedCount}</span> solved ·{" "}
+                  <span className="font-semibold text-foreground">{totalProblems - solvedCount}</span> left
+                </span>
+              </div>
+              <span className={`text-xs font-bold ${progressColor}`}>
+                {progressPercentage}% done
+              </span>
             </div>
           </div>
         </div>
-        <TabsList className="max-sm:w-full">
-          <TabsTrigger value="LEETCODE"><Leetcode /></TabsTrigger>
-          <TabsTrigger value="GFG"><GFGIcon /></TabsTrigger>
-        </TabsList>
       </div>
 
-      <TabsContent className="pb-8" value="LEETCODE">
-        {/* <LeetcodeQuestions company={company} /> */}
-        <ProblemsTab company={company} platform='LEETCODE' session={session} />
-      </TabsContent>
-      <TabsContent className="pb-8" value="GFG">
-      <ProblemsTab company={company} platform='GFG' session={session} />
-      </TabsContent>
-    </Tabs>
+      {/* ── Tabs ── */}
+      <Tabs defaultValue="LEETCODE">
+        <TabsList className="w-full sm:w-auto h-11 rounded-xl bg-muted/60 p-1 mb-5">
+          <TabsTrigger
+            value="LEETCODE"
+            className="flex-1 sm:flex-initial gap-2 rounded-lg text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all"
+          >
+            <Leetcode className="h-4 w-4 shrink-0" />
+            LeetCode
+          </TabsTrigger>
+          <TabsTrigger
+            value="GFG"
+            className="flex-1 sm:flex-initial gap-2 rounded-lg text-sm font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all"
+          >
+            <GFGIcon className="h-4 w-4 shrink-0" />
+            GeeksforGeeks
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="LEETCODE" className="pb-8 mt-0">
+          <ProblemsTab company={company} platform="LEETCODE" session={session} />
+        </TabsContent>
+        <TabsContent value="GFG" className="pb-8 mt-0">
+          <ProblemsTab company={company} platform="GFG" session={session} />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
 

@@ -97,7 +97,7 @@ const LiveTerminal = forwardRef<LiveTerminalRef, LiveTerminalProps>(
         </div>
         <div
           ref={terminalRef}
-          className="w-full flex-1 border border-secondary rounded-b-lg overflow-hidden min-h-[300px] sm:min-h-[400px] lg:min-h-[500px]"
+          className="w-full flex-1 border border-secondary rounded-b-lg overflow-hidden min-h-75 sm:min-h-100 lg:min-h-125"
         />
       </div>
     );

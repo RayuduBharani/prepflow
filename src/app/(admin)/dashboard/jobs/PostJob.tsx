@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import Form from "next/form";
-import {jobPosting } from "@/actions/actions";
+import { jobPosting } from "@/actions/actions";
 import FormButton from "@/components/snippets/FormButton";
 import { useActionState } from "react";
 const initialResult = {
@@ -23,7 +23,7 @@ const initialResult = {
   success?: string
   issues?: any
 }
-async function PostJob() {
+function PostJob() {
   const [_, formAction] = useActionState(jobPosting, initialResult)
   return (
     <div className="w-full px-2 flex flex-col">

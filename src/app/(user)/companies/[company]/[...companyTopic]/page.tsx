@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getCompanyTopicWiseProblems } from "@/actions/company-actions";
 import FiltersPanel from "./FiltersPanel";
 import CompaniesBreadcrumb from "@/components/companiesBreadcrumb";
@@ -70,9 +71,10 @@ const CarouselCategoryPage = async ({
     notFound();
   }
   return (
-    <div className="pt-20 min-h-screen max-md:px-3 px-6 mx-auto max-w-160">
+    <div className="pt-20 min-h-screen max-md:px-3 px-6 mx-auto max-w-4xl">
       <LoginAlert userId={userId} />
       <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
+      <Suspense>
         <FiltersPanel
           difficultyCount={difficultyCount}
           companyTopic={companyTopic[0]}
@@ -83,6 +85,7 @@ const CarouselCategoryPage = async ({
           company={company}
           platform={companyTopic[1] as Platform}
         />
+      </Suspense>
     </div>
   );
 };

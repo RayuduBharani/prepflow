@@ -17,6 +17,7 @@ const AllProviders = ({ children }: { children: React.ReactNode }) => {
         defaultTheme="system"
         enableSystem
         enableColorScheme
+        disableTransitionOnChange
       >
         <TooltipProvider>
           <ActiveThemeProvider>

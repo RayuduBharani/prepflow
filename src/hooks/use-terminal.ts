@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Terminal } from "xterm";
+import type { Terminal } from "@xterm/xterm";
 import type { FitAddon } from "@xterm/addon-fit";
 import {
   TERMINAL_CONFIG,
@@ -25,16 +25,20 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
 
   // Initialize terminal
   useEffect(() => {
-    if (!terminalRef.current) return;
+    const container = terminalRef.current;
+    if (!container) return;
 
     let handleResize: (() => void) | null = null;
     let orientationHandler: (() => void) | null = null;
     let visibilityObserver: IntersectionObserver | null = null;
 
     const initTerminal = async () => {
-      const { Terminal } = await import("xterm");
+      const { Terminal } = await import("@xterm/xterm");
       const { FitAddon } = await import("@xterm/addon-fit");
-      await import("xterm/css/xterm.css");
+      await import("@xterm/xterm/css/xterm.css");
+
+      // Check if container is still mounted after async imports
+      if (!container.isConnected) return;
 
       const term = new Terminal({
         ...TERMINAL_CONFIG,
@@ -45,7 +49,7 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
       term.loadAddon(fitAddon);
       fitAddonRef.current = fitAddon;
 
-      term.open(terminalRef.current!);
+      term.open(container);
 
       setTimeout(() => {
         try {
@@ -63,7 +67,7 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
       // Setup resize handler
       handleResize = createResizeHandler(
         fitAddon,
-        terminalRef.current,
+        container,
         resizeTimeoutRef
       );
 
@@ -79,9 +83,7 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
         handleResize!();
       });
 
-      if (terminalRef.current) {
-        resizeObserverRef.current.observe(terminalRef.current);
-      }
+      resizeObserverRef.current.observe(container);
 
       // Visibility observer for mobile tab switching
       visibilityObserver = new IntersectionObserver(
@@ -94,7 +96,7 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
 
               visibilityTimeoutRef.current = setTimeout(() => {
                 try {
-                  const rect = terminalRef.current?.getBoundingClientRect();
+                  const rect = container.getBoundingClientRect();
                   if (rect && rect.width > 0 && rect.height > 0) {
                     fitAddonRef.current?.fit();
                   }
@@ -111,9 +113,7 @@ export function useTerminal({ fontSize, onTerminalReady }: UseTerminalOptions) {
         }
       );
 
-      if (terminalRef.current) {
-        visibilityObserver.observe(terminalRef.current);
-      }
+      visibilityObserver.observe(container);
 
       window.addEventListener("resize", handleResize);
       window.addEventListener("orientationchange", orientationHandler);

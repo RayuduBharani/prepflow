@@ -1,7 +1,8 @@
-const GFGIcon = ({size} : {size? : number}) => {
+const GFGIcon = ({ size, className }: { size?: number, className?: string }) => {
   return (
     <svg
       fill="currentColor"
+      className={className}
       width={`${size ? size : 24}px`}
       height={`${size ? size : 24}px`}
       viewBox="0 0 24 24"

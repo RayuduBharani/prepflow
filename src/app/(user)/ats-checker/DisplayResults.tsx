@@ -8,192 +8,264 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Badge } from "@/components/ui/badge";
 import { convertMarkdownArrayToHTML } from "@/lib/mdTohtml";
 import { ApiResponse } from "@/actions/atsActions";
-interface ChartData {
-  category: string;
-  score: number;
-  fill: string;
-}
+import { AlertTriangle, Lightbulb, Puzzle, Star, Trophy } from "lucide-react";
 
-export default function DisplayResults({result} : {result : ApiResponse}) {
-  const atsData = result.ats_score.breakdown
-  const ACTUAL_SCORE = Object.values(atsData).reduce(
-    (acc, value) => acc + value,
-    0
+// ── chart config ──────────────────────────────────────────────────────────────
+
+const chartConfig: ChartConfig = {
+  score: { label: "Score" },
+  relevance: { label: "Relevance", color: "hsl(var(--chart-1))" },
+  keyword_match: { label: "Keyword Match", color: "hsl(var(--chart-2))" },
+  formatting: { label: "Formatting", color: "hsl(var(--chart-3))" },
+  contact_completeness: { label: "Contact Completeness", color: "hsl(var(--chart-4))" },
+  remaining: { label: "Missing", color: "hsl(var(--muted))" },
+} satisfies ChartConfig;
+
+// ── score colour ──────────────────────────────────────────────────────────────
+
+const scoreColor = (score: number) =>
+  score >= 80
+    ? "text-emerald-500"
+    : score >= 50
+      ? "text-amber-500"
+      : "text-red-500";
+
+// ── small reusable card ───────────────────────────────────────────────────────
+
+const SectionCard = ({
+  icon,
+  title,
+  children,
+  className = "",
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={`rounded-2xl border border-border/60 bg-card p-4 flex flex-col gap-3 ${className}`}>
+    <div className="flex items-center gap-2">
+      {icon}
+      <h2 className="text-sm font-semibold">{title}</h2>
+    </div>
+    {children}
+  </div>
+);
+
+// ── tag list ──────────────────────────────────────────────────────────────────
+
+const TagList = ({
+  label,
+  items,
+  variant,
+}: {
+  label: string;
+  items: string[];
+  variant: "destructive" | "warning" | "secondary";
+}) => {
+  if (!items.length) return null;
+
+  const badgeCls =
+    variant === "destructive"
+      ? "bg-red-500/10 text-red-600 border-red-500/20"
+      : variant === "warning"
+        ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+        : "bg-muted text-muted-foreground border-border";
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {items.map((item) => (
+          <Badge
+            key={item}
+            variant="outline"
+            className={`text-xs font-normal ${badgeCls}`}
+          >
+            {item}
+          </Badge>
+        ))}
+      </div>
+    </div>
   );
-  const chartData: ChartData[] = [
+};
+
+// ── main component ────────────────────────────────────────────────────────────
+
+export default function DisplayResults({ result }: { result: ApiResponse }) {
+  const atsData = result.ats_score.breakdown;
+  const totalScore = Object.values(atsData).reduce((acc, v) => acc + v, 0);
+
+  const chartData = [
     ...Object.entries(atsData).map(([key, value], index) => ({
       category: key.replace("_", " "),
       score: value,
       fill: `hsl(var(--chart-${index + 1}))`,
     })),
-    {
-      category: "Remaining",
-      score: 100 - ACTUAL_SCORE,
-      fill: "hsl(var(--muted))",
-    },
+    { category: "Remaining", score: 100 - totalScore, fill: "hsl(var(--muted))" },
   ];
 
-  const chartConfig: ChartConfig = {
-    score: { label: "Score" },
-    relevance: { label: "Relevance", color: "hsl(var(--chart-1))" },
-    keyword_match: { label: "Keyword Match", color: "hsl(var(--chart-2))" },
-    formatting: { label: "Formatting", color: "hsl(var(--chart-3))" },
-    contact_completeness: {
-      label: "Contact Completeness",
-      color: "hsl(var(--chart-4))",
-    },
-    remaining: { label: "Missing", color: "hsl(var(--muted))" }, // Add Remaining to config
-  } satisfies ChartConfig;
   const renderLabel = React.useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (props: any) => {
-      const { viewBox } = props;
-      if (
-        viewBox &&
-        "cx" in viewBox &&
-        "cy" in viewBox &&
-        typeof viewBox.cx === "number" &&
-        typeof viewBox.cy === "number"
-      ) {
-        return (
-          <text
-            x={viewBox.cx}
-            y={viewBox.cy}
-            textAnchor="middle"
-            dominantBaseline="middle"
+    ({ viewBox }: any) => {
+      if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null;
+      const { cx, cy } = viewBox as { cx: number; cy: number };
+      return (
+        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+          <tspan
+            x={cx}
+            y={cy}
+            className={`text-3xl font-bold ${scoreColor(totalScore)}`}
+            fill="currentColor"
           >
-            <tspan
-              x={viewBox.cx}
-              y={viewBox.cy}
-              className="fill-foreground text-3xl font-bold"
-            >
-              {ACTUAL_SCORE}%
-            </tspan>
-            <tspan
-              x={viewBox.cx}
-              y={viewBox.cy + 24}
-              className="fill-muted-foreground"
-            >
-              Total Score
-            </tspan>
-          </text>
-        );
-      }
-      return null;
+            {totalScore}%
+          </tspan>
+          <tspan x={cx} y={cy + 24} className="fill-muted-foreground text-xs">
+            ATS Score
+          </tspan>
+        </text>
+      );
     },
-    [ACTUAL_SCORE]
+    [totalScore]
   );
+
   const htmlArray = convertMarkdownArrayToHTML(result.suggestions);
+  const hasMissingSections =
+    result.missing_sections &&
+    (result.missing_sections.critical.length > 0 ||
+      result.missing_sections.recommended.length > 0);
+  const hasMissingSkills =
+    result.missing_skills &&
+    (result.missing_skills.must_have.length > 0 ||
+      result.missing_skills.nice_to_have.length > 0);
 
   return (
-    <div className="flex max-sm:flex-col items-stretch max-w-xl flex-wrap flex-1 gap-4 w-full motion-preset-slide-up">
-      <div className="flex h-fit items-center border py-3 rounded-xl flex-col gap-2">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square min-w-[150px]"
-        >
+    <div className="flex max-sm:flex-col items-start flex-wrap gap-4 w-full max-w-xl motion-preset-slide-up">
+
+      {/* ── Score donut ── */}
+      <SectionCard
+        icon={<Trophy className="h-4 w-4 text-primary" />}
+        title="ATS Score Breakdown"
+        className="w-full"
+      >
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square w-40">
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie
               data={chartData}
               dataKey="score"
               nameKey="category"
-              innerRadius={50}
-              strokeWidth={5}
+              innerRadius={52}
+              strokeWidth={4}
             >
               <Label content={renderLabel} />
             </Pie>
           </PieChart>
         </ChartContainer>
-        <h2 className="text-lg font-bold">ATS Score</h2>
-      </div>
-      {result.missing_sections && (
-        <div className="flex flex-col h-fit text-sm p-2 text-muted-foreground gap-2 rounded-xl border bg-muted/60">
-          <h2 className="text-base font-bold text-primary">Missing Sections</h2>
-          {result.missing_sections.critical.length > 0 && (
-            <div className="bg-destructive rounded-md">
-              <h3>Critical</h3>
-              <ul className="list-disc pl-3">
-                {result.missing_sections.critical.map((sec, idx) => (
-                  <li key={idx}>{sec}</li>
-                ))}
-              </ul>
+
+        {/* Score breakdown pills */}
+        <div className="grid grid-cols-2 gap-1.5">
+          {Object.entries(atsData).map(([key, value], idx) => (
+            <div
+              key={key}
+              className="flex items-center justify-between rounded-lg bg-muted/50 px-2.5 py-1.5"
+            >
+              <span className="text-xs text-muted-foreground capitalize">
+                {key.replace("_", " ")}
+              </span>
+              <span
+                className="text-xs font-semibold tabular-nums"
+                style={{ color: `hsl(var(--chart-${idx + 1}))` }}
+              >
+                {value}%
+              </span>
             </div>
-          )}
-          {result.missing_sections.recommended.length > 0 && (
-            <div className="bg-muted rounded-md p-2">
-              <h3 className="text-sm font-medium text-primary/80">
-                Recommended
-              </h3>
-              <ul className="list-disc pl-3">
-                {result.missing_sections.recommended.map((sec, idx) => (
-                  <li key={idx}>{sec}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          ))}
         </div>
+      </SectionCard>
+
+      {/* ── Missing Sections ── */}
+      {hasMissingSections && (
+        <SectionCard
+          icon={<AlertTriangle className="h-4 w-4 text-red-500" />}
+          title="Missing Sections"
+          className="w-full"
+        >
+          <TagList
+            label="Critical"
+            items={result.missing_sections!.critical}
+            variant="destructive"
+          />
+          <TagList
+            label="Recommended"
+            items={result.missing_sections!.recommended}
+            variant="warning"
+          />
+        </SectionCard>
       )}
 
-      {result.missing_skills && (
-        <div className="p-2 rounded-xl flex flex-col bg-muted/60 text-sm gap-2">
-          <h2 className="font-bold text-base text-primary">Skills</h2>
-          {result.missing_skills.must_have.length > 0 && (
-            <div className="p-2 bg-muted rounded-lg">
-              <h3 className="text-sm font-medium text-primary/60">Must Have</h3>
-              <ul className="list-disc text-muted-foreground pl-3">
-                {result.missing_skills.must_have.map((skill, idx) => (
-                  <li key={idx}>{skill}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {result.missing_skills.nice_to_have.length > 0 && (
-            <div className="p-2 bg-muted rounded-lg">
-              <h3 className="text-sm font-medium text-primary/60">
-                Nice to Have
-              </h3>
-              <ul className="list-disc text-muted-foreground pl-3">
-                {result.missing_skills.nice_to_have.map((skill, idx) => (
-                  <li key={idx}>{skill}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+      {/* ── Missing Skills ── */}
+      {hasMissingSkills && (
+        <SectionCard
+          icon={<Puzzle className="h-4 w-4 text-amber-500" />}
+          title="Skills to Add"
+          className="w-full"
+        >
+          <TagList
+            label="Must Have"
+            items={result.missing_skills!.must_have}
+            variant="destructive"
+          />
+          <TagList
+            label="Nice to Have"
+            items={result.missing_skills!.nice_to_have}
+            variant="secondary"
+          />
+        </SectionCard>
       )}
-      {result.missing_achievements && (
-        <div className="flex flex-col text-sm p-2 rounded-xl text-muted-foreground border gap-2 bg-muted">
-          <h2 className="font-bold text-base text-primary">
-            Missing Achievements
-          </h2>
-          <ul className="flex list-disc pl-4 pr-2 flex-col gap-3">
-            {result.missing_achievements.map((ma, idx) => (
-              <li key={idx}>{ma}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {result.suggestions && (
-        <div className="p-2 rounded-xl border dark:border-0">
-          <h2 className="text-lg mb-4 font-bold bg-clip-text bg-linear-to-r from bg-pink-500 to-violet-500 text-transparent">
-            AI Suggestions
-          </h2>
-          <ul className="flex list-disc pl-3 flex-col text-sm gap-8">
-            {htmlArray.map((sg, idx) => (
+
+      {/* ── Missing Achievements ── */}
+      {result.missing_achievements?.length > 0 && (
+        <SectionCard
+          icon={<Star className="h-4 w-4 text-amber-400" />}
+          title="Missing Achievements"
+          className="w-full"
+        >
+          <ul className="flex flex-col gap-2">
+            {result.missing_achievements.map((ma) => (
               <li
-                key={idx}
-                className="p-2 rounded-xl border dark:border-0 shadow dark:shadow-0 bg-muted/60 *:*:text-primary"
-                dangerouslySetInnerHTML={{ __html: sg }}
-              ></li>
+                key={ma}
+                className="flex gap-2 text-sm text-muted-foreground before:mt-1.5 before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full before:bg-amber-400"
+              >
+                {ma}
+              </li>
             ))}
           </ul>
-        </div>
+        </SectionCard>
+      )}
+
+      {/* ── AI Suggestions ── */}
+      {result.suggestions && htmlArray.length > 0 && (
+        <SectionCard
+          icon={<Lightbulb className="h-4 w-4 text-violet-500" />}
+          title="AI Suggestions"
+          className="w-full"
+        >
+          <ul className="flex flex-col gap-3">
+            {htmlArray.map((sg) => (
+              <li
+                key={sg}
+                className="rounded-xl border border-border/50 bg-muted/40 px-3 py-2.5 text-sm text-foreground [&_strong]:text-primary [&_code]:text-primary [&_a]:text-primary [&_a]:underline"
+                dangerouslySetInnerHTML={{ __html: sg }}
+              />
+            ))}
+          </ul>
+        </SectionCard>
       )}
     </div>
   );

@@ -1,21 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { SquareChartGantt } from "lucide-react";
+import { AlertCircle, SquareChartGantt } from "lucide-react";
 import { analyzeResume, ActionState, ApiResponse } from "@/actions/atsActions";
-import DisplayResults from "./DisplayResults";
 import { Switch } from "@/components/ui/switch";
+
+const DisplayResults = dynamic(() => import("./DisplayResults"), { ssr: false });
 
 const Upload = () => {
   const [resume, setResume] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isJobDescOptional, setIsJobDescOptional] = useState(true);
+  const [jobDescEnabled, setJobDescEnabled] = useState(false);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,27 +25,19 @@ const Upload = () => {
     if (file) setError(null);
   }, []);
 
-  const handleTextareaChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setJobDescription(e.target.value);
-      if (e.target.value) setError(null);
-    },
-    []
-  );
-
-  const toggleJobDescOptional = useCallback(() => {
-    setIsJobDescOptional((prev) => {
-      if (!prev) setJobDescription("");
+  const toggleJobDesc = useCallback(() => {
+    setJobDescEnabled((prev) => {
+      if (prev) setJobDescription("");
       return !prev;
     });
   }, []);
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.SubmitEvent) => {
       e.preventDefault();
       if (!resume) {
         toast.warning("Resume Missing", {
-          description: "Please upload a resume.",
+          description: "Please upload a resume before submitting.",
         });
         return;
       }
@@ -67,20 +60,22 @@ const Upload = () => {
 
         if (data.error) {
           setError(data.error);
-          toast.warning("Error", {
-            description: data.error || "Failed to process request.",
-          });
+          toast.error("Analysis failed", { description: data.error });
         } else if (data.structuredData) {
           setResult(data.structuredData);
-          toast.success("Success", { description: "ATS analysis completed." });
+          toast.success("Analysis complete", {
+            description: "Your ATS results are ready.",
+          });
         } else {
-          setError("No analysis data received");
-          toast.warning("Error", { description: "No analysis data received." });
+          setError("No analysis data received.");
+          toast.error("Something went wrong", {
+            description: "No data returned from analysis.",
+          });
         }
-      } catch (error: any) {
-        const errorMessage = error.message || "Unexpected error occurred";
-        setError(errorMessage);
-        toast.warning("Error", { description: errorMessage });
+      } catch (err: any) {
+        const msg = err.message || "An unexpected error occurred.";
+        setError(msg);
+        toast.error("Error", { description: msg });
       } finally {
         setLoading(false);
       }
@@ -89,86 +84,105 @@ const Upload = () => {
   );
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-8 pb-16 px-4 min-h-screen">
+    <div className="flex flex-col items-center gap-8 pb-20 px-4 min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-6 w-full max-w-xl animate-fade-in"
+        className="flex flex-col gap-6 w-full max-w-xl"
       >
-        {/* File Upload Section */}
-        <div className="space-y-3 animate-slide-up">
-          <Label htmlFor="file-upload" className="text-base font-bold">
-            Upload Resume
-          </Label>
-          <FileUpload onChange={handleFileChange} />
+        {/* ── Header ── */}
+        <div className="flex items-center gap-3 mb-1">
+          <div>
+            <h1 className="text-lg font-bold leading-tight">ATS Resume Checker</h1>
+            <p className="text-sm text-muted-foreground">
+              Upload your resume and get an instant ATS score
+            </p>
+          </div>
         </div>
 
-        {/* Job Description Section */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between animate-slide-up">
-            <Label
-              htmlFor="jobdesc"
-              className="text-base font-bold animate-fade-up text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-pink-500"
-            >
-              Job Description {' '}
-              {isJobDescOptional && "(Optional)"}
-            </Label>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">
-                {isJobDescOptional ? "Enable" : "Disable"}
-              </span>
-              <Switch
-                id="jobdesc-switch"
-                checked={!isJobDescOptional}
-                onCheckedChange={toggleJobDescOptional}
-                className="transition-transform duration-200 ease-in-out"
-              />
-            </div>
-          </div>
-          {!isJobDescOptional && (
-            <Textarea
-              name="jobdesc"
-              id="jobdesc"
-              rows={10}
-              disabled={isJobDescOptional}
-              className="w-full text-sm rounded-md animate-fade-up"
-              value={jobDescription}
-              onChange={handleTextareaChange}
-              placeholder="Paste the job description here..."
-            />
+        {/* ── File Upload ── */}
+        <div className="flex flex-col gap-2 rounded-2xl border border-border/60 p-4">
+          <FileUpload onChange={handleFileChange} />
+          {resume && (
+            <p className="text-xs text-emerald-600 font-medium mt-1">
+              ✓ {resume.name}
+            </p>
           )}
         </div>
 
-        {/* Submit Button */}
+        {/* ── Job Description ── */}
+        <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="jobdesc" className="text-base font-semibold">
+                Job Description
+              </Label>
+              {!jobDescEnabled && (
+                <span className="text-xs text-muted-foreground font-normal">
+                  (optional)
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">
+                {jobDescEnabled ? "On" : "Off"}
+              </span>
+              <Switch
+                id="jobdesc-switch"
+                checked={jobDescEnabled}
+                onCheckedChange={toggleJobDesc}
+              />
+            </div>
+          </div>
+
+          {jobDescEnabled ? (
+            <Textarea
+              name="jobdesc"
+              id="jobdesc"
+              rows={8}
+              className="w-full text-sm rounded-xl resize-none"
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Paste the job description here to get a tailored ATS analysis…"
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Enable to compare your resume against a specific job description
+              for a more accurate score and targeted suggestions.
+            </p>
+          )}
+        </div>
+
+        {/* ── Error ── */}
+        {error && (
+          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/30 dark:border-red-900/50 p-4 text-red-700 dark:text-red-400">
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+            <p className="text-sm font-medium leading-snug">{error}</p>
+          </div>
+        )}
+
+        {/* ── Submit ── */}
         <Button
           type="submit"
-          variant={"secondary"}
-          className="w-fit text-xs self-end"
-          icon={SquareChartGantt}
-          iconPlacement="right"
-          effect={"expandIcon"}
-          size="sm"
-          disabled={loading}
+          className="w-full h-11 text-base font-semibold rounded-xl gap-2"
+          disabled={loading || !resume}
         >
           {loading ? (
-            <span className="flex items-center gap-2 animate-pulse">
-              Processing...
-            </span>
+            <>
+              <span className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
+              Analysing…
+            </>
           ) : (
-            "Get Results"
+            <>
+              <SquareChartGantt className="h-4 w-4" />
+              Analyse Resume
+            </>
           )}
         </Button>
       </form>
 
-      {/* Error Display */}
-      {error && (
-        <div className="w-full max-w-xl rounded-md bg-red-50 p-4 text-red-800 border border-red-200 animate-shake">
-          <p className="font-medium">{error}</p>
-        </div>
-      )}
-
-      {/* Results Display */}
+      {/* ── Results ── */}
       {result && (
-        <div className="w-full max-w-xl animate-fade-in-up">
+        <div className="w-full max-w-xl">
           <DisplayResults result={result} />
         </div>
       )}

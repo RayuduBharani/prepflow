@@ -1,15 +1,12 @@
 "use client";
 
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import React, { useEffect, useRef, useState } from "react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import React, { useEffect, useRef } from "react";
 import DesktopCodeEditor from "./DesktopCodeEditor";
 import { useCompilerStore } from "@/store/compilerStore";
 import { codeTemplates } from "@/lib/codeTemplates";
 import LiveTerminal, { LiveTerminalRef } from "./LiveTerminal";
+import { useShallow } from "zustand/react/shallow";
 
 const CompilerPage: React.FC = () => {
   const {
@@ -20,25 +17,32 @@ const CompilerPage: React.FC = () => {
     setCode,
     isFullscreen,
     setIsFullscreen,
-  } = useCompilerStore();
-  const terminalRef = useRef<LiveTerminalRef>(null);
-  const [terminalKey, setTerminalKey] = useState(0);
+  } = useCompilerStore(
+    useShallow((state) => ({
+      language: state.language,
+      code: state.code,
+      activeTab: state.activeTab,
+      setActiveTab: state.setActiveTab,
+      setCode: state.setCode,
+      isFullscreen: state.isFullscreen,
+      setIsFullscreen: state.setIsFullscreen,
+    }))
+  );
 
-  // Load default or saved code
+  const terminalRef = useRef<LiveTerminalRef>(null);
+
   useEffect(() => {
     const savedCode = localStorage.getItem(`compiler-code-${language}`);
     setCode(savedCode ?? codeTemplates[language] ?? "");
   }, [language, setCode]);
 
-  // Remount terminal when language changes
   useEffect(() => {
-    setTerminalKey(prev => prev + 1);
-  }, [language]);
+    if (!isFullscreen) return;
 
-  // Exit fullscreen on Escape
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) =>
-      e.key === "Escape" && isFullscreen && setIsFullscreen(false);
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+    };
+
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [isFullscreen, setIsFullscreen]);
@@ -46,62 +50,70 @@ const CompilerPage: React.FC = () => {
   return (
     <div
       className={`${
-        isFullscreen ? "fixed inset-0 z-50" : "h-screen"
+        isFullscreen ? "fixed inset-0 z-50" : "h-fit"
       } bg-background flex flex-col overflow-hidden`}
     >
       {/* --- Mobile Layout (Tabs) --- */}
       <div className={`lg:hidden flex-1 flex flex-col ${isFullscreen ? "hidden" : ""}`}>
         <div className="flex w-full border-b border-border">
-          <button
-            onClick={() => setActiveTab("editor")}
-            className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "editor"
-                ? "border-b-2 border-primary bg-background text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
+          <TabButton isActive={activeTab === "editor"} onClick={() => setActiveTab("editor")}>
             Code Editor
-          </button>
-          <button
-            onClick={() => setActiveTab("terminal")}
-            className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "terminal"
-                ? "border-b-2 border-primary bg-background text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
+          </TabButton>
+          <TabButton isActive={activeTab === "terminal"} onClick={() => setActiveTab("terminal")}>
             Terminal
-          </button>
+          </TabButton>
         </div>
 
         <div className={`flex-1 ${activeTab === "editor" ? "block" : "hidden"}`}>
           <DesktopCodeEditor terminalRef={terminalRef} />
         </div>
         <div className={`flex-1 ${activeTab === "terminal" ? "block" : "hidden"}`}>
-          <LiveTerminal key={`mobile-terminal-${terminalKey}`} ref={terminalRef} code={code} language={language} />
+          {/* 3. Removed redundant state; use `language` directly as the key */}
+          <LiveTerminal
+            key={`mobile-terminal-${language}`}
+            ref={terminalRef}
+            code={code}
+            language={language}
+          />
         </div>
       </div>
 
       {/* --- Desktop Layout (Resizable Panels) --- */}
-      <div
-        className={`hidden lg:block flex-1 ${
-          isFullscreen ? "fixed inset-0 z-50" : ""
-        }`}
-      >
-        <ResizablePanelGroup direction="horizontal" className="flex-1 h-full">
-          <ResizablePanel defaultSize={68} minSize={32} maxSize={90}>
+      <div className={`hidden lg:block overflow-auto ${isFullscreen && "fixed inset-0 z-50 h-full"}`}>
+        <ResizablePanelGroup className="h-[calc(100vh-5rem)]!" orientation="horizontal">
+          {/* 4. Changed percentage strings to raw numbers */}
+          <ResizablePanel defaultSize="68%" minSize="32%" maxSize="90%">
             <DesktopCodeEditor terminalRef={terminalRef} />
           </ResizablePanel>
 
           <ResizableHandle className="mx-1" withHandle />
 
-          <ResizablePanel defaultSize={32} minSize={20} maxSize={68}>
-            <LiveTerminal key={`desktop-terminal-${terminalKey}`} ref={terminalRef} code={code} language={language} />
+          <ResizablePanel defaultSize="32%" minSize="20%" maxSize="68%">
+            <LiveTerminal
+              key={`desktop-terminal-${language}`}
+              ref={terminalRef}
+              code={code}
+              language={language}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
     </div>
   );
 };
+
+// Extracted UI Component for cleaner main render function
+const TabButton = ({ isActive, onClick, children }: { isActive: boolean; onClick: () => void; children: React.ReactNode }) => (
+  <button
+    onClick={onClick}
+    className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+      isActive
+        ? "border-b-2 border-primary bg-background text-foreground"
+        : "text-muted-foreground hover:text-foreground"
+    }`}
+  >
+    {children}
+  </button>
+);
 
 export default CompilerPage;

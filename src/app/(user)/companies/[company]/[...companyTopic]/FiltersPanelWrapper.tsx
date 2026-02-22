@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import FiltersPanel from "./FiltersPanel";
 
@@ -9,7 +9,9 @@ const queryClient = new QueryClient();
 const FiltersPanelWrapper: React.FC<FiltersPanelProps> = (props) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <FiltersPanel {...props} />
+      <Suspense>
+        <FiltersPanel {...props} />
+      </Suspense>
     </QueryClientProvider>
   );
 };
@@ -21,12 +23,10 @@ interface FiltersPanelProps {
   solvedProblems: number;
   userId: string | undefined;
   totalProblems: number;
+  /** Header title — pass `companyTopic` for company pages or any label for DSA pages */
   companyTopic: string;
-  problems : Problem[];
+  problems: Problem[];
   difficultyCount: Record<string, { solved: number; unsolved: number }>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialProblems: any[];
-  initialNextPage: number | null;
-  company: string;
-  platform: Platform;
+  company?: string;
+  platform?: Platform;
 }

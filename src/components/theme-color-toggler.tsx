@@ -104,7 +104,7 @@ export default function ThemeChanger({
             <Palette className="h-4 w-4" color="currentColor" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="max-h-[10rem] overflow-auto w-fit">
+        <DropdownMenuContent className="max-h-40 overflow-auto w-fit">
           <DropdownMenuLabel className="text-xs">
             {currentThemeLabel}
           </DropdownMenuLabel>

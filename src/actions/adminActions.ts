@@ -35,8 +35,10 @@ export const getCarouselsData = cache(async (userId?: string) => {
             orderBy: { difficulty: "asc" },
           },
         },
+        orderBy : {id : "asc"}
       },
     },
+    orderBy : {id : 'desc'}
   });
 
   const data = results.map((sheet) => ({
@@ -48,8 +50,10 @@ export const getCarouselsData = cache(async (userId?: string) => {
         solved: category.problems.reduce(
           (acc, problem) =>
             acc +
-            (problem.UserProgress?.some((progress) => progress.isCompleted) ? 1 : 0),
-          0
+            (problem.UserProgress?.some((progress) => progress.isCompleted)
+              ? 1
+              : 0),
+          0,
         ),
       },
       problems: category.problems.map((problem) => ({
@@ -86,26 +90,18 @@ export const updateCompanyImage = async (formData: FormData) => {
 };
 
 export const searchProblems = async (query: string) => {
-  if (!query.trim()) return [];
+  const trimmed = query.trim();
+  if (!trimmed) return [];
 
   try {
-    const normalizedQuery = query
-      .toLowerCase()
-      .replace(/-/g, " ") // Convert slugs to normal words
-      .replace(/\s+/g, " ") // Remove extra spaces
-      .trim();
-
     const problems = await prisma.problem.findMany({
       where: {
         OR: [
-          { title: { contains: normalizedQuery, mode: "insensitive" } },
-          { slug: { contains: query.replace(/\s+/g, "-"), mode: "insensitive" } }, // Handle direct slug matches
+          { title: { contains: trimmed, mode: "insensitive" } },
+          { slug: { contains: trimmed, mode: "insensitive" } },
         ],
       },
-      take: 50, // Limit results for efficiency
-      orderBy: {
-        title: "asc", // Prioritize alphabetical order (or use ranking)
-      },
+      take: 50,
       select: {
         title: true,
         slug: true,
@@ -115,33 +111,38 @@ export const searchProblems = async (query: string) => {
     });
 
     return problems;
-  } catch (err) {
-    console.error("Error searching problems:", err);
+  } catch (error) {
+    console.error("Search failed:", error);
     return [];
   }
 };
 
 export const addSheets = async (formData: FormData) => {
   const carouselName = formData.get("carouselName") as string;
-  let problems: string[] = [];
-  // eslint-disable-next-line no-var
-  var categories: { category: string; problems: string[] }[] = [];
-  let currCategory = "";
+
+  // Group form data by category index
+  const categoryMap = new Map<number, { name: string; problems: string[] }>();
 
   for (const [key, value] of formData.entries()) {
     if (key.startsWith("category-")) {
-      if (currCategory) {
-        categories.push({ category: currCategory, problems });
-        problems = [];
+      const index = parseInt(key.replace("category-", ""));
+      if (!categoryMap.has(index)) {
+        categoryMap.set(index, { name: value as string, problems: [] });
       }
-      currCategory = value as string;
-    } else if (key === "problem") {
-      problems.push(value as string);
+    } else if (key.startsWith("problem-")) {
+      const index = parseInt(key.replace("problem-", ""));
+      if (!categoryMap.has(index)) {
+        categoryMap.set(index, { name: "", problems: [] });
+      }
+      categoryMap.get(index)!.problems.push(value as string);
     }
   }
-  if (currCategory) {
-    categories.push({ category: currCategory, problems });
-  }
+
+  // Convert map to array and filter out empty categories
+  const categories = Array.from(categoryMap.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([, { name, problems }]) => ({ category: name, problems }))
+    .filter(({ category, problems }) => category.trim() && problems.length > 0);
   try {
     await prisma.$transaction(async (prisma) => {
       const sheet = await prisma.sheets.create({
@@ -162,10 +163,23 @@ export const addSheets = async (formData: FormData) => {
       console.log("Sheet and categories added:", sheet);
       const cookieStore = await cookies();
       cookieStore.set("sheet", carouselName, { expires: 2 });
-    });
+    }, {timeout : 10000});
   } catch (err) {
     console.dir(err, { depth: 3 });
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+export const fetchProblemsBySlug = async (slugs: string[]) => {
+  if (!slugs.length) return [];
+  try {
+    return await prisma.problem.findMany({
+      where: { slug: { in: slugs } },
+      select: { title: true, slug: true, difficulty: true },
+    });
+  } catch (error) {
+    console.error("fetchProblemsBySlug failed:", error);
+    return [];
   }
 };

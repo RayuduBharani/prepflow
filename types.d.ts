@@ -219,6 +219,6 @@ interface FiltersPanelProps {
   totalProblems: number;
   companyTopic: string;
   difficultyCount: Record<string, { solved: number; unsolved: number }>;
-  company: string;
-  platform: Platform;
+  company?: string;
+  platform?: Platform;
 }
