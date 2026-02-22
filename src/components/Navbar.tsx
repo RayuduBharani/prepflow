@@ -6,7 +6,6 @@ import NavbarItems from "./NavbarItems";
 import AvatarDropDown from "./AvatarDropDown";
 import { ModeToggle } from "./ui/ModeToggler";
 import Navsheet from "./Navsheet";
-import { NavigationMenuItem } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import ThemeChanger from "./theme-color-toggler";
 import { QuickSearch } from "./QuickSearch";
@@ -14,29 +13,47 @@ import { getSession } from "@/auth-client";
 
 const Navbar = async () => {
   const session = await getSession();
+
   return (
-      <NavigationMenu className="gap-2 fixed z-50 mx-auto w-screen p-4 backdrop-blur-md text-sm font-medium">
-      <NavigationMenuList className="flex gap-8 items-center max-md:hidden">
-        <NavbarItems session={session} />
-      </NavigationMenuList>
-      <div className="md:hidden flex gap-2 items-center">
-        <Navsheet session={session} />
-        <NavigationMenuItem asChild
-          tabIndex={0}
-          className="text-xl max-sm:text-lg font-bold"
+    <header className="fixed top-0 left-0 right-0 z-50">
+      {/* Blur + border backdrop */}
+      <div className="relative mx-auto max-w-screen-2xl">
+        <NavigationMenu
+          className={[
+            "w-full px-4 md:px-6 py-3",
+            "bg-background/70 backdrop-blur-xl backdrop-saturate-150",
+            "border-b border-border/50",
+            "shadow-sm shadow-black/5",
+            "flex items-center gap-4",
+          ].join(" ")}
         >
-          <Link className="text-primary" href="/">
-            PrepFlow
-          </Link>
-        </NavigationMenuItem>
+          {/* ── Mobile: hamburger + brand ── */}
+          <div className="md:hidden flex items-center gap-3">
+            <Navsheet session={session} />
+            <Link
+              href="/"
+              className="text-xl font-extrabold tracking-tight text-foreground hover:text-primary transition-colors duration-200"
+            >
+              PrepFlow
+            </Link>
+          </div>
+
+          {/* ── Desktop: full nav ── */}
+          <NavigationMenuList className="hidden md:flex items-center gap-1">
+            <NavbarItems session={session} />
+          </NavigationMenuList>
+
+          {/* ── Right actions ── */}
+          <div className="ml-auto flex items-center gap-1.5">
+            <QuickSearch />
+            <ThemeChanger />
+            <ModeToggle />
+            <div className="h-5 w-px bg-border mx-1 hidden sm:block" aria-hidden />
+            <AvatarDropDown session={session} />
+          </div>
+        </NavigationMenu>
       </div>
-      <div className="flex items-center ml-auto gap-2">
-          <QuickSearch />
-          <ThemeChanger />
-          <ModeToggle />
-          <AvatarDropDown session={session}/>
-        </div>
-    </NavigationMenu>
+    </header>
   );
 };
 

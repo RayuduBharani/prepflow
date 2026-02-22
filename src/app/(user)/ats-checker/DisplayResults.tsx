@@ -1,28 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Label, Pie, PieChart } from "recharts";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { convertMarkdownArrayToHTML } from "@/lib/mdTohtml";
 import { ApiResponse } from "@/actions/atsActions";
 import { AlertTriangle, Lightbulb, Puzzle, Star, Trophy } from "lucide-react";
-
-// ── chart config ──────────────────────────────────────────────────────────────
-
-const chartConfig: ChartConfig = {
-  score: { label: "Score" },
-  relevance: { label: "Relevance", color: "hsl(var(--chart-1))" },
-  keyword_match: { label: "Keyword Match", color: "hsl(var(--chart-2))" },
-  formatting: { label: "Formatting", color: "hsl(var(--chart-3))" },
-  contact_completeness: { label: "Contact Completeness", color: "hsl(var(--chart-4))" },
-  remaining: { label: "Missing", color: "hsl(var(--muted))" },
-} satisfies ChartConfig;
 
 // ── score colour ──────────────────────────────────────────────────────────────
 
@@ -32,6 +14,66 @@ const scoreColor = (score: number) =>
     : score >= 50
       ? "text-amber-500"
       : "text-red-500";
+
+const scoreRingColor = (score: number) =>
+  score >= 80
+    ? "#10b981"
+    : score >= 50
+      ? "#f59e0b"
+      : "#ef4444";
+
+const SEGMENT_COLORS = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+];
+
+// ── circular score ring ───────────────────────────────────────────────────────
+
+function ScoreRing({ score }: { score: number }) {
+  const radius = 52;
+  const stroke = 10;
+  const normalizedRadius = radius - stroke / 2;
+  const circumference = 2 * Math.PI * normalizedRadius;
+  const offset = circumference - (score / 100) * circumference;
+
+  return (
+    <div
+      className="relative mx-auto flex items-center justify-center"
+      style={{ width: radius * 2, height: radius * 2 }}
+    >
+      <svg width={radius * 2} height={radius * 2} className="rotate-[-90deg]">
+        <circle
+          cx={radius}
+          cy={radius}
+          r={normalizedRadius}
+          fill="none"
+          stroke="hsl(var(--muted))"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={radius}
+          cy={radius}
+          r={normalizedRadius}
+          fill="none"
+          stroke={scoreRingColor(score)}
+          strokeWidth={stroke}
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          style={{ transition: "stroke-dashoffset 0.6s ease" }}
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center leading-tight">
+        <span className={`text-2xl font-bold tabular-nums ${scoreColor(score)}`}>
+          {score}%
+        </span>
+        <span className="text-[10px] text-muted-foreground">ATS Score</span>
+      </div>
+    </div>
+  );
+}
 
 // ── small reusable card ───────────────────────────────────────────────────────
 
@@ -46,7 +88,9 @@ const SectionCard = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className={`rounded-2xl border border-border/60 bg-card p-4 flex flex-col gap-3 ${className}`}>
+  <div
+    className={`rounded-2xl border border-border/60 bg-card p-4 flex flex-col gap-3 ${className}`}
+  >
     <div className="flex items-center gap-2">
       {icon}
       <h2 className="text-sm font-semibold">{title}</h2>
@@ -66,7 +110,7 @@ const TagList = ({
   items: string[];
   variant: "destructive" | "warning" | "secondary";
 }) => {
-  if (!items.length) return null;
+  if (!items?.length) return null;
 
   const badgeCls =
     variant === "destructive"
@@ -101,86 +145,56 @@ export default function DisplayResults({ result }: { result: ApiResponse }) {
   const atsData = result.ats_score.breakdown;
   const totalScore = Object.values(atsData).reduce((acc, v) => acc + v, 0);
 
-  const chartData = [
-    ...Object.entries(atsData).map(([key, value], index) => ({
-      category: key.replace("_", " "),
-      score: value,
-      fill: `hsl(var(--chart-${index + 1}))`,
-    })),
-    { category: "Remaining", score: 100 - totalScore, fill: "hsl(var(--muted))" },
-  ];
-
-  const renderLabel = React.useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ({ viewBox }: any) => {
-      if (!viewBox || !("cx" in viewBox) || !("cy" in viewBox)) return null;
-      const { cx, cy } = viewBox as { cx: number; cy: number };
-      return (
-        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
-          <tspan
-            x={cx}
-            y={cy}
-            className={`text-3xl font-bold ${scoreColor(totalScore)}`}
-            fill="currentColor"
-          >
-            {totalScore}%
-          </tspan>
-          <tspan x={cx} y={cy + 24} className="fill-muted-foreground text-xs">
-            ATS Score
-          </tspan>
-        </text>
-      );
-    },
-    [totalScore]
-  );
-
   const htmlArray = convertMarkdownArrayToHTML(result.suggestions);
+
+  // FIX: missing_sections is now { critical: string[], recommended: string[] }
   const hasMissingSections =
     result.missing_sections &&
-    (result.missing_sections.critical.length > 0 ||
-      result.missing_sections.recommended.length > 0);
+    (result.missing_sections.critical?.length > 0 ||
+      result.missing_sections.recommended?.length > 0);
+
   const hasMissingSkills =
     result.missing_skills &&
-    (result.missing_skills.must_have.length > 0 ||
-      result.missing_skills.nice_to_have.length > 0);
+    (result.missing_skills.must_have?.length > 0 ||
+      result.missing_skills.nice_to_have?.length > 0);
+
+  const hasWeakBullets = result.weak_bullets_to_improve?.length > 0;
 
   return (
     <div className="flex max-sm:flex-col items-start flex-wrap gap-4 w-full max-w-xl motion-preset-slide-up">
 
-      {/* ── Score donut ── */}
+      {/* ── Score ring ── */}
       <SectionCard
         icon={<Trophy className="h-4 w-4 text-primary" />}
         title="ATS Score Breakdown"
         className="w-full"
       >
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square w-40">
-          <PieChart>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-            <Pie
-              data={chartData}
-              dataKey="score"
-              nameKey="category"
-              innerRadius={52}
-              strokeWidth={4}
-            >
-              <Label content={renderLabel} />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+        <ScoreRing score={totalScore} />
 
-        {/* Score breakdown pills */}
         <div className="grid grid-cols-2 gap-1.5">
           {Object.entries(atsData).map(([key, value], idx) => (
             <div
               key={key}
               className="flex items-center justify-between rounded-lg bg-muted/50 px-2.5 py-1.5"
             >
-              <span className="text-xs text-muted-foreground capitalize">
-                {key.replace("_", " ")}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className="inline-block h-2 w-2 rounded-full flex-shrink-0"
+                  style={{
+                    backgroundColor:
+                      SEGMENT_COLORS[idx] ?? "hsl(var(--muted-foreground))",
+                  }}
+                />
+                <span className="text-xs text-muted-foreground capitalize">
+                  {key.replace(/_/g, " ")}
+                </span>
+              </div>
               <span
                 className="text-xs font-semibold tabular-nums"
-                style={{ color: `hsl(var(--chart-${idx + 1}))` }}
+                style={{
+                  color:
+                    SEGMENT_COLORS[idx] ?? "hsl(var(--muted-foreground))",
+                }}
               >
                 {value}%
               </span>
@@ -198,12 +212,12 @@ export default function DisplayResults({ result }: { result: ApiResponse }) {
         >
           <TagList
             label="Critical"
-            items={result.missing_sections!.critical}
+            items={result.missing_sections.critical}
             variant="destructive"
           />
           <TagList
             label="Recommended"
-            items={result.missing_sections!.recommended}
+            items={result.missing_sections.recommended}
             variant="warning"
           />
         </SectionCard>
@@ -218,31 +232,35 @@ export default function DisplayResults({ result }: { result: ApiResponse }) {
         >
           <TagList
             label="Must Have"
-            items={result.missing_skills!.must_have}
+            items={result.missing_skills.must_have}
             variant="destructive"
           />
           <TagList
             label="Nice to Have"
-            items={result.missing_skills!.nice_to_have}
+            items={result.missing_skills.nice_to_have}
             variant="secondary"
           />
         </SectionCard>
       )}
 
-      {/* ── Missing Achievements ── */}
-      {result.missing_achievements?.length > 0 && (
+      {/* ── Weak Bullets ── */}
+      {/* FIX: was referencing missing_achievements (non-existent field);
+               replaced with weak_bullets_to_improve from ApiResponse */}
+      {hasWeakBullets && (
         <SectionCard
           icon={<Star className="h-4 w-4 text-amber-400" />}
-          title="Missing Achievements"
+          title="Bullets to Strengthen"
           className="w-full"
         >
-          <ul className="flex flex-col gap-2">
-            {result.missing_achievements.map((ma) => (
-              <li
-                key={ma}
-                className="flex gap-2 text-sm text-muted-foreground before:mt-1.5 before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full before:bg-amber-400"
-              >
-                {ma}
+          <ul className="flex flex-col gap-3">
+            {result.weak_bullets_to_improve.map((wb, i) => (
+              <li key={i} className="flex flex-col gap-1 text-sm">
+                <span className="text-muted-foreground line-through">
+                  {wb.original}
+                </span>
+                <span className="text-foreground before:content-['→_'] before:text-emerald-500 before:font-bold">
+                  {wb.suggested_improvement}
+                </span>
               </li>
             ))}
           </ul>

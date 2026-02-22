@@ -1,5 +1,5 @@
-'use client'
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   NavigationMenuItem,
   NavigationMenuLink,
@@ -15,91 +15,113 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Menu } from "lucide-react";
+import { LayoutDashboard, Menu, X } from "lucide-react";
 import { navItems, isActive } from "@/lib/utils";
 import { Session } from "better-auth";
 import { Button } from "./ui/button";
 import { UserRole } from "../../generated/prisma/enums";
+import { cn } from "@/lib/utils";
 
 interface FullSession extends Session {
-  role : UserRole
+  role: UserRole;
 }
 
-const Navsheet: React.FC<{session: FullSession | null }> = ({
-  session,
-}) => {
+const Navsheet: React.FC<{ session: FullSession | null }> = ({ session }) => {
   const router = useRouter();
-  const pathname = usePathname()
-  const pathSegments = pathname.split("/").filter(Boolean); // Remove empty segments
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const [open, setOpen] = useState(false);
 
-    // Dynamically determine the base path
-    const getBasePath = (href: string) => {
-      if (pathSegments[0] === href.replace("/", "")) {
-        return `/${pathSegments.slice(0, 1).join("/")}`; // Keep first 2 segments
-      }
-      return href; // Default to normal href
-    };
+  const getBasePath = (href: string) => {
+    if (pathSegments[0] === href.replace("/", "")) {
+      return `/${pathSegments.slice(0, 1).join("/")}`;
+    }
+    return href;
+  };
 
-    const handleClick = (
-      e: React.MouseEvent<HTMLAnchorElement>,
-      href: string
-    ) => {
-      e.preventDefault();
-      const newPath = getBasePath(href);
-      if (pathname !== newPath) {
-        router.push(newPath);
-      }
-    };
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const newPath = getBasePath(href);
+    setOpen(false); // close drawer on navigation
+    if (pathname !== newPath) router.push(newPath);
+  };
+
   return (
-    <Drawer>
-      <DrawerTrigger asChild aria-label="Open Navigation Drawer" className="rounded-md border">
-        <Button size={'icon'} variant={'ghost'}>
-        <Menu />
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Open navigation menu"
+          className="rounded-lg hover:bg-accent transition-colors"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
-        <NavigationMenuList className="flex flex-col pb-8 justify-center gap-6">
-          <DrawerHeader className="font-medium">
-            <DrawerTitle>
-              <NavigationMenuItem tabIndex={0} className="text-xl font-bold">
+
+      <DrawerContent className="px-0 pb-safe">
+        <DrawerHeader className="px-6 pt-6 pb-4 border-b border-border/60">
+          <DrawerTitle asChild>
+            <Link
+              href="/"
+              onClick={(e) => handleClick(e, "/")}
+              className="text-2xl font-extrabold tracking-tight text-foreground hover:text-primary transition-colors w-fit"
+            >
+              PrepFlow
+            </Link>
+          </DrawerTitle>
+          <DrawerDescription className="sr-only">
+            Mobile navigation menu
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <NavigationMenuList className="flex flex-col items-stretch gap-1 p-4">
+          {navItems.map(({ href, label }) => (
+            <NavigationMenuItem key={href} className="w-full">
+              <NavigationMenuLink asChild>
+                {/* BUG FIX: Link is now correctly inside NavigationMenuLink */}
                 <Link
-                  onClick={(e) => handleClick(e, "/")}
-                  className={isActive("/", pathname)}
-                  href="/"
+                  tabIndex={0}
+                  href={href}
+                  onClick={(e) => handleClick(e, href)}
+                  className={cn(
+                    "flex items-center w-full px-4 py-3 rounded-lg text-base font-medium",
+                    "transition-all duration-150 outline-none",
+                    "hover:bg-accent hover:text-accent-foreground",
+                    "focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive(href, pathname)
+                  )}
                 >
-                  PrepFlow
+                  {label}
                 </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
+
+          {session?.role === "ADMIN" && (
+            <>
+              <div className="h-px bg-border/60 my-2 mx-4" aria-hidden />
+              <NavigationMenuItem className="w-full">
+                <NavigationMenuLink asChild>
+                  <Link
+                    tabIndex={0}
+                    href="/dashboard"
+                    onClick={(e) => handleClick(e, "/dashboard")}
+                    className={cn(
+                      "flex items-center gap-2.5 w-full px-4 py-3 rounded-lg text-base font-medium",
+                      "transition-all duration-150 outline-none",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      "focus-visible:ring-2 focus-visible:ring-ring",
+                      isActive("/dashboard", pathname)
+                    )}
+                  >
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    Dashboard
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
-            </DrawerTitle>
-            <DrawerDescription className="hidden">Navigation for Mobile</DrawerDescription>
-          </DrawerHeader>
-          <>
-              {navItems.map(({ href, label }) => (
-                <NavigationMenuItem key={href}>
-                    <NavigationMenuLink asChild
-                      onClick={(e) => handleClick(e, href)}
-                      className={isActive(href, pathname)}
-                    >
-                    </NavigationMenuLink>
-                  <Link tabIndex={0} href={href}>
-                      {label}
-                  </Link>
-                </NavigationMenuItem>
-              ))}
-              {/* Dashboard Link for Admin LOGIN */}
-              {session && session.role === "ADMIN" && (
-                <NavigationMenuItem >
-                    <NavigationMenuLink asChild
-                      onClick={(e) => handleClick(e, "/dashboard")}
-                      className={isActive("/dashboard", pathname)}
-                    >
-                  <Link tabIndex={0} href={"/dashboard"}>
-                      Dashboard
-                  </Link>
-                    </NavigationMenuLink>
-                </NavigationMenuItem>
-              )}
             </>
+          )}
         </NavigationMenuList>
       </DrawerContent>
     </Drawer>
