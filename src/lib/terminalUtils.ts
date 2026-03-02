@@ -90,7 +90,7 @@ export function createKeyHandler(
   sendInput: (input: string) => void
 ) {
   return ({ domEvent }: { key: string; domEvent: KeyboardEvent }) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const hasSelection = (terminal as any)?.hasSelection?.() ?? false;
 
     if (

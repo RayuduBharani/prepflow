@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { actions } from "@/lib/utils";
 import { Briefcase, Map, Building2, FileSpreadsheet, UserCog, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import SeedButton from "./SeedButton";
+import BackupButton from "./BackupButton";
+import RestoreFromBackupButton from "./RestoreFromBackupButton";
 import { getSession } from "@/auth-client";
 import { redirect, RedirectType } from "next/navigation";
 
@@ -69,13 +69,20 @@ export default async function AdminDashboard() {
 
       {/* Database Management Section */}
       <div className="max-w-7xl mx-auto">
-        <div className="rounded-xl bg-card border border-border p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-1">Database Management</h3>
-              <p className="text-sm text-muted-foreground">Populate database with initial data</p>
-            </div>
-            <SeedButton />
+        <h2 className="text-xl font-semibold text-foreground mb-4">Database Management</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Backup */}
+          <div className="rounded-xl bg-card border border-border p-5 shadow-sm flex flex-col gap-2">
+            <p className="font-semibold text-foreground">Backup</p>
+            <p className="text-sm text-muted-foreground">Export a full JSON snapshot of the database.</p>
+            <BackupButton />
+          </div>
+
+          {/* Restore from backup */}
+          <div className="rounded-xl bg-card border border-border p-5 shadow-sm flex flex-col gap-2">
+            <p className="font-semibold text-foreground">Restore</p>
+            <p className="text-sm text-muted-foreground">Upload a backup JSON and seed the database from it.</p>
+            <RestoreFromBackupButton />
           </div>
         </div>
       </div>

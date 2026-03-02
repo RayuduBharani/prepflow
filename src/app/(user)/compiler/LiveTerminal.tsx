@@ -32,7 +32,7 @@ const LiveTerminal = forwardRef<LiveTerminalRef, LiveTerminalProps>(
 
     // Setup input/output handling
     const { run, stop } = useTerminalIO({
-      terminal: termRef.current,
+      terminal: null,
       getTerminal: () => termRef.current,
     });
 

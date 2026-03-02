@@ -50,6 +50,47 @@ export const formatDate = (dateInput?: Date | number | string): string => {
   return formattedDate.replace(",", " at");
 };
 
+export function arrayDifference(arr1: string[], arr2: string[]): string[] {
+  const set = new Set(arr1);
+  return arr2.filter(v => !set.has(v));
+}
+
+export function toDifficulty(difficulty: string): Difficulty {
+  switch (difficulty) {
+    case "Easy":
+      return "EASY";
+    case "Medium":
+      return "MEDIUM";
+    case "Hard":
+      return "HARD";
+    case "Basic":
+      return "BASIC";
+    case "School":
+      return "SCHOOL";
+    default:
+      throw new Error(`Unknown difficulty: ${difficulty}`);
+  }
+}
+
+export function toCamelCaseResult(raw: RawGfgResults): GfgResults {
+  return {
+    problemName: raw.problem_name,
+    slug: raw.slug,
+    accuracy: raw.accuracy,
+    allSubmissions: raw.all_submissions,
+    difficulty: toDifficulty(raw.difficulty),
+    tags: {
+      companyTags: raw.tags.company_tags,
+      topicTags: raw.tags.topic_tags,
+    },
+    problemUrl: raw.problem_url,
+  };
+}
+
+export function getAcceptedSubmissions(totalSubmitions : number, accuracy : number ) : number {
+  return Math.ceil((totalSubmitions / 100) * accuracy);
+}
+
 export const formatIndianCount = (num: number | null): string => {
   if (num === null || num === 0) return "0";
 
@@ -118,7 +159,7 @@ export function slugToTitle(slug: string): string {
     .join(" "); // Join words with spaces
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function objectToQueryParams(params: Record<string, any>): string {
   return Object.entries(params)
     .filter(([, value]) => value !== undefined && value !== null)

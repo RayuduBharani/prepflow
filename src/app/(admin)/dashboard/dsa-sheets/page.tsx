@@ -203,7 +203,7 @@ export default async function AdminDSAPage() {
                   </div>
                   <h3 className="text-lg font-medium mb-1">No sheets yet</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Switch to the "Create Sheet" tab to get started.
+                    Switch to the &ldquo;Create Sheet&rdquo; tab to get started.
                   </p>
                 </CardContent>
               </Card>

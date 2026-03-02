@@ -1,118 +1,193 @@
+# PrepFlow 🚀
 
-# PrepFlow
+> **Your unified platform for technical interview preparation.**
+> Practice DSA, compile code in the browser, check your resume with AI, and discover real job opportunities — all in one place.
 
-PrepFlow is a comprehensive platform designed to help users prepare for technical interviews by providing a variety of resources, including job listings, internships, DSA (Data Structures and Algorithms) sheets, a built-in code compiler, and companywise DSA questions. The platform offers a user-friendly interface and a range of functionalities to enhance the preparation process.
+🌐 **Live:** [prepflow.vercel.app](https://prepflow.vercel.app)
 
+---
 
-<!-- ## Description
+## ✨ Features
 
-PrepFlow is built using Next.js and TypeScript, leveraging modern web development practices to deliver a seamless user experience. The platform integrates with various services and libraries to provide a rich set of features, including authentication, data management, UI components, and an online code compiler. It also offers companywise DSA questions to help users target their preparation for specific companies. -->
+### 📚 Curated DSA Sheets
+- Browse multiple curated problem sheets (e.g., Striver's A2Z, Love Babbar 450, and more)
+- Problems sourced from **LeetCode** and **GeeksForGeeks**
+- Filter by difficulty, topic, and company tags
+- Track your progress per-problem with a PostgreSQL-backed `UserProgress` model
 
-## Why We Built This
+### 🏢 Company-Wise Questions
+- Dedicated company pages for **Google, Amazon, Microsoft, Meta, Apple**, and many more
+- Browse problems tagged by company with difficulty and acceptance rate
+- Hover cards showing problem details at a glance via `@radix-ui/react-hover-card`
 
-As students passionate about web development and technical growth, we (Rayudu Bharani and Ashok Atragadda) built **PrepFlow** to solve a real problem we faced during our own preparation: scattered resources, lack of structure, and the absence of a unified platform to prepare for internships and full-time roles.
+### 💻 Online Code Compiler
+- Powered by **Monaco Editor** (the engine behind VS Code)
+- Supports **Python, Java, C, C++, and JavaScript**
+- Custom **IntelliSense** — language-aware keyword and built-in completion providers for all 5 languages
+- **Code Snippets** — rich tab-stop snippets (loops, classes, try-catch, etc.) for all languages
+- Live terminal output via `@xterm/xterm`
+- Resizable panels with `react-resizable-panels` and fullscreen mode
 
-PrepFlow is our solution—a centralized, beginner-friendly hub that offers:
+### 🤖 AI-Powered ATS Resume Checker
+- Upload a **PDF or DOCX** resume (up to 5MB)
+- Powered by **Google Gemini 2.5 Flash** via `@google/generative-ai`
+- Generates a scored ATS report with:
+  - **ATS Score** (0–100) broken down into: Relevance & Impact, Keyword Match, Formatting, Contact Completeness
+  - **Missing sections** (critical & recommended)
+  - **Missing skills** (must-have & nice-to-have) when a job description is provided
+  - **Weak bullet rewrites** — up to 3 specific bullet-point improvement suggestions
+  - **Actionable suggestions** tailored to real recruiter standards
+- Optional job description input for targeted analysis
 
-- Curated DSA sheets to practice with focus.
-- Company-specific DSA questions to prepare with intent.
-- Internship and job listings to explore opportunities.
-- A built-in code compiler to instantly run and test logic.
-- Admin tools to keep the platform fresh and updated.
+### 💼 Jobs & Internships Board
+- Browse full-time, part-time, remote, and contract job listings
+- Internship listings with stipend, duration, and type
+- Filter and search across roles, companies, and locations
 
-We built this not just as a project, but as a platform that **we wish we had when we started our journey**—and now we're sharing it with every aspiring developer who needs a better way to prepare.
+### 🗺️ Roadmap Builder (Admin)
+- Visual roadmap builder powered by **React Flow (`@xyflow/react`)**
+- Node types: MAIN, SUB, END, OPTIONAL — persisted to PostgreSQL via Prisma
 
+### 🔐 Authentication
+- Secure authentication via **Better Auth** with session management
+- Google OAuth and email methods supported
+- Role-based access control (`USER` / `ADMIN`)
 
+---
 
-## Routes
+## 🛠️ Tech Stack
 
-- `/` - Home page
-- `/jobs` - Browse job listings
-- `/jobs/[jobview]` - View details of a specific job
-- `/internships` - Browse internship listings
-- `/internships/[id]` - View details of a specific internship
-- `/dsa-sheets` - Browse DSA sheets
-- `/dsa-sheets/[...carouselCategory]` - View specific DSA sheet categories
-- `/companies` - Browse companywise DSA questions
-- `/compiler` - Online code compiler for practicing coding problems
-- `/admin/dashboard` - Admin dashboard for managing content
-- `/admin/dashboard/jobs` - Admin page for managing job listings
-- `/admin/dashboard/internships` - Admin page for managing internship listings
+| Layer | Technology |
+|---|---|
+| **Framework** | Next.js 16 (App Router, Server Actions) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS v4, `tw-animate-css`, `tailwindcss-motion` |
+| **UI Components** | Radix UI, shadcn/ui, Lucide React, Framer Motion |
+| **Database** | PostgreSQL via `pg` + Prisma ORM |
+| **Auth** | Better Auth |
+| **AI** | Google Gemini 2.5 Flash (`@google/generative-ai`) |
+| **Code Editor** | Monaco Editor (`@monaco-editor/react`) |
+| **Terminal** | xterm.js (`@xterm/xterm`) |
+| **State Management** | Zustand, TanStack Query (React Query) |
+| **Data Tables** | TanStack Table |
+| **Routing / Flow** | React Flow (`@xyflow/react`) |
+| **File Parsing** | `pdf-parse`, `mammoth` |
+| **Caching** | Upstash Redis |
+| **Deployment** | Vercel |
+| **Analytics** | Vercel Analytics |
 
+---
 
-## Features
+## 🗄️ Database Schema (Key Models)
 
-- **User Authentication**: Secure user authentication using NextAuth.js.
-- **Job Listings**: Browse and view detailed information about various job opportunities.
-- **Internship Listings**: Browse and view detailed information about various internship opportunities.
-- **DSA Sheets**: Access a curated list of DSA problems categorized by topics.
-- **Companywise DSA Questions**: Practice DSA questions asked by specific companies to target your preparation.
-- **Online Compiler**: Write, run, and test code directly in the browser for supported languages.
-- **Admin Dashboard**: Manage job and internship listings, including adding, editing, and deleting entries.
-- **User Progress Tracking**: Track your progress on solving DSA problems.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Search and Filter**: Easily search and filter job and internship listings based on various criteria.
+```
+User → UserProgress (many-to-many through problems)
+Problem → ProblemTopic, ProblemCompany, ProblemMainTopic, ProblemCategory, SheetCategory
+Sheets → SheetCategory → Problem
+Jobs, Internships
+Roadmap → Node → Edge
+```
 
+Platforms supported: **LeetCode**, **GeeksForGeeks**
+Difficulty levels: `EASY`, `MEDIUM`, `HARD`, `BASIC`, `SCHOOL`
 
-## Getting Started
+---
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
+## 🚀 Getting Started
 
-2. **Set up environment variables:**
-   - Copy `.env.example` to `.env.local` and fill in the required values (e.g., database URL, NextAuth secrets).
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+- Google AI API key (for ATS checker)
+- Upstash Redis (for caching)
 
-3. **Run database migrations:**
-   ```bash
-   npx prisma migrate dev
-   ```
+### Installation
 
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   # or
-   bun dev
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/cygnuxxs/prepflow.git
+cd prepflow
 
-5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
+# Install dependencies (automatically runs prisma generate & db push)
+npm install
 
-## Tech Stack
+# Set up environment variables
+cp .env.example .env
+# Fill in: DATABASE_URL, GOOGLE_AI_API_KEY, BETTER_AUTH_SECRET, UPSTASH_REDIS_REST_URL, etc.
 
-- **Frontend:** Next.js, TypeScript, Tailwind CSS
-- **Backend:** Next.js Server Actions, Express.js, Prisma ORM with PostgreSQL (or your preferred DB)
-- **Authentication:** NextAuth.js
-- **Other:** ESLint
+# Start the development server
+npm run dev
+```
 
-## Contributing
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Make your changes and commit: `git commit -m "Add your feature"`
-4. Push to your fork: `git push origin feature/your-feature-name`
-5. Open a pull request.
+### Available Scripts
 
+| Command | Description |
+|---|---|
+| `npm run dev` | Start dev server with Turbopack |
+| `npm run build` | Generate Prisma client & build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run generate-sql` | Generate SQL dump from seed data |
+| `npm run verify-db` | Verify database import |
 
-## Authors
+---
 
-- **Ashok Atragadda** – Creator of PrepFlow  
-  - GitHub: [@AshokAtragadda](https://github.com/cygnuxxs)  
-  - LinkedIn: [Ashok Atragadda](https://www.linkedin.com/in/ashok-atragadda/)
-  
-- **Rayudu Bharani Satya Siva Durga Prasad** – Creator of PrepFlow  
-  - GitHub: [@RayuduBharani](https://github.com/RayuduBharani)  
-  - LinkedIn: [Rayudu Bharani](https://www.linkedin.com/in/rayudu-bharani/)
+## 📁 Project Structure
 
+```
+prepflow/
+├── src/
+│   ├── app/
+│   │   ├── (user)/           # User-facing routes
+│   │   │   ├── ats-checker/  # AI resume analyzer
+│   │   │   ├── compiler/     # Monaco code editor
+│   │   │   ├── companies/    # Company-wise questions
+│   │   │   ├── dsa-sheets/   # DSA problem sheets
+│   │   │   └── jobs/         # Jobs & internships
+│   │   ├── (admin)/          # Admin dashboard routes
+│   │   ├── api/              # API routes (Better Auth)
+│   │   └── page.tsx          # Landing page
+│   ├── actions/              # Next.js Server Actions
+│   │   ├── atsActions.ts     # AI resume analysis
+│   │   ├── actions.ts        # Problem & progress actions
+│   │   └── job-actions.tsx   # Jobs & internships actions
+│   ├── components/           # Shared React components
+│   ├── hooks/                # Custom React hooks
+│   ├── lib/                  # Utilities & helpers
+│   ├── store/                # Zustand state stores
+│   └── auth.ts               # Better Auth configuration
+├── prisma/
+│   └── schema.prisma         # Database schema
+└── public/                   # Static assets & logos
+```
 
-## License
+---
 
-This project is licensed under the MIT License.
+## 🌐 Deployment
+
+PrepFlow is deployed on **Vercel** with automatic deployments on push to `main`.
+
+- Full-text search via PostgreSQL (`fullTextSearchPostgres` preview feature)
+- Prisma adapter for PostgreSQL using `@prisma/adapter-pg`
+- Redis caching via Upstash for performance optimization
+
+---
+
+## 👥 Authors
+
+| Name | LinkedIn |
+|---|---|
+| **Ashok Atragadda** | [linkedin.com/in/ashok-atragadda](https://www.linkedin.com/in/ashok-atragadda/) |
+| **R.B.S.S Durga Prasad (Bharani)** | [linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad](https://www.linkedin.com/in/rayudu-bharani-satya-siva-durga-prasad/) |
+
+---
+
+## 📄 License
+
+This project is private. All rights reserved.
+
+---
+
+> *"We built the platform we wish we'd had when we started — and now we're sharing it with every aspiring developer who needs a better way to prepare."*

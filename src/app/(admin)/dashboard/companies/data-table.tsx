@@ -6,7 +6,7 @@ import {
   getFilteredRowModel,
   flexRender,
   SortingState,
-  getSortedRowModel, 
+  getSortedRowModel,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table"
@@ -21,10 +21,6 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
-import Form from "next/form"
-import { seedCompaniesImages } from "@/actions/seedAction"
-import { Button } from "@/components/ui/button"
-import { DownloadCloud } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -40,7 +36,7 @@ export function DataTable<TData, TValue>({
   const [filterMissingImages, ] = useState(false)
 
   // Create the combined filters outside of the table state
-  const combinedFilters = filterMissingImages 
+  const combinedFilters = filterMissingImages
     ? [...columnFilters, { id: 'image', value: true }]
     : columnFilters
 
@@ -69,12 +65,6 @@ export function DataTable<TData, TValue>({
           }
           className="md:max-w-sm max-md:w-full placeholder:text-xs"
         />
-
-        <Form action={seedCompaniesImages}>
-          <Button className="text-xs" type="submit" size="sm" variant="outline">
-            <DownloadCloud /> Seed
-          </Button>
-        </Form>
       </div>
       <div className="rounded-md border overflow-auto h-[76vh]">
         <Table>

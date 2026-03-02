@@ -90,7 +90,7 @@ export const getUserProgressQuestions = cache(async (userId: string, company: st
       },
       include: {
         problem: {
-          select: { topicSlugs: true },
+          select: { topicTags: true },
         },
       },
     });
@@ -158,7 +158,7 @@ export const getCarouselCategoryData = cache(
           select: {
             title: true,
             url: true,
-            topicSlugs: { select: { slug: true } },
+            topicTags: {select : {name : true} },
             slug: true,
             difficulty: true,
             platform: true,

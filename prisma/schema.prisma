@@ -85,7 +85,7 @@ model SimilarProblem {
 
 model ProblemTopic {
   id       Int       @id @default(autoincrement())
-  name     String    @unique
+  name     String?    @unique
   problems Problem[] @relation("ProblemTopicProblems")
 }
 
@@ -101,12 +101,6 @@ model ProblemMainTopic {
   id       Int       @id @default(autoincrement())
   name     String    @unique
   problems Problem[] @relation("ProblemMainTopicProblems")
-}
-
-model ProblemTopicSlug {
-  id       Int       @id @default(autoincrement())
-  slug     String    @unique
-  problems Problem[] @relation("ProblemTopicSlugProblems")
 }
 
 model UserProgress {
@@ -140,14 +134,6 @@ model SheetCategory {
   problems Problem[] @relation("SheetCategoryProblems")
 }
 
-model ProblemCategory {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  problems  Problem[] @relation("ProblemCategoryProblems")
-}
 
 model Problem {
   id             Int                @id @default(autoincrement())
@@ -165,11 +151,9 @@ model Problem {
   similarTo      SimilarProblem[]   @relation("ProblemToSimilar")
   similarFrom    SimilarProblem[]   @relation("SimilarToProblem")
   UserProgress   UserProgress[]
-  category       ProblemCategory[]  @relation("ProblemCategoryProblems")
   companyTags    ProblemCompany[]   @relation("ProblemCompanyProblems")
   mainTopics     ProblemMainTopic[] @relation("ProblemMainTopicProblems")
   topicTags      ProblemTopic[]     @relation("ProblemTopicProblems")
-  topicSlugs     ProblemTopicSlug[] @relation("ProblemTopicSlugProblems")
   sheetCategory  SheetCategory[]    @relation("SheetCategoryProblems")
 
   @@index([difficulty])

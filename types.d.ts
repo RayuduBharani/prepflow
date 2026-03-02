@@ -134,7 +134,6 @@ interface IProblem {
   companyTags: string[];
   platform: "LEETCODE" | "GFG"; // Updated platforms
   mainTopics: string[];
-  topicSlugs: string[];
 }
 
 interface Problem {
@@ -149,7 +148,7 @@ interface Problem {
   companyTags: {
     name: string;
   }[];
-  topicSlugs: { slug: string }[];
+  topicTags: { name: string }[];
 }
 
 interface IPrismaDsaSheetData {
@@ -221,4 +220,45 @@ interface FiltersPanelProps {
   difficultyCount: Record<string, { solved: number; unsolved: number }>;
   company?: string;
   platform?: Platform;
+}
+
+
+// Extract Problems from Leetcode and GFG
+
+interface RawGfgResults {
+  problem_name : string;
+  slug : string;
+  accuracy : string;
+  all_submissions : number;
+  difficulty : "School" | "Basic" | "Easy" | "Medium" | "Hard";
+  tags : {
+    company_tags : string[];
+    topic_tags : string[];
+  };
+  problem_url : string;
+}
+
+
+
+interface GfgResults {
+  problemName: string;
+  slug: string;
+  accuracy: string;
+  allSubmissions: number;
+  difficulty: Difficulty;
+  tags: {
+    companyTags: string[];
+    topicTags: string[];
+  };
+  problemUrl: string;
+}
+
+interface GfgResponse {
+  previous : Number | null;
+  next : Number | null;
+  count : Number;
+  total : Number;
+  solved : Number;
+  unsolved : Number;
+  results  : GfgResults[]
 }

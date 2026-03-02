@@ -1,5 +1,6 @@
 "use server";
 
+import { toSlug } from "@/lib/utils";
 import prisma from "@/prisma";
 import { cache } from "react";
 
@@ -34,11 +35,11 @@ export const getCompanies = cache(
       take: 20,
       skip: (currentPage - 1) * 20,
     });
-  }
+  },
 );
 
 interface ProblemTopicResult {
-  slug: string;
+  name: string;
   count: number;
   solvedCount?: number;
 }
@@ -47,106 +48,58 @@ export const getCompanyPlatformProblems = cache(
   async (
     slug: string,
     platform: Platform,
-    userId?: string
+    userId?: string,
   ): Promise<ProblemTopicResult[]> => {
-    try {
-      // Execute both queries in parallel
-      const [totalResults, solvedResults] = await Promise.all([
-        // Total problems per topic
-        prisma.problemTopicSlug.findMany({
-          where: {
-            problems: {
-              some: {
-                companyTags: { some: { slug } },
-                platform,
-              },
+    const problemFilter = {
+      companyTags: { some: { slug } },
+      platform,
+    } as const;
+
+    const solvedFilter = userId
+      ? {
+          ...problemFilter,
+          UserProgress: { some: { userId, isCompleted: true } },
+        }
+      : null;
+
+    const [totalResults, solvedResults] = await Promise.all([
+      prisma.problemTopic.findMany({
+        where: { problems: { some: problemFilter } },
+        orderBy: { problems: { _count: "desc" } },
+        select: {
+          name: true,
+          _count: { select: { problems: { where: problemFilter } } },
+        },
+      }),
+      solvedFilter
+        ? prisma.problemTopic.findMany({
+            where: { problems: { some: solvedFilter } },
+            select: {
+              name: true,
+              _count: { select: { problems: { where: solvedFilter } } },
             },
-          },
-          orderBy: { problems: { _count: "desc" } },
-          select: {
-            slug: true,
-            _count: {
-              select: {
-                problems: {
-                  where: {
-                    companyTags: { some: { slug } },
-                    platform,
-                  },
-                },
-              },
-            },
-          },
-        }),
-        // Solved problems (only if userId provided)
-        userId
-          ? prisma.problemTopicSlug.findMany({
-              where: {
-                problems: {
-                  some: {
-                    companyTags: { some: { slug } },
-                    platform,
-                    UserProgress: { some: { userId, isCompleted: true } },
-                  },
-                },
-              },
-              select: {
-                slug: true,
-                _count: {
-                  select: {
-                    problems: {
-                      where: {
-                        companyTags: { some: { slug } },
-                        platform,
-                        UserProgress: { some: { userId, isCompleted: true } },
-                      },
-                    },
-                  },
-                },
-              },
-            })
-          : Promise.resolve([]),
-      ]);
+          })
+        : Promise.resolve(
+            [] as { name: string; _count: { problems: number } }[],
+          ),
+    ]);
 
-      // Combine results efficiently using a Map
-      const resultMap = new Map<string, ProblemTopicResult>();
+    const solvedMap = new Map(
+      solvedResults.map(({ name, _count }) => [name, _count.problems]),
+    );
 
-      // Process total counts
-      totalResults.forEach(({ slug, _count }) => {
-        resultMap.set(slug, {
-          slug,
-          count: _count.problems,
-          solvedCount: 0, // Default solved count
-        });
-      });
-
-      // Update with solved counts if available
-      if (userId) {
-        solvedResults.forEach(({ slug, _count }) => {
-          const existing = resultMap.get(slug);
-          if (existing) {
-            existing.solvedCount = _count.problems;
-          } else {
-            resultMap.set(slug, {
-              slug,
-              count: 0,
-              solvedCount: _count.problems,
-            });
-          }
-        });
-      }
-
-      return Array.from(resultMap.values());
-    } catch (error) {
-      console.error("Error in getCompanyPlatformProblems:", error);
-      throw new Error("Failed to fetch company platform problems");
-    }
-  }
-); // gfg company topics
+    return totalResults.map(({ name, _count }) => ({
+      name : name as string,
+      count: _count.problems,
+      ...(userId && { solvedCount: solvedMap.get(name) ?? 0 }),
+    })) as ProblemTopicResult[];
+  },
+);
 
 export async function getCompanyTopicProgress(
   userId: string,
   companySlug: string,
-  platform: Platform
+  platform: Platform,
 ) {
   return prisma.userProgress.findMany({
     where: {
@@ -166,19 +119,19 @@ export const getCompanyTopicWiseProblems = cache(
     companySlug: string,
     topicSlug: string,
     platform: Platform,
-    userId?: string
+    userId?: string,
   ) => {
     const results = await prisma.problem.findMany({
       where: {
         companyTags: { some: { slug: companySlug } },
-        topicSlugs: { some: { slug: topicSlug } },
+        topicTags: { some: { name: topicSlug } },
         platform,
       },
       select: {
         title: true,
         slug: true,
         platform: true,
-        topicSlugs : {select : {slug : true}},
+        topicTags: { select: { name: true } },
         companyTags: { select: { name: true } },
         UserProgress: {
           where: { userId: userId, isCompleted: true },
@@ -195,13 +148,16 @@ export const getCompanyTopicWiseProblems = cache(
     const total = await prisma.problem.count({
       where: {
         companyTags: { some: { slug: companySlug } },
-        topicSlugs: { some: { slug: topicSlug } },
+        topicTags: { some: { name: topicSlug } },
         platform,
       },
     });
 
     const problems = results.map((problem) => ({
       ...problem,
+      topicTags: problem.topicTags.filter(
+        (t): t is { name: string } => t.name !== null,
+      ),
       UserProgress: problem.UserProgress[0] || null,
     }));
 
@@ -213,7 +169,7 @@ export const getCompanyTopicWiseProblems = cache(
             problem: {
               platform,
               companyTags: { some: { slug: companySlug } },
-              topicSlugs: { some: { slug: topicSlug } },
+              topicTags: { some: { name: topicSlug } },
             },
           },
         })
@@ -234,7 +190,7 @@ export const getCompanyTopicWiseProblems = cache(
         EASY: { solved: 0, unsolved: 0 },
         MEDIUM: { solved: 0, unsolved: 0 },
         HARD: { solved: 0, unsolved: 0 },
-      }
+      },
     );
     return {
       totalProblems: total,
@@ -242,5 +198,5 @@ export const getCompanyTopicWiseProblems = cache(
       problems,
       difficultyCount,
     };
-  }
+  },
 );

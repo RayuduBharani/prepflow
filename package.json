@@ -7,10 +7,9 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "start": "next start",
-    "postinstall": "prisma generate && prisma db push",
-    "lint": "next lint",
-    "generate-sql": "node scripts/generate-sql-dump.mjs",
-    "verify-db": "./scripts/verify-import.sh"
+    "postinstall": "prisma generate",
+    "lint": "eslint .",
+    "fetch-problems": "tsx scripts/fetch-problems.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -80,14 +79,13 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^10.0.1",
+    "eslint": "^9.39.3",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8",
     "prisma": "^7.4.1",
     "tailwindcss": "^4.2.0",
     "tailwindcss-intersect": "^2.2.0",
     "tailwindcss-motion": "^1.1.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5"
   },
   "overrides": {

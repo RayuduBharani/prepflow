@@ -3,11 +3,10 @@ import React from 'react'
 import CarouselForm from '@/components/DSA/CarouselForm'
 import JsonDumpForm from '@/components/DSA/JsonDumpForm'
 import Form from 'next/form'
-import { seedDSASheets } from '@/actions/seedAction'
 import { extractData } from '@/actions/extractData'
 import { Button } from '@/components/ui/button'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Database, Download, FileJson, Loader2, PencilLine } from 'lucide-react'
+import { Download, FileJson, Loader2, PencilLine } from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
@@ -18,7 +17,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const AddSheetsPage = () => {
   const [client] = React.useState(() => new QueryClient())
-  const [isSeeding, setIsSeeding] = React.useState(false)
   const [isExtracting, setIsExtracting] = React.useState(false)
   const [activeTab, setActiveTab] = React.useState('manual')
 
@@ -56,23 +54,6 @@ const AddSheetsPage = () => {
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
               <div className="flex flex-wrap gap-3">
-                <Form action={seedDSASheets}>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-2"
-                    type="submit"
-                    disabled={isSeeding}
-                    onClick={() => setIsSeeding(true)}
-                  >
-                    {isSeeding ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Database className="h-4 w-4" />
-                    )}
-                    Seed Data
-                  </Button>
-                </Form>
                 <Form action={extractData}>
                   <Button
                     size="sm"

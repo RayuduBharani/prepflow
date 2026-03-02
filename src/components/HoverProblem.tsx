@@ -141,21 +141,21 @@ const ProblemRow = React.memo(({ problem, userId }: ProblemRowProps) => {
           </div>
 
           {/* Tags Section */}
-          {(problem.companyTags.length > 0 || problem.topicSlugs.length > 0) && (
+          {(problem.companyTags.length > 0 || problem.topicTags.length > 0) && (
             <div className="flex flex-col gap-3.5 mt-1">
-              {problem.topicSlugs.length > 0 && (
+              {problem.topicTags.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Topics
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {problem.topicSlugs.map(({ slug }) => (
+                    {problem.topicTags.map(({ name }) => (
                       <Badge
-                        key={slug}
+                        key={name}
                         variant="secondary"
                         className="bg-secondary/40 hover:bg-secondary/60 text-secondary-foreground text-[10px] px-2 py-0.5 font-medium border-0 transition-colors"
                       >
-                        {toTitleCase(slug)}
+                        {toTitleCase(name)}
                       </Badge>
                     ))}
                   </div>
@@ -211,7 +211,7 @@ const HoverProblem: React.FC<HoverProblemProps> = ({ problems, userId }) => {
           No problems found
         </p>
         <p className="mt-1.5 text-xs text-muted-foreground max-w-[220px]">
-          Try adjusting your filters or search terms to find what you're looking for.
+          Try adjusting your filters or search terms to find what you&apos;re looking for.
         </p>
       </div>
     );

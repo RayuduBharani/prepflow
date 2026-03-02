@@ -1,5 +1,4 @@
 import { getCompanyPlatformProblems } from "@/actions/company-actions";
-import { toTitleCase } from "@/lib/utils";
 import { Session } from "better-auth";
 import CategoryCard from "@/components/DSA/CategoryCard";
 
@@ -22,10 +21,10 @@ export default async function ProblemsTab({
       {result.length > 0 ? (
         result.map((topic, index) => (
           <CategoryCard
-            key={topic.slug}
-            href={`/companies/${company}/${topic.slug}/${platform}`}
+            key={topic.name}
+            href={`/companies/${company}/${topic.name}/${platform}`}
             category={{
-              name: toTitleCase(topic.slug),
+              name: topic.name,
               problems: [],
               _count: {
                 solved: topic.solvedCount || 0,

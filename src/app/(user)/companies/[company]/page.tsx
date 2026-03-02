@@ -105,7 +105,7 @@ async function CompanyPage({
       {/* ── Company Header Card ── */}
       <div className="rounded-2xl border border-border/60 bg-card overflow-hidden mb-6">
         {/* Subtle top accent strip */}
-        <div className="h-1 w-full bg-gradient-to-r from-primary/60 via-primary to-primary/30" />
+        <div className="h-1 w-full bg-linear-to-r from-primary/60 via-primary to-primary/30" />
 
         <div className="p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">

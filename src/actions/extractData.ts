@@ -2,7 +2,7 @@
 import prisma from "../prisma";
 import { writeFileSync } from "fs";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export async function extractData(formData : FormData) {
   try {
     const sheets = await prisma.sheets.findMany({

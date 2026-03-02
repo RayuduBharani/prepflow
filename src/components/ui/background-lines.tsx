@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useMemo } from "react";
 
 export const BackgroundLines = ({
   children,
@@ -90,6 +90,19 @@ const SVG = ({
     "#6A286F",
     "#604483",
   ];
+
+  // Pre-compute random delays once to keep renders pure
+  const pathDelays = useMemo(
+    () =>
+      paths.map(() => ({
+        delay: Math.floor(Math.random() * 10),
+        repeatDelay: Math.floor(Math.random() * 10 + 2),
+      })),
+    // paths is a static constant defined inside the component — safe to omit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   return (
     <motion.svg
       viewBox="0 0 1440 900"
@@ -114,8 +127,8 @@ const SVG = ({
             ease: "linear",
             repeat: Infinity,
             repeatType: "loop",
-            delay: Math.floor(Math.random() * 10),
-            repeatDelay: Math.floor(Math.random() * 10 + 2),
+            delay: pathDelays[idx]?.delay ?? 0,
+            repeatDelay: pathDelays[idx]?.repeatDelay ?? 2,
           }}
           key={`path-first-${idx}`}
         />
@@ -136,8 +149,8 @@ const SVG = ({
             ease: "linear",
             repeat: Infinity,
             repeatType: "loop",
-            delay: Math.floor(Math.random() * 10),
-            repeatDelay: Math.floor(Math.random() * 10 + 2),
+            delay: pathDelays[idx]?.delay ?? 0,
+            repeatDelay: pathDelays[idx]?.repeatDelay ?? 2,
           }}
           key={`path-second-${idx}`}
         />

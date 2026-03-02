@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { cn } from "@/lib/utils";
@@ -71,12 +71,14 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
     retry: false,
   });
 
-  // Accumulate title cache during render — no side-effect needed
-  if (options.length > 0) {
-    options.forEach((opt) => {
-      titleCacheRef.current[opt.slug] = opt.title;
-    });
-  }
+  // Accumulate title cache when options update
+  useEffect(() => {
+    if (options.length > 0) {
+      options.forEach((opt) => {
+        titleCacheRef.current[opt.slug] = opt.title;
+      });
+    }
+  }, [options]);
 
   // Handle selection using state updater functions to prevent stale closures
   const handleSelect = useCallback(
@@ -138,6 +140,7 @@ const ProblemsCombobox: React.FC<MultiSelectProps> = ({
                 {placeholder}
               </span>
             ) : (
+              // eslint-disable-next-line react-hooks/refs
               selectedSlugs.map((slug, idx) => (
                 <Badge
                   key={slug}

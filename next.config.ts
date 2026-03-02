@@ -39,6 +39,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  experimental: {
+    serverActions: {
+      // Allow large backup JSON files to be uploaded via server actions.
+      // Increase if your backups exceed 50 MB.
+      bodySizeLimit: "50mb",
+    },
+  },
 };
 
 export default nextConfig;

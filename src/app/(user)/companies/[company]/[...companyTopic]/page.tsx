@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { metadata as defaultMetadata } from "@/lib/defaultMetadata";
 import { toTitleCase } from "@/lib/utils";
 import { getSession } from "@/auth-client";
+import Loading from "@/app/loading";
 
 type Props = {
   params: Promise<{ company: string; companyTopic: string[] }>;
@@ -16,7 +17,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { company, companyTopic } = await params;
   const companyName = toTitleCase(company);
-  const topicName = toTitleCase(companyTopic?.[0] || "DSA");
+  const topicName = toTitleCase(decodeURIComponent(companyTopic?.[0]) || "DSA");
   const platform = toTitleCase(companyTopic?.[1] || "LeetCode");
 
   return {
@@ -58,6 +59,7 @@ const CarouselCategoryPage = async ({
   if (!companyTopic) {
     return redirect("/companies");
   }
+  companyTopic[0] = decodeURIComponent(companyTopic[0])
   const userId = (await getSession())?.userId;
   const { totalProblems, solvedProblems, problems, difficultyCount } =
     await getCompanyTopicWiseProblems(
@@ -74,7 +76,7 @@ const CarouselCategoryPage = async ({
     <div className="pt-20 min-h-screen max-md:px-3 px-6 mx-auto max-w-4xl">
       <LoginAlert userId={userId} />
       <CompaniesBreadcrumb companyName={company} topic={companyTopic[0]} />
-      <Suspense>
+      <Suspense fallback = {<Loading />}>
         <FiltersPanel
           difficultyCount={difficultyCount}
           companyTopic={companyTopic[0]}

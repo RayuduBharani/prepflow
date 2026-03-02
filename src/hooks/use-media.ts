@@ -1,23 +1,22 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore, useCallback } from 'react';
 
 function useMedia(query: string): boolean {
-  const [matches, setMatches] = useState<boolean>(false);
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const mediaQueryList = window.matchMedia(query);
+      mediaQueryList.addEventListener('change', onChange);
+      return () => mediaQueryList.removeEventListener('change', onChange);
+    },
+    [query]
+  );
 
-  useEffect(() => {
-    // Set initial value on mount (client-side only)
-    const mediaQueryList = window.matchMedia(query);
-    setMatches(mediaQueryList.matches);
+  const getSnapshot = useCallback(
+    () => window.matchMedia(query).matches,
+    [query]
+  );
 
-    const updateMatch = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
-    };
-
-    mediaQueryList.addEventListener('change', updateMatch);
-    return () => mediaQueryList.removeEventListener('change', updateMatch);
-  }, [query]);
-
-  return matches;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }
 
 export default useMedia;
