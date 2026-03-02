@@ -134,6 +134,7 @@ export const getLabel = (num: number | null): string => {
 };
 
 export function toSlug(str: string): string {
+  if (!str) return "";
   return str
     .toLowerCase() // Convert to lowercase
     .replace(/\s+/g, "-") // Replace spaces with hyphens
@@ -159,7 +160,7 @@ export function slugToTitle(slug: string): string {
     .join(" "); // Join words with spaces
 }
 
- 
+
 export function objectToQueryParams(params: Record<string, any>): string {
   return Object.entries(params)
     .filter(([, value]) => value !== undefined && value !== null)

@@ -183,3 +183,136 @@ export const fetchProblemsBySlug = async (slugs: string[]) => {
     return [];
   }
 };
+
+export async function addProblem(problem: IProblem) {
+  const result = await addProblems([problem]);
+  if (!result.success) return { success: false as const, error: result.error };
+  return { success: true as const, id: result.ids[0] };
+}
+
+const BATCH_SIZE = 50;
+
+export async function addProblems(problems: IProblem[]) {
+  if (problems.length === 0) return { success: true as const, ids: [], count: 0 };
+
+  try {
+    // 1. Collect all unique tags/topics/companies across all problems
+    const allTopicTags = [...new Set(problems.flatMap((p) => p.topicTags))];
+    const allMainTopics = [...new Set(problems.flatMap((p) => p.mainTopics))];
+    const allCompanyTags = [...new Set(problems.flatMap((p) => p.companyTags))];
+
+    // 2. Ensure all lookup rows exist in parallel
+    await Promise.all([
+      allTopicTags.length > 0
+        ? prisma.problemTopic.createMany({
+            data: allTopicTags.map((name) => ({ name })),
+            skipDuplicates: true,
+          })
+        : Promise.resolve(),
+      allMainTopics.length > 0
+        ? prisma.problemMainTopic.createMany({
+            data: allMainTopics.map((name) => ({ name })),
+            skipDuplicates: true,
+          })
+        : Promise.resolve(),
+      allCompanyTags.length > 0
+        ? prisma.problemCompany.createMany({
+            data: allCompanyTags.map((name) => ({ name, slug: toSlug(name) })),
+            skipDuplicates: true,
+          })
+        : Promise.resolve(),
+    ]);
+
+    // 3. Upsert problems in batches
+    const ids: number[] = [];
+
+    for (let i = 0; i < problems.length; i += BATCH_SIZE) {
+      const batch = problems.slice(i, i + BATCH_SIZE);
+
+      const upserted = await Promise.all(
+        batch.map((problem) =>
+          prisma.problem.upsert({
+            where: { slug: problem.slug },
+            select: { id: true },
+            create: {
+              title: problem.title,
+              slug: problem.slug,
+              isPremium: problem.isPremium,
+              dislikes: problem.dislikes,
+              likes: problem.likes,
+              difficulty: problem.difficulty,
+              url: problem.url,
+              accepted: problem.accepted,
+              submissions: problem.submissions ?? 0,
+              acceptanceRate: problem.acceptanceRate ?? 0,
+              platform: problem.platform,
+              topicTags: { connect: problem.topicTags.map((name) => ({ name })) },
+              mainTopics: { connect: problem.mainTopics.map((name) => ({ name })) },
+              companyTags: { connect: problem.companyTags.map((name) => ({ name })) },
+            },
+            update: {
+              title: problem.title,
+              isPremium: problem.isPremium,
+              dislikes: problem.dislikes,
+              likes: problem.likes,
+              difficulty: problem.difficulty,
+              url: problem.url,
+              accepted: problem.accepted,
+              submissions: problem.submissions ?? 0,
+              acceptanceRate: problem.acceptanceRate ?? 0,
+              platform: problem.platform,
+              topicTags: { set: problem.topicTags.map((name) => ({ name })) },
+              mainTopics: { set: problem.mainTopics.map((name) => ({ name })) },
+              companyTags: { set: problem.companyTags.map((name) => ({ name })) },
+            },
+          }),
+        ),
+      );
+
+      ids.push(...upserted.map((p) => p.id));
+    }
+
+    // 4. Link similar questions — resolve slugs → ids then bulk insert
+    const allSimilarSlugs = [
+      ...new Set(problems.flatMap((p) => p.similarQuestions.map((q) => q.slug))),
+    ];
+
+    if (allSimilarSlugs.length > 0) {
+      const slugToId = new Map(
+        (
+          await prisma.problem.findMany({
+            where: { slug: { in: allSimilarSlugs } },
+            select: { id: true, slug: true },
+          })
+        ).map((p) => [p.slug, p.id]),
+      );
+
+      // Build the slug → upserted id map
+      const problemSlugToId = new Map(
+        problems.map((p, i) => [p.slug, ids[i]]),
+      );
+
+      const similarRows = problems.flatMap((problem) => {
+        const problemId = problemSlugToId.get(problem.slug)!;
+        return problem.similarQuestions
+          .filter((q) => slugToId.has(q.slug))
+          .map((q) => ({ problemId, similarId: slugToId.get(q.slug)! }));
+      });
+
+      if (similarRows.length > 0) {
+        await prisma.similarProblem.createMany({
+          data: similarRows,
+          skipDuplicates: true,
+        });
+      }
+    }
+
+    return { success: true as const, ids, count: ids.length };
+  } catch (error) {
+    console.error("addProblems failed:", error);
+    return {
+      success: false as const,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

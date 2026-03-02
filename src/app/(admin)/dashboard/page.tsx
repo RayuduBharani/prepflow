@@ -3,6 +3,7 @@ import { Briefcase, Map, Building2, FileSpreadsheet, UserCog, ArrowRight } from 
 import Link from "next/link";
 import BackupButton from "./BackupButton";
 import RestoreFromBackupButton from "./RestoreFromBackupButton";
+import SeedGfgProblemsButton from "./SeedGfgProblemsButton";
 import { getSession } from "@/auth-client";
 import { redirect, RedirectType } from "next/navigation";
 
@@ -83,6 +84,13 @@ export default async function AdminDashboard() {
             <p className="font-semibold text-foreground">Restore</p>
             <p className="text-sm text-muted-foreground">Upload a backup JSON and seed the database from it.</p>
             <RestoreFromBackupButton />
+          </div>
+
+          {/* Seed GFG Problems */}
+          <div className="rounded-xl bg-card border border-border p-5 shadow-sm flex flex-col gap-2">
+            <p className="font-semibold text-foreground">Seed GFG Problems</p>
+            <p className="text-sm text-muted-foreground">Fetch and import new problems from GeeksForGeeks that are not yet in the database.</p>
+            <SeedGfgProblemsButton />
           </div>
         </div>
       </div>

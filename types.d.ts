@@ -225,40 +225,35 @@ interface FiltersPanelProps {
 
 // Extract Problems from Leetcode and GFG
 
-interface RawGfgResults {
-  problem_name : string;
-  slug : string;
-  accuracy : string;
-  all_submissions : number;
-  difficulty : "School" | "Basic" | "Easy" | "Medium" | "Hard";
-  tags : {
-    company_tags : string[];
-    topic_tags : string[];
-  };
-  problem_url : string;
-}
-
-
-
-interface GfgResults {
-  problemName: string;
+interface GfgProblemResult {
+  id: number;
+  problem_name: string;
+  problem_type: number;
+  problem_level: number;
   slug: string;
   accuracy: string;
-  allSubmissions: number;
-  difficulty: Difficulty;
+  all_submissions: number;
+  marks: number;
+  difficulty: string;
   tags: {
-    companyTags: string[];
-    topicTags: string[];
+    company_tags: string[];
+    topic_tags: string[];
   };
-  problemUrl: string;
+  content_type: number;
+  problem_url: string;
+  topic_order: number | null;
+  visibility_type: number;
+  batch_slug: string | null;
+  track_slug: string | null;
+  solved_status: number;
 }
 
-interface GfgResponse {
-  previous : Number | null;
-  next : Number | null;
-  count : Number;
-  total : Number;
-  solved : Number;
-  unsolved : Number;
-  results  : GfgResults[]
+interface GfgApiResponse {
+  previous: number | null;
+  next: number | null;
+  count: number;
+  total: number;
+  solved: number;
+  unsolved: number;
+  results: GfgProblemResult[];
 }
