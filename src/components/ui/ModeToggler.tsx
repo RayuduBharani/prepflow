@@ -34,9 +34,13 @@ export function ModeToggle() {
   }, [isLight, setTheme]);
 
   useKeyPress("d", (e: KeyboardEvent) => {
-    // 4. Input safety check: Don't toggle if typing inside a form field
+    // 4. Input safety check: Don't toggle if typing inside a form field or editor (e.g. Monaco uses contenteditable divs)
     const target = e.target as HTMLElement;
-    if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+    if (
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.isContentEditable
+    ) return;
 
     e.preventDefault();
     toggleTheme();
