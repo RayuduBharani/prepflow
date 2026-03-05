@@ -72,21 +72,6 @@ export function toDifficulty(difficulty: string): Difficulty {
   }
 }
 
-export function toCamelCaseResult(raw: RawGfgResults): GfgResults {
-  return {
-    problemName: raw.problem_name,
-    slug: raw.slug,
-    accuracy: raw.accuracy,
-    allSubmissions: raw.all_submissions,
-    difficulty: toDifficulty(raw.difficulty),
-    tags: {
-      companyTags: raw.tags.company_tags,
-      topicTags: raw.tags.topic_tags,
-    },
-    problemUrl: raw.problem_url,
-  };
-}
-
 export function getAcceptedSubmissions(totalSubmitions : number, accuracy : number ) : number {
   return Math.ceil((totalSubmitions / 100) * accuracy);
 }

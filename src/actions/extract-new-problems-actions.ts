@@ -2,9 +2,11 @@
 "use server"
 
 import prisma from "@/prisma"
-import { Platform } from "../../generated/prisma/enums"
+import { Difficulty, Platform } from "../../generated/prisma/enums"
 import { getAcceptedSubmissions } from "@/lib/utils";
 import { addProblems } from "./adminActions";
+
+const VALID_DIFFICULTIES = new Set<string>(["EASY", "MEDIUM", "HARD", "BASIC", "SCHOOL"]);
 
 async function getExistingGfgSlugs(): Promise<Set<string>> {
   const problems = await prisma.problem.findMany({
@@ -30,25 +32,27 @@ export async function extractNewGfgProblems(): Promise<IProblem[]> {
       throw new Error(`Failed to fetch page ${page}: ${response.statusText}`);
     }
 
-    const data: GfgResponse = await response.json();
+    const data: GfgApiResponse = await response.json();
 
     for (const p of data.results ?? []) {
-      if (!p.slug || !p.problemName || !p.problemUrl || !p.difficulty) continue;
+      if (!p.slug || !p.problem_name || !p.problem_url || !p.difficulty) continue;
       if (existingSlugs.has(p.slug)) continue;
+      const upperDifficulty = (p.difficulty as string).toUpperCase();
+      if (!VALID_DIFFICULTIES.has(upperDifficulty)) continue;
       const accuracy = Number(p.accuracy.split("%")[0]);
       results.push({
-        title: p.problemName,
+        title: p.problem_name,
         platform: "GFG",
-        difficulty: p.difficulty,
+        difficulty: upperDifficulty as Difficulty,
         slug: p.slug,
-        submissions: p.allSubmissions,
-        url: p.problemUrl,
-        accepted: getAcceptedSubmissions(p.allSubmissions, accuracy),
+        submissions: p.all_submissions,
+        url: p.problem_url,
+        accepted: getAcceptedSubmissions(p.all_submissions, accuracy),
         acceptanceRate: accuracy,
-        companyTags: (p.tags.companyTags ?? []).filter(Boolean),
-        mainTopics: (p.tags.topicTags ?? []).filter(Boolean),
+        companyTags: (p.tags?.company_tags ?? []).filter(Boolean) as string[],
+        mainTopics: (p.tags?.topic_tags ?? []).filter(Boolean) as string[],
         similarQuestions: [],
-        topicTags: (p.tags.topicTags ?? []).filter(Boolean),
+        topicTags: (p.tags?.topic_tags ?? []).filter(Boolean) as string[],
       });
     }
 
