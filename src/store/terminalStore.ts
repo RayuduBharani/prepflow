@@ -79,15 +79,21 @@ export const useTerminalStore = create<TerminalState>()(
           socket = null;
         };
         socket.onerror = (err) => {
+          // Prevent onclose from also firing "Execution completed" after an error
+          if (socket) socket.onclose = null;
           set((state) => ({
             outputBuffer: [...state.outputBuffer, { type: 'error', data: `\r\n\x1b[1;31m✗\x1b[0m Connection error: ${err.type}\r\n\x1b[1;36m$\x1b[0m ` }],
-            status: 'error'
+            status: 'idle'
           }));
           socket = null;
         };
       },
       stopWebSocket: () => {
         if (socket) {
+          // Null out handlers before closing so onclose doesn't show
+          // "Execution completed" after a manual stop
+          socket.onclose = null;
+          socket.onerror = null;
           socket.close();
           socket = null;
         }

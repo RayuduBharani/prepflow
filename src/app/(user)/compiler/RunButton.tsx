@@ -6,35 +6,39 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
-import { CirclePlay } from "lucide-react";
+import { CirclePlay, Square } from "lucide-react";
 
 interface RunButtonProps {
   onClick: () => void;
+  onStop: () => void;
   isRunning: boolean;
 }
 
-export default function RunButton({ onClick, isRunning }: RunButtonProps) {
+export default function RunButton({ onClick, onStop, isRunning }: RunButtonProps) {
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
         <Button
-          onClick={onClick}
-          disabled={isRunning}
+          onClick={isRunning ? onStop : onClick}
           size="sm"
-          className="h-8 px-3 text-xs gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-          aria-label="Run code"
+          className={`h-8 px-3 text-xs gap-2 transition-all ${
+            isRunning
+              ? "bg-destructive/90 hover:bg-destructive text-destructive-foreground"
+              : ""
+          }`}
+          aria-label={isRunning ? "Stop execution" : "Run code"}
         >
           {isRunning ? (
-            <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <Square className="h-3.5 w-3.5 fill-current" />
           ) : (
             <CirclePlay className="h-4 w-4" strokeWidth={1.5} />
           )}
-          {isRunning ? "Running…" : "Run"}
+          {isRunning ? "Stop" : "Run"}
         </Button>
       </TooltipTrigger>
-      <TooltipContent 
-        side="bottom" 
-        align="center" 
+      <TooltipContent
+        side="bottom"
+        align="center"
         className="bg-background border border-secondary text-[0.7rem] rounded-md px-3 py-2 shadow-md"
       >
         <KbdGroup>

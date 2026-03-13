@@ -109,14 +109,14 @@ git clone https://github.com/cygnuxxs/prepflow.git
 cd prepflow
 
 # Install dependencies (automatically runs prisma generate & db push)
-npm install
+pnpm install
 
 # Set up environment variables
 cp .env.example .env
 # Fill in: DATABASE_URL, GOOGLE_AI_API_KEY, BETTER_AUTH_SECRET, UPSTASH_REDIS_REST_URL, etc.
 
 # Start the development server
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -125,12 +125,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start dev server with Turbopack |
-| `npm run build` | Generate Prisma client & build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run generate-sql` | Generate SQL dump from seed data |
-| `npm run verify-db` | Verify database import |
+| `pnpm dev` | Start dev server with Turbopack |
+| `pnpm build` | Generate Prisma client & build for production |
+| `pnpm start` | Start production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm generate-sql` | Generate SQL dump from seed data |
+| `pnpm verify-db` | Verify database import |
 
 ---
 

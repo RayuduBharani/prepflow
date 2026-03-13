@@ -189,6 +189,12 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
     }
   };
 
+  const handleStopCode = () => {
+    if (terminalRef.current) {
+      terminalRef.current.stop();
+    }
+  };
+
   const handleResetClick = () => {
     setShowResetDialog(true);
   };
@@ -202,8 +208,10 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.altKey && e.key === "Enter") {
         e.preventDefault();
-        if (status !== "running" && terminalRef.current) {
-          terminalRef.current.run();
+        if (status === "running") {
+          terminalRef.current?.stop();
+        } else {
+          terminalRef.current?.run();
         }
       }
     };
@@ -249,6 +257,7 @@ export default function DesktopCodeEditor({ terminalRef }: DesktopCodeEditorProp
         <EditorHeader
           onResetClick={handleResetClick}
           onRunCode={handleRunCode}
+          onStopCode={handleStopCode}
           isRunning={status === "running"}
         />
 

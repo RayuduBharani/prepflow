@@ -8,8 +8,19 @@ import { Separator } from "@/components/ui/separator";
 import { redirect } from "next/navigation";
 import { getSession, signIn } from "@/auth-client";
 
-const page = async () => {
-  if (await getSession()) return redirect("/");
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) => {
+  const { callbackUrl } = await searchParams;
+  // Sanitise: only allow same-origin relative paths
+  const safeCallback =
+    callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+      ? callbackUrl
+      : "/";
+
+  if (await getSession()) return redirect(safeCallback);
   return (
     <>
       <div className="w-full h-full flex items-center justify-center">
@@ -21,7 +32,7 @@ const page = async () => {
           <div className="flex gap-2 w-full justify-between">
             <Form action={async () => {
               'use server'
-              await signIn('google')
+              await signIn('google', safeCallback)
             }}>
               <Button
                 className="text-xs"
@@ -37,7 +48,7 @@ const page = async () => {
             </Form>
             <Form action={async () => {
               'use server'
-              await signIn('github')
+              await signIn('github', safeCallback)
             }}>
               <Button
                 className="text-xs"

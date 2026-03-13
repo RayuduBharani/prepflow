@@ -9,12 +9,14 @@ import RunButton from "./RunButton";
 interface EditorHeaderProps {
   onResetClick: () => void;
   onRunCode: () => void;
+  onStopCode: () => void;
   isRunning: boolean;
 }
 
 export default function EditorHeader({
   onResetClick,
   onRunCode,
+  onStopCode,
   isRunning,
 }: EditorHeaderProps) {
   return (
@@ -34,7 +36,7 @@ export default function EditorHeader({
         {/* Desktop Controls */}
         <div className="hidden sm:flex space-x-1 items-center">
           <EditorControls
-            onResetClick={onResetClick} 
+            onResetClick={onResetClick}
           />
         </div>
 
@@ -48,8 +50,8 @@ export default function EditorHeader({
             </PopoverTrigger>
             <PopoverContent className="bg-background/20 backdrop-blur-xs">
               <div className="flex space-x-1 flex-wrap gap-2 items-center">
-                <EditorControls 
-                  onResetClick={onResetClick} 
+                <EditorControls
+                  onResetClick={onResetClick}
                 />
               </div>
             </PopoverContent>
@@ -57,7 +59,7 @@ export default function EditorHeader({
         </div>
 
         {/* Run Button */}
-        <RunButton onClick={onRunCode} isRunning={isRunning} />
+        <RunButton onClick={onRunCode} onStop={onStopCode} isRunning={isRunning} />
       </div>
     </div>
   );

@@ -10,22 +10,30 @@ const AdminForm = () => {
   const [changeRoleState, changeRoleAction, isChangeRolePending] =
     useActionState(changeToAdmin, null);
 
+  const inputClassName =
+    "h-9 flex-1 bg-background/70 border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-ring/35 text-sm";
+  const buttonClassName =
+    "h-9 shrink-0 text-xs bg-primary/10 hover:bg-border-primary/20 border border-primary/25 text-foreground shadow-none";
+  const feedbackBaseClassName =
+    "flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 border";
+
+  const errorMessage = changeRoleState?.error;
+  const successMessage = changeRoleState?.success;
+
   return (
     <div className="flex flex-col gap-4 w-full">
-      {/* Change Role + Seed + Drop in one row */}
       <div className="flex flex-wrap items-start gap-2 w-full">
-        {/* Change Role Form */}
         <Form action={changeRoleAction} className="flex items-center gap-2 flex-1 min-w-60">
           <Input
             name="email"
-            className="h-9 flex-1 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/40 focus-visible:ring-white/30 text-sm"
+            className={inputClassName}
             type="email"
             placeholder="Enter user email..."
             required
           />
           <Button
             size="sm"
-            className="h-9 shrink-0 text-xs bg-white/15 hover:bg-white/25 border border-white/20 text-primary-foreground shadow-none"
+            className={buttonClassName}
             icon={ShieldCheck}
             iconPlacement="right"
             effect="expandIcon"
@@ -37,18 +45,21 @@ const AdminForm = () => {
         </Form>
       </div>
 
-      {/* Feedback messages */}
       <div className="flex flex-wrap gap-2 empty:hidden">
-        {changeRoleState?.error && (
-          <div className="flex items-center gap-1.5 text-xs text-red-300 bg-red-500/15 border border-red-500/25 rounded-lg px-3 py-1.5">
+        {errorMessage && (
+          <div
+            className={`${feedbackBaseClassName} text-destructive bg-destructive/10 border-destructive/30`}
+          >
             <XCircle size={12} />
-            {changeRoleState.error}
+            {errorMessage}
           </div>
         )}
-        {changeRoleState?.success && (
-          <div className="flex items-center gap-1.5 text-xs text-green-300 bg-green-500/15 border border-green-500/25 rounded-lg px-3 py-1.5">
+        {successMessage && (
+          <div
+            className={`${feedbackBaseClassName} text-primary bg-primary/10 border-primary/30`}
+          >
             <CheckCircle2 size={12} />
-            {changeRoleState.success}
+            {successMessage}
           </div>
         )}
       </div>

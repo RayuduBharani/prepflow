@@ -1,29 +1,18 @@
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { getTwoAlphabets, formatDate } from "@/lib/utils";
-import { LogOutIcon, LogIn } from "lucide-react";
-import Link from "next/link";
+import { LogOutIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import Form from "next/form";
 import { signOut } from "@/auth-client";
 import { revalidatePath } from "next/cache";
 import prisma from "@/prisma";
 import { Session } from "better-auth";
+import SignInButton from "./SignInButton";
 
 const AvatarDropDown = async ({ session }: { session: Session | null }) => {
   if (!session?.userId)
-    return (
-      <Button
-        asChild
-        effect={"expandIcon"}
-        iconPlacement="right"
-        icon={LogIn}
-        size={"sm"}
-        className="text-xs"
-      >
-        <Link href={"/signin"}>Sign in</Link>
-      </Button>
-    );
+    return <SignInButton />;
 
   const user = await prisma.user.findUnique({
     where: { id: session?.userId },

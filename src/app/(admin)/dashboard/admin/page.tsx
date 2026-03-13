@@ -1,4 +1,3 @@
-import React from "react";
 import prisma from "@/prisma";
 import AdminForm from "./AdminForm";
 import Image from "next/image";
@@ -7,35 +6,56 @@ import { Users, ShieldCheck, User } from "lucide-react";
 
 async function Admin() {
   const usersData = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      createdAt: true,
+      lastLogin: true,
+    },
     orderBy: [{ role: "desc" }, { createdAt: "desc" }],
   });
 
-  const adminCount = usersData.filter((u) => u.role === "ADMIN").length;
-  const userCount = usersData.length;
+  const { adminCount, userCount } = usersData.reduce(
+    (counts, user) => {
+      counts.userCount += 1;
+      if (user.role === "ADMIN") counts.adminCount += 1;
+      return counts;
+    },
+    { adminCount: 0, userCount: 0 }
+  );
+
+  const baseCardClass =
+    "group relative flex flex-col rounded-2xl p-4 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg overflow-hidden";
+  const adminCardClass =
+    "bg-primary/10 border-primary/25 hover:border-primary/40";
+  const userCardClass = "bg-card border-border hover:border-border/80";
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center pt-[5rem] px-3 sm:px-6 bg-background">
+    <div className="min-h-screen w-full flex flex-col items-center pt-20 px-3 sm:px-6 bg-background">
       {/* Page Header */}
       <div className="w-full max-w-4xl mb-6">
-        <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-primary/5 shadow-xl">
+        <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-card border border-border shadow-sm">
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
                 Admin Dashboard
               </h1>
-              <p className="text-primary-foreground/60 text-sm mt-1">
+              <p className="text-muted-foreground text-sm mt-1">
                 Manage users · Seed data · Control access
               </p>
             </div>
 
             {/* Stats pills */}
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-primary-foreground text-xs font-medium">
+              <div className="flex items-center gap-1.5 bg-muted/70 border border-border rounded-full px-3 py-1.5 text-foreground text-xs font-medium">
                 <Users size={13} />
                 <span>{userCount} Users</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 text-primary-foreground text-xs font-medium">
+              <div className="flex items-center gap-1.5 bg-muted/70 border border-border rounded-full px-3 py-1.5 text-foreground text-xs font-medium">
                 <ShieldCheck size={13} />
                 <span>{adminCount} Admins</span>
               </div>
@@ -43,7 +63,7 @@ async function Admin() {
           </div>
 
           {/* Admin actions strip */}
-          <div className="relative z-10 mt-5 pt-5 border-t border-white/15">
+          <div className="relative z-10 mt-5 pt-5 border-t border-border/60">
             <AdminForm />
           </div>
         </div>
@@ -54,7 +74,7 @@ async function Admin() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
           All Users
         </h2>
-        <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+        <div className="flex-1 h-px bg-linear-to-r from-border to-transparent" />
       </div>
 
       {/* Users Grid */}
@@ -64,14 +84,11 @@ async function Admin() {
           return (
             <div
               key={user.id}
-              className={`group relative flex flex-col rounded-2xl p-4 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg overflow-hidden ${isAdmin
-                ? "bg-gradient-to-br from-primary/8 to-primary/3 border-primary/20 hover:border-primary/40 hover:shadow-primary/10"
-                : "bg-card border-border hover:border-border/80"
-                }`}
+              className={`${baseCardClass} ${isAdmin ? adminCardClass : userCardClass}`}
             >
               {/* Subtle gradient shine on hover for admin cards */}
               {isAdmin && (
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-primary/5 to-transparent transition-opacity duration-300 pointer-events-none rounded-2xl" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.16),transparent_60%)] transition-opacity duration-300 pointer-events-none rounded-2xl" />
               )}
 
               <div className="relative flex items-center gap-3">
@@ -87,13 +104,13 @@ async function Admin() {
                       sizes="48px"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-muted to-muted/60 flex items-center justify-center ring-2 ring-border">
+                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-muted to-muted/60 flex items-center justify-center ring-2 ring-border">
                       <User size={20} className="text-muted-foreground" />
                     </div>
                   )}
                   {/* Online-style role indicator */}
                   {isAdmin && (
-                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-gradient-to-br from-primary to-primary/70 ring-2 ring-card flex items-center justify-center">
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-linear-to-br from-primary to-primary/70 ring-2 ring-card flex items-center justify-center">
                       <ShieldCheck size={7} className="text-primary-foreground" />
                     </span>
                   )}
@@ -111,7 +128,7 @@ async function Admin() {
               </div>
 
               {/* Divider */}
-              <div className="my-3 h-px bg-gradient-to-r from-border via-border/50 to-transparent" />
+              <div className="my-3 h-px bg-linear-to-r from-border via-border/50 to-transparent" />
 
               {/* Footer */}
               <div className="flex items-end justify-between gap-2 mt-auto">
@@ -127,7 +144,7 @@ async function Admin() {
                 </div>
 
                 {isAdmin ? (
-                  <span className="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-sm shadow-primary/20 tracking-wide">
+                  <span className="shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-linear-to-r from-primary to-primary/80 text-primary-foreground shadow-sm shadow-primary/20 tracking-wide">
                     ADMIN
                   </span>
                 ) : (
